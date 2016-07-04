@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:fillViewport="true" android:fitsSystemWindows="true" android:clipToPadding="false"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/app_bg">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center_horizontal"
+    android:fitsSystemWindows="true" android:orientation="vertical" >
+
+        <ImageView android:id="@+id/closeImage" android:layout_width="@dimen/dimen_70dp"  android:layout_height="wrap_content" android:src="@mipmap/login_close"
+             android:layout_gravity="right" android:paddingTop="@dimen/dimen_20dp" android:paddingBottom="@dimen/dimen_20dp" />
+
+        <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@mipmap/login_icon" android:layout_gravity="center_horizontal"
+             android:layout_marginBottom="@dimen/dimen_30dp" />
+
+        <LinearLayout android:layout_marginLeft="@dimen/dimen_20dp" android:layout_marginRight="@dimen/dimen_20dp"
+            android:background="@drawable/login_fieldarea_bg_shape" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="@dimen/dimen_120dp">
+            <LinearLayout android:layout_weight="1" android:gravity="center_vertical"  android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="horizontal">
+                <ImageView android:layout_width="wrap_content"  android:layout_height="wrap_content" android:src="@mipmap/login_user_icon"
+                    android:layout_marginLeft="@dimen/dimen_15dp" android:layout_marginRight="@dimen/dimen_15dp" />
+                <com.straw.lession.physical.custom.ClearEditText android:id="@+id/userNameEdit" android:maxLength="11"  android:inputType="number" android:layout_width="fill_parent" android:layout_height="fill_parent" android:textCursorDrawable="@drawable/color_cursor"
+                    android:hint="@string/login_user" android:background="@color/transparent" android:textSize="@dimen/font_size_16" android:layout_marginRight="@dimen/dimen_10dp" android:textColorHint="@color/gray_cccccc"  />
+            </LinearLayout>
+            <include layout="@layout/line_view" android:layout_marginLeft="0dp" android:layout_width="fill_parent" android:layout_height="@dimen/dimen_1dp" />
+            <LinearLayout android:layout_weight="1" android:gravity="center_vertical" android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="horizontal">
+                <ImageView android:layout_width="wrap_content"  android:layout_height="wrap_content" android:src="@mipmap/login_password_icon"
+                    android:layout_marginLeft="@dimen/dimen_15dp" android:layout_marginRight="@dimen/dimen_15dp"  />
+                <com.straw.lession.physical.custom.ClearEditText android:id="@+id/passwordEdit" android:layout_width="fill_parent" android:layout_height="fill_parent" android:textCursorDrawable="@drawable/color_cursor"
+                    android:hint="@string/login_password" android:inputType="textPassword" android:background="@color/transparent" android:textSize="@dimen/font_size_16" android:layout_marginRight="@dimen/dimen_10dp" android:textColorHint="@color/gray_cccccc" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <Button android:id="@+id/login"
+            android:layout_width="fill_parent" android:textColor="@color/white" android:textSize="@dimen/font_size_20"
+            android:layout_height="@dimen/dimen_50dp" android:background="@drawable/button_blue_selector" android:text="@string/login_text"
+            android:layout_marginTop="@dimen/dimen_20dp" android:layout_marginLeft="@dimen/dimen_20dp" android:layout_marginRight="@dimen/dimen_20dp" />
+
+        <Button android:id="@+id/reg"
+            android:layout_width="fill_parent" android:textColor="@drawable/font_text_selector" android:textSize="@dimen/font_size_20"
+            android:layout_height="@dimen/dimen_50dp" android:background="@drawable/button_reg_selector" android:text="@string/reg_text"
+            android:layout_marginTop="@dimen/dimen_20dp" android:layout_marginLeft="@dimen/dimen_20dp" android:layout_marginRight="@dimen/dimen_20dp" />
+
+    <TextView android:id="@+id/forget" android:layout_gravity="center" android:gravity="center"  android:layout_marginTop="@dimen/dimen_20dp"
+        android:layout_width="wrap_content" android:textColor="@color/gray_959595" android:textSize="@dimen/font_size_16"
+        android:layout_height="@dimen/dimen_50dp" android:background="@color/transparent" android:text="@string/forget_text"  />
+
+</LinearLayout>
+</ScrollView>
+

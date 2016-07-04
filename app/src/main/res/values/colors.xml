@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="app_bg">#f5f5f5</color>
+    <color name="transparent">#00000000</color>
+    <color name="transparent_bb">#bb000000</color>
+    <color name="white">#ffffff</color>
+    <color name="white_fcfdfe">#fcfdfe</color>
+
+    <color name="black">#000000</color>
+    <color name="gray_33">#333333</color>
+    <color name="gray_line">#d2d2d2</color>
+    <color name="gray_32">#323232</color>
+    <color name="gray_333333">#4b4b4b</color>
+    <color name="gray_4b4b4b">#4b4b4b</color>
+
+    <color name="gray_999999">#999999</color>
+    <color name="gray_6b6b6b">#6b6b6b</color>
+    <color name="gray_4a4f49">#4a4f49</color>
+    <color name="gray_d3d3d3">#d3d3d3</color>
+    <color name="gray_959595">#959595</color>
+    <color name="gray_989898">#989898</color>
+    <color name="gray_cdcdcd">#cdcdcd</color>
+    <color name="gray_d2d2d2">#d2d2d2</color>
+    <color name="gray_828282">#828282</color>
+    <color name="actionsheet_gray">#8F8F8F</color>
+    <color name="actionsheet_blue">#037BFF</color>
+    <color name="gray_dddedf">#ccdddedf</color>
+    <color name="gray_dddedf2">#99dddedf</color>
+    <color name="gray_cccccc">#cccccc</color>
+
+
+
+    <color name="blue_light">#C9EEFC</color>
+    <color name="blue_nor">#17b7f3</color>
+    <color name="blue_press">#076C91</color>
+    <color name="blue17">#17b7f5</color>
+    <color name="blue_14b7ee">#14b7ee</color>
+
+    <color name="green_46d136">#46d136</color>
+
+    <color name="red">#ffcc0033</color>
+    <color name="red_nor">#ed5b5e</color>
+    <color name="red_press">#720C10</color>
+    <color name="red_cell_bg">#ff7575</color>
+
+
+    <color name="yellow_nor">#fbae5c</color>
+    <color name="yellow_press">#A45404</color>
+    <color name="yellow_fbae5c">#fbae5c</color>
+
+    <color name="province_line_border">#D0D0D0</color>
+
+    <color name="button_state_noenable">#C3C3C3</color>
+    <color name="button_state_enable">#FF5722</color>
+    <color name="button_state_pressed">#7A1C00</color>
+    <color name="font_gray_1">#555555</color>
+    <color name="font_gray_6">#666666</color>
+    <color name="font_gray_5">#282828</color>
+    <color name="font_gray_2">#CCCCCC</color>
+    <color name="font_gray_button_state">#999999</color>
+</resources>

@@ -1,0 +1,399 @@
+<resources>
+    <string name="app_name">小步体育</string>
+    <string name="action_settings">Settings</string>
+    <string name="loading">加载中...</string>
+    <string name="commting">提交中...</string>
+    <string name="sending">发送中...</string>
+    <string name="regstering">注册中...</string>
+    <string name="seeing">检查中...</string>
+    <string name="tips_connection_error">联网失败，请检查手机网络状态</string>
+    <string name="tips_malformed_url_error">请求格式出错</string>
+    <string name="tips_io_error">请求失败</string>
+    <string name="tips_socket_timeout_error">请检查手机网络状态，请求超时</string>
+
+
+    <string name="folder_all">所有照片</string>
+    <string name="preview">预览</string>
+    <string name="msg_no_camera">没有系统相机</string>
+    <string name="msg_amount_limit">已经达到最高选择数量</string>
+
+    <string name="msg_load_ing">加载中....</string>
+    <string name="home_title">宜信商消贷</string>
+    <string name="wyjk_title">我要借款</string>
+    <string name="shzc_title">商户注册</string>
+    <string name="wdjk_title">我的借款</string>
+    <string name="wjmm_title">忘记密码</string>
+    <string name="txdy_title">填写单元</string>
+    <string name="sqrxx_title">申请人信息</string>
+    <string name="gsxx_title">公司信息</string>
+    <string name="contacts_title">联系人信息</string>
+    <string name="bank_title">银行卡信息</string>
+    <string name="ziliao_title">资料上传</string>
+    <string name="person_title">个人信息</string>
+    <string name="resetpwd_title">重置密码</string>
+    <string name="news_title">消息中心</string>
+    <string name="zxgp_title">资信评估</string>
+
+    <string name="title_update">保存</string>
+
+
+
+    <!-- 登陆-->
+    <string name="login_user">手机号</string>
+    <string name="login_password">登录密码</string>
+    <string name="login_text">登录</string>
+    <string name="reg_text">注册</string>
+    <string name="forget_text">忘记密码？</string>
+
+    <!-- 商户注册-->
+    <string name="business_red_desc">请使用本人真实信息注册</string>
+    <string name="business_red_name_label">姓名</string>
+    <string name="business_red_mobile_label">移动电话</string>
+    <string name="business_red_yyzz_label">营业执照</string>
+    <string name="business_red_shbh_label">商户编号</string>
+    <string name="business_red_tjr_label">推荐人</string>
+    <string name="business_red_tjrdh_label">推荐人电话</string>
+    <string name="business_red_code_label">验证码</string>
+    <string name="business_red_getcode_label">获取验证码</string>
+    <string name="business_red_hint_code_label">短信验证码</string>
+    <string name="business_red_pwd">设置密码</string>
+
+    <string name="business_red_hint_name_label">填写真实姓名</string>
+    <string name="business_red_phone_label">手机号码</string>
+    <string name="business_red_hint_yyzz_label">营业执照注册名称</string>
+    <string name="business_red_hint_shbh_label">POS单上15位商户编号</string>
+    <string name="business_red_hint_tjrdh_label">可以为空</string>
+    <string name="business_reg_label">注册</string>
+    <string name="business_reg_result_btn">返回</string>
+    <string name="business_reg_result_label">恭喜您，注册成功！</string>
+
+    <!-- 我要借款-->
+    <string name="mywantloan_jkqx_label">借款期限</string>
+    <string name="mywantloan_please_label">请选择</string>
+    <string name="mywantloan_jkyt_label">借款用途</string>
+    <string name="mywantloan_sxjkyt_label">所需借款用途</string>
+    <string name="mywantloan_jkje_label">借款金额</string>
+    <string name="mywantloan_xz_label">限制1万到50万</string>
+    <string name="mywantloan_wy_label">万元</string>
+    <string name="mywantloan_y_label">元</string>
+    <string name="mywantloan_next_label">下一步</string>
+
+    <string name="mywantloan_hy_label">行业</string>
+    <string name="mywantloan_szhy_label">所在行业</string>
+    <string name="mywantloan_cp_label">产品</string>
+    <string name="mywantloan_cpmc_label">产品名称</string>
+    <string name="mywantloan_area_label">省、市、区</string>
+    <string name="mywantloan_address_label">详细地址</string>
+    <string name="mywantloan_posnum_label">pos数量</string>
+    <string name="mywantloan_posnum2_label">pos机的刷卡数量</string>
+    <string name="mywantloan_yjske_label">月均刷卡额</string>
+    <string name="mywantloan_hint_yjske_label">月平均刷卡额</string>
+    <string name="mywantloan_yuan_label">元</string>
+    <string name="mywantloan_yjxje_label">月均现金额</string>
+    <string name="mywantloan_hint_yjxje_label">月平均现金额</string>
+    <string name="mywantloan_skpl_label">刷卡频率</string>
+    <string name="mywantloan_unit_by_label">笔/月</string>
+    <string name="mywantloan_dj_label">淡季</string>
+    <string name="mywantloan_wj_label">旺季</string>
+    <string name="mywantloan_kdx_label">可多选</string>
+    <string name="mywantloan_jzjh_label">集中进货</string>
+    <string name="mywantloan_hint_jzjh_label">请选择</string>
+
+    <string name="mywantloan_tisq_btn">提交申请</string>
+    <string name="mywantloan_result_desc1">您的借款申请已提交！</string>
+    <string name="mywantloan_result_desc2">请等待额度审批，会有客服人员与您联系</string>
+    <string name="mywantloan_result_desc3">请保持电话畅通。</string>
+    <string name="mywantloan_result_btn">查看我的借款</string>
+
+
+
+    <!-- 我的借款-->
+    <string name="myloan_empty_desc1">您目前还没有借款哦～</string>
+    <string name="myloan_empty_desc2">请点击下方 \"我要借款\"</string>
+    <string name="myloan_item_filed1">申请日期</string>
+    <string name="myloan_item_filed2">借款期限</string>
+    <string name="myloan_item_filed3">借款金额</string>
+    <string name="myloan_item_filed4">借款用途</string>
+    <string name="myloan_item_filed5">当前状态</string>
+
+
+    <!-- 首页-->
+    <string name="home_login_desc">点击登录/注册</string>
+    <string name="home_login_lasttime">上次登录时间：</string>
+    <string name="home_news_desc">最新消息</string>
+    <string name="home_password_desc">重置密码</string>
+    <string name="home_personinfo_desc">个人信息</string>
+    <string name="home_weixin_desc">微信商消贷</string>
+    <string name="home_exit_btn">退&#160;&#160;&#160;出</string>
+    <string name="home_update_btn">更新</string>
+
+    <string name="home_copyright">版权所有</string>
+    <string name="home_copyright_name">宜信公司拥有最终解释权</string>
+
+    <!-- 忘记密码-->
+    <string name="forget_phone">手机号</string>
+
+    <!-- 填写单元-->
+    <string name="add_cellinfo_jkdh">借款单号：</string>
+    <string name="add_cellinfo_dbj">待补件</string>
+    <string name="add_cellinfo_field1">1、申请人信息</string>
+    <string name="add_cellinfo_field2">2、公司信息</string>
+    <string name="add_cellinfo_field3">3、紧急联系人</string>
+    <string name="add_cellinfo_field4">4、银行卡信息</string>
+    <string name="add_cellinfo_field5">5、资料上传</string>
+    <string name="add_cellinfo_agreen_content">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;本申请表填写内容完全属实，确认为本人申请，并同意授权查询与本次申请相关信息核实，并可保留该等相关资料</string>
+    <string name="add_cellinfo_btn">确认提交</string>
+
+    <!-- 申请人信息-->
+    <string name="add_cellpersoninfo_jkdh">借款单号</string>
+    <string name="add_cellpersoninfo_username">姓名</string>
+    <string name="add_cellpersoninfo_IDCard">身份证</string>
+    <string name="add_cellpersoninfo_IDCard_hint">18位身份证号码</string>
+    <string name="add_cellpersoninfo_phone">常用手机</string>
+    <string name="add_cellpersoninfo_desc1">若对应信息没有，则填写\"0\"</string>
+    <string name="add_cellpersoninfo_desc2">现居住地址</string>
+    <string name="add_cellpersoninfo_area">省、市、区</string>
+    <string name="add_cellpersoninfo_area_hint">详细地址</string>
+    <string name="add_cellpersoninfo_jztime">已居住时间</string>
+    <string name="add_cellpersoninfo_jztime_hint">现住地已居住时间</string>
+    <string name="add_cellpersoninfo_jztime_year">年</string>
+    <string name="add_cellpersoninfo_tel">现居住电话</string>
+    <string name="add_cellpersoninfo_tel_hint">居住电话</string>
+    <string name="add_cellpersoninfo_fangchan">名下有无房产</string>
+    <string name="add_cellpersoninfo_fangchan_hint">请选择</string>
+    <string name="add_cellpersoninfo_fangchan_num">房产数量</string>
+    <string name="add_cellpersoninfo_fangchan_tao">套</string>
+    <string name="add_cellpersoninfo_hunyin">婚姻状况</string>
+    <string name="add_cellpersoninfo_zinv">子女状况</string>
+    <string name="add_cellpersoninfo_qita">其他借款</string>
+    <string name="add_cellpersoninfo_qita_hint">月还款额</string>
+    <string name="add_cellpersoninfo_qita_unit">元/月</string>
+    <string name="add_cellpersoninfo_qq">QQ</string>
+    <string name="add_cellpersoninfo_qq_hint">QQ号码</string>
+    <string name="add_cellpersoninfo_commit">提交</string>
+
+
+    <!-- 公司信息-->
+    <string name="add_cellcompanyinfo">新增公司信息</string>
+
+    <string name="add_cellcompanyinfo_desc">若对应信息没有，则填写\"0\"</string>
+    <string name="add_cellcompanyinfo_jkdh">借款单号：</string>
+    <string name="add_cellcompanyinfo_zcmc">注册名称</string>
+    <string name="add_cellcompanyinfo_zpmc">招牌名称</string>
+    <string name="add_cellcompanyinfo_zpmc_hint">对外招牌名称</string>
+    <string name="add_cellcompanyinfo_yjysj">已经营时间</string>
+    <string name="add_cellcompanyinfo_please">请选择</string>
+    <string name="add_cellcompanyinfo_jydz">经营地址</string>
+    <string name="add_cellcompanyinfo_area">省、市、区</string>
+    <string name="add_cellcompanyinfo_address">详细居住地址</string>
+    <string name="add_cellcompanyinfo_address2">详细经营地址</string>
+
+    <string name="add_cellcompanyinfo_dpxq">店铺详情</string>
+
+    <string name="add_cellcompanyinfo_dpdh">店铺电话</string>
+    <string name="add_cellcompanyinfo_dpgddh">店铺固定电话</string>
+    <string name="add_cellcompanyinfo_yymj">营业面积</string>
+    <string name="add_cellcompanyinfo_pm">平米</string>
+    <string name="add_cellcompanyinfo_fdxm">房东姓名</string>
+    <string name="add_cellcompanyinfo_fddh">房东电话</string>
+    <string name="add_cellcompanyinfo_ygrs">员工人数</string>
+    <string name="add_cellcompanyinfo_ygrs_unit">人</string>
+    <string name="add_cellcompanyinfo_zyyw">主营业务</string>
+    <string name="add_cellcompanyinfo_jylx">经营类型</string>
+
+
+    <string name="add_cellcompanyinfo_dj">淡季</string>
+    <string name="add_cellcompanyinfo_wj">旺季</string>
+    <string name="add_cellcompanyinfo_yyye">月营业额</string>
+    <string name="add_cellcompanyinfo_yyye_unit">元</string>
+    <string name="add_cellcompanyinfo_jkyt">借款用途</string>
+    <string name="add_cellcompanyinfo_zjxq">资金需求</string>
+    <string name="add_cellcompanyinfo_zjxq_unit">万元</string>
+    <string name="add_cellcompanyinfo_sftzzdz">是否同注册地址</string>
+    <string name="add_cellcompanyinfo_dpsl">店铺数量</string>
+
+    <string name="add_cellcompanyinfo_sdmzc">水电煤支出</string>
+    <string name="add_cellcompanyinfo_sdmzc_unit">元/月</string>
+    <string name="add_cellcompanyinfo_sdmzc_unit2">笔/月</string>
+    <string name="add_cellcompanyinfo_gzzc">工资支出</string>
+
+
+    <string name="add_cellcompanyinfo_yyzz">营业执照</string>
+    <string name="add_cellcompanyinfo_shbh">商户编号</string>
+    <string name="add_cellcompanyinfo_shbh_hint">POS单上15位商户编号</string>
+
+    <string name="add_cellcompanyinfo_posnum">POS数量</string>
+    <string name="add_cellcompanyinfo_skpl">刷卡频率</string>
+    <string name="add_cellcompanyinfo_dpfzr">店铺负责人</string>
+    <string name="add_cellcompanyinfo_fzrsj">负责人手机</string>
+    <string name="add_cellcompanyinfo_fzrsj_hint">店铺负责人手机</string>
+    <string name="add_cellcompanyinfo_hy">行业</string>
+    <string name="add_cellcompanyinfo_cp">产品</string>
+    <string name="add_cellcompanyinfo_zyxz">主营性质</string>
+    <string name="add_cellcompanyinfo_sfjzjh">是否集中进货</string>
+    <string name="add_cellcompanyinfo_yjske">月均刷卡额</string>
+    <string name="add_cellcompanyinfo_yjxje">月均现金额</string>
+    <string name="add_cellcompanyinfo_yjyye">月均营业额</string>
+    <string name="add_cellcompanyinfo_zhdk">在还贷款</string>
+    <string name="add_cellcompanyinfo_zhdk_hint">在还贷款笔数</string>
+    <string name="add_cellcompanyinfo_zhdk_unit">笔</string>
+    <string name="add_cellcompanyinfo_jydsyq">经营地所有权</string>
+    <string name="add_cellcompanyinfo_jydsyqr">经营地所有权人</string>
+    <string name="add_cellcompanyinfo_myzj">每月租金</string>
+    <string name="add_cellcompanyinfo_myzj_unit">元</string>
+    <string name="add_cellcompanyinfo_zq">租期</string>
+    <string name="add_cellcompanyinfo_zq_hint">日期</string>
+
+
+    <!-- 联系人信息-->
+    <string name="add_cellcontactsinfo_po">配偶（无配偶填直系亲属）</string>
+    <string name="add_cellcontactsinfo_xm">姓名</string>
+    <string name="add_cellcontactsinfo_sj">手机</string>
+    <string name="add_cellcontactsinfo_sfz">身份证号码</string>
+    <string name="add_cellcontactsinfo_gx">关系</string>
+    <string name="add_cellcontactsinfo_qs1">亲属1</string>
+    <string name="add_cellcontactsinfo_qs2">亲属2</string>
+    <string name="add_cellcontactsinfo_qtlxr">其他联系人</string>
+
+
+    <!-- 银行卡信息 -->
+    <string name="add_cellbankinfo_posdesc">除个人常用银行卡外均为必填项</string>
+    <string name="add_cellbankinfo_ruzdesc">POS入账银行卡或账号</string>
+    <string name="add_cellbankinfo_bank">银行</string>
+    <string name="add_cellbankinfo_bank_hint">银行卡发卡机构</string>
+    <string name="add_cellbankinfo_card">卡号</string>
+    <string name="add_cellbankinfo_card_hint">卡号(账号)</string>
+    <string name="add_cellbankinfo_khh">开户行</string>
+    <string name="add_cellbankinfo_jingydesc">经营流水银行卡</string>
+    <string name="add_cellbankinfo_gerendesc1">个人常用银行卡1</string>
+    <string name="add_cellbankinfo_gerendesc2">个人常用银行卡2</string>
+
+    <!-- 资料上传-->
+    <string name="add_cellziliao_desc1">客服反馈信息：</string>
+    <string name="add_cellziliao_desc2">请上传相应材料</string>
+    <string name="add_cellziliao_field1">身份证正反面</string>
+    <string name="add_cellziliao_field2">手持身份证自拍</string>
+    <string name="add_cellziliao_field3">POS流水入账卡正反面</string>
+    <string name="add_cellziliao_field4">常用个人储蓄卡正反面</string>
+    <string name="add_cellziliao_field5">个人信用报告</string>
+    <string name="add_cellziliao_field6">营业执照</string>
+    <string name="add_cellziliao_field7">店铺租赁合同或房产证</string>
+    <string name="add_cellziliao_field8">店铺缴费单</string>
+    <string name="add_cellziliao_field9">店铺外景</string>
+    <string name="add_cellziliao_field10">店铺内景</string>
+    <string name="add_cellziliao_field11">法人在收银台内</string>
+    <string name="add_cellziliao_field12">补充材料</string>
+    <string name="add_cell_surecommit">确认提交</string>
+
+    <string name="add_cell_step1_desc1">1、上传内容完整、清晰可见</string>
+    <string name="add_cell_step1_desc2">2、有效期限不小于6个月</string>
+    <string name="add_cell_step1_desc3">3、若已婚，请在&#160;\"补充材料\"&#160;处上传&#160;\"结婚证\"&#160;和&#160;\"配偶身份证正反面\"</string>
+
+    <string name="add_cell_step2_desc1">1、身份证上的信息清晰可见</string>
+    <string name="add_cell_step2_desc2">2、法人面部及身份证同时入镜</string>
+
+    <string name="add_cell_step3_desc1">1、上传卡面正反面内容完整、清晰可见</string>
+    <string name="add_cell_step3_desc2">2、卡片背面签名应与借款人姓名一致</string>
+
+    <string name="add_cell_step4_desc1">1、上传卡面正反面内容完整、清晰可见</string>
+    <string name="add_cell_step4_desc2">2、卡片背面签名应与借款人姓名一致</string>
+
+    <string name="add_cell_step5_desc1">1、上传内容完整、清晰可见</string>
+    <string name="add_cell_step5_desc2">2、报告查询日期需在交件日起15日内</string>
+    <string name="add_cell_step5_desc3">3、逾期次数≥10次必须提供详版征信报告</string>
+    <string name="add_cell_step5_desc4">4、自行打印的纸质报告仅接受详版征信报告</string>
+
+    <string name="add_cell_step6_desc1">1、上传内容完整、清晰可见</string>
+    <string name="add_cell_step6_desc2">2、经营时间满1年且通过年检</string>
+    <string name="add_cell_step6_desc3">3、有效期＞借款周期3个月</string>
+    <string name="add_cell_step6_desc4">4、若为对公账户，请上传开户许可证</string>
+
+    <string name="add_cell_step7_desc1">1、上传内容完整、清晰可见</string>
+    <string name="add_cell_step7_desc2">2、租赁有效期应大于借款周期至少1个月</string>
+
+    <string name="add_cell_step8_desc1">1、上传内容完整、清晰可见</string>
+    <string name="add_cell_step8_desc2">2、近一个月店铺所在地水电缴费单据任意上传一张</string>
+
+    <string name="add_cell_step9_desc1">1、上传照片清晰</string>
+    <string name="add_cell_step9_desc2">2、所上传照片需包含招牌、门牌号（或铺位号）</string>
+
+    <string name="add_cell_step10_desc1">1、上传照片清晰</string>
+    <string name="add_cell_step10_desc2">2、能体现店内整体情况</string>
+    <string name="add_cell_step10_desc3">3、对经营产品可以有特写</string>
+
+    <string name="add_cell_step11_desc1">1、上传照片清晰</string>
+    <string name="add_cell_step11_desc2">2、法人及收银台、POS机同时入镜</string>
+
+
+    <string name="add_cell_step12_desc1">所上传内容需完整、清晰可见</string>
+    <string name="add_cell_step12_desc2">【配偶信息】</string>
+    <string name="add_cell_step12_desc3">结婚证：登记日期、双方姓名、身份证号码</string>
+    <string name="add_cell_step12_desc4">配偶身份证正反面</string>
+    <string name="add_cell_step12_desc5">【结清证明】</string>
+    <string name="add_cell_step12_desc6">贷款/信用卡当前逾期</string>
+    <string name="add_cell_step12_desc7">贷款到期，未显示已结清</string>
+    <string name="add_cell_step12_desc8">【许可证】</string>
+    <string name="add_cell_step12_desc9">食品：烟酒、食品、餐饮、药品</string>
+    <string name="add_cell_step12_desc10">服务：桑拿、旅馆</string>
+    <string name="add_cell_step12_desc111">【品牌代理/加盟协议】</string>
+    <string name="add_cell_step12_desc12">【其它证明个人财产情况的材料】</string>
+
+
+
+
+    <!-- 个人信息 -->
+    <string name="personinfo_name">姓名</string>
+    <string name="personinfo_tel">电话</string>
+    <string name="personinfo_yyzz">营业执照</string>
+    <string name="personinfo_tjr">推荐人</string>
+    <string name="personinfo_shbh">商户编号</string>
+    <string name="personinfo_zjshbh">追加商户编号</string>
+    <string name="personinfo_qtshbh">其他商户编号</string>
+
+    <!-- 重置密码-->
+    <string name="resetpwd_oldpwd">旧密码</string>
+    <string name="resetpwd_oldpwd_hint">请输入旧密码</string>
+    <string name="resetpwd_pwd">新密码</string>
+    <string name="resetpwd_pwd2">确认密码</string>
+    <string name="resetpwd_pwd_hint">请输入6-16位新密码</string>
+    <string name="resetpwd_pwd_sure">确认密码</string>
+
+    <string name="cancel_btn">取&#160;&#160;消</string>
+    <string name="ok_btn">确&#160;&#160;定</string>
+
+    <string name="no_btn">否</string>
+    <string name="yes_btn">是</string>
+
+
+    <string name="zxgp_label1">聚信立个人征信</string>
+    <string name="zxgp_label2">银行卡流水查询</string>
+    <string name="zxgp_title2">\"商户消费贷\"将为您保证个人信息的绝对安全</string>
+
+
+
+    <!-- 表单验证 -->
+    <string name="please_input_name">请输入姓名</string>
+    <string name="please_input_mobile">请输入手机号</string>
+    <string name="please_input_password">请输入密码</string>
+    <string name="please_input_businessLicense">请输入营业执照</string>
+    <string name="please_input_merchantNo">请输入商户编号</string>
+    <string name="please_input_verifyCode">请输入验证码</string>
+    <string name="please_input_loginpass">请输入登录密码</string>
+    <string name="please_input_newpwd">请输入新密码</string>
+    <string name="please_input_idno">请输入身份证</string>
+    <string name="please_input_zcmc">请输入注册名称</string>
+    <string name="please_input_zpcm">请输入招牌名称</string>
+    <string name="please_input_yjjsj">请选择经营时间</string>
+    <string name="please_input_zxxm">请输入直系亲属姓名</string>
+    <string name="please_input_zxsj">请输入直系亲属手机</string>
+    <string name="please_input_zxidno">请输入直系亲属身份证号</string>
+
+    <string name="please_input_pos_kh">请输入POS入账银行卡账号</string>
+    <string name="please_input_pos_yh">请选择POS入账银行</string>
+    <string name="please_input_pos_khh">请输入POS开户行</string>
+
+    <string name="no_operate_tip">您当前的状态不可操作！</string>
+    <string name="version_desc">您当前有新版本%s , 是否需要下载更新！</string>
+    <string name="version_desc2">您当前有新版本%s , 需要下载更新！</string>
+    <string name="system_exit">再按一次退出软件！</string>
+</resources>
