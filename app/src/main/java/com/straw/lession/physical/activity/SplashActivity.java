@@ -2,12 +2,11 @@ package com.straw.lession.physical.activity;
 
 import android.content.Intent;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.straw.lession.physical.R;
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends ThreadBaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,7 +17,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private Handler mHandler = new Handler() {
         public void handleMessage(android.os.Message msg) {
-            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+            startActivity(new Intent(SplashActivity.this, MainActivity.class));
             finish();
         };
     };

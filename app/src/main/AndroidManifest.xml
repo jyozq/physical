@@ -21,6 +21,11 @@
             android:name="com.straw.lession.physical.activity.LoginActivity"
             android:label="@string/login_text" android:theme="@style/AppTheme.NoActionBar">
         </activity>
+
+        <activity android:windowSoftInputMode="adjustResize|stateHidden" android:configChanges="orientation|keyboardHidden" android:screenOrientation="portrait"
+                  android:name="com.straw.lession.physical.activity.MainActivity"
+                  android:label="@string/login_text" android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

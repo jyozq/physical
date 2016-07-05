@@ -45,6 +45,9 @@
     <string name="reg_text">注册</string>
     <string name="forget_text">忘记密码？</string>
 
+    <!-- 首页-->
+    <string name="index_text">首页</string>
+
     <!-- 商户注册-->
     <string name="business_red_desc">请使用本人真实信息注册</string>
     <string name="business_red_name_label">姓名</string>
