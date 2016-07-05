@@ -16,8 +16,8 @@ public class MainActivity extends ThreadBaseActivity{
         Utils.getInstance().systemBarTintUpdate(mContext);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        toolbar = (Toolbar)this.findViewById(R.id.id_tool_bar);
-        setSupportActionBar(toolbar);
+//        toolbar = (Toolbar)this.findViewById(R.id.id_tool_bar);
+//        setSupportActionBar(toolbar);
         MainApplication.getInstance().addActivity(this);
     }
 }
