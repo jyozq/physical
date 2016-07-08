@@ -24,7 +24,7 @@
 
         <activity android:windowSoftInputMode="adjustResize|stateHidden" android:configChanges="orientation|keyboardHidden" android:screenOrientation="portrait"
                   android:name="com.straw.lession.physical.activity.MainActivity"
-                  android:label="@string/index_text" android:theme="@style/AppTheme.NoActionBar">
+                  android:label="@string/toolbar_today" android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>
 

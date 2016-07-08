@@ -43,9 +43,6 @@
     <string name="reg_text">注册</string>
     <string name="forget_text">忘记密码？</string>
 
-    <!-- 首页-->
-    <string name="index_text">今日课程</string>
-
     <!-- 商户注册-->
     <string name="business_red_desc">请使用本人真实信息注册</string>
     <string name="business_red_name_label">姓名</string>
@@ -71,9 +68,8 @@
     <!-- 首页-->
     <string name="home_login_desc">点击登录/注册</string>
     <string name="home_login_lasttime">上次登录时间：</string>
-    <string name="home_news_desc">最新消息</string>
-    <string name="home_password_desc">重置密码</string>
-    <string name="home_personinfo_desc">个人信息</string>
+    <string name="profile_upload">上传数据</string>
+    <string name="profile_reset_passwd">修改密码</string>
     <string name="home_exit_btn">退&#160;&#160;&#160;出</string>
     <string name="home_update_btn">更新</string>
 
@@ -121,6 +117,8 @@
     <string name="version_desc2">您当前有新版本%s , 需要下载更新！</string>
     <string name="system_exit">再按一次退出软件！</string>
 
+    <string name="toolbar_today">今日</string>
     <string name="toolbar_course">课程</string>
     <string name="toolbar_profile">我</string>
+    <string name="btn_start_course">开始上课</string>
 </resources>

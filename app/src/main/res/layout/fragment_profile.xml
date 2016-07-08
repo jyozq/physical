@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent" android:layout_height="match_parent" android:id="@+id/fragment_container"
+              android:fitsSystemWindows="true" android:orientation="vertical" android:background="@color/white">
+
+    <LinearLayout android:id="@+id/fragment_container1" android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="vertical" android:layout_weight="1"
+                  android:weightSum="1">
+        <LinearLayout android:id="@+id/blankLayout" android:layout_width="fill_parent" android:layout_height="wrap_content"
+                      android:orientation="horizontal" android:gravity="center" android:layout_marginTop="@dimen/dimen_20dp"
+                      android:background="@mipmap/profile_back" android:layout_weight="0.15">
+            <com.straw.lession.physical.custom.CircleImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@mipmap/ic_launcher"
+            />
+            <LinearLayout android:layout_width="wrap_content" android:layout_height="match_parent"
+                          android:orientation="vertical" android:layout_marginLeft="@dimen/dimen_20dp"
+                            android:gravity="center">
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal"
+                              android:gravity="center">
+                    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@mipmap/icon_me" />
+                    <TextView
+                              android:layout_width="fill_parent" android:layout_weight="1"  android:gravity="center_vertical" android:layout_height="fill_parent" android:text="测试账户"
+                              android:textSize="@dimen/font_size_16" android:layout_marginLeft="@dimen/dimen_15dp" android:layout_marginRight="@dimen/dimen_15dp" android:textColor="@color/gray_4a4f49" />
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal"
+                               android:gravity="center">
+                    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@mipmap/icon_school" />
+                    <TextView
+                            android:layout_width="fill_parent" android:layout_weight="1"  android:gravity="center_vertical" android:layout_height="fill_parent" android:text="XXX大学"
+                            android:textSize="@dimen/font_size_16" android:layout_marginLeft="@dimen/dimen_15dp" android:layout_marginRight="@dimen/dimen_15dp" android:textColor="@color/gray_4a4f49" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout android:layout_marginTop="@dimen/dimen_25dp"
+                      android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="vertical"
+                      android:background="@color/white">
+            <LinearLayout android:layout_width="fill_parent" android:layout_height="@dimen/dimen_50dp" android:orientation="horizontal">
+                <ImageView
+                        android:layout_width="wrap_content" android:layout_gravity="center_vertical" android:layout_marginTop="@dimen/dimen_1dp"
+                        android:layout_height="wrap_content" android:src="@mipmap/icon_upload" android:layout_marginLeft="@dimen/dimen_40dp"/>
+                <TextView android:id="@+id/newsText"
+                          android:layout_width="fill_parent" android:layout_weight="1"  android:gravity="center_vertical" android:layout_height="fill_parent" android:text="@string/profile_upload"
+                          android:textSize="@dimen/font_size_16" android:layout_marginLeft="@dimen/dimen_15dp" android:layout_marginRight="@dimen/dimen_15dp" android:textColor="@color/gray_4a4f49" />
+                <ImageView android:layout_marginRight="@dimen/dimen_20dp"
+                           android:layout_width="wrap_content" android:layout_gravity="center" android:gravity="center" android:layout_height="wrap_content" android:src="@mipmap/right_arrow" />
+            </LinearLayout>
+            <include layout="@layout/line_view"  android:layout_width="match_parent" android:layout_height="@dimen/dimen_1dp"  />
+
+            <LinearLayout android:layout_width="fill_parent" android:layout_height="@dimen/dimen_50dp" android:orientation="horizontal">
+                <ImageView android:layout_width="wrap_content" android:layout_gravity="center_vertical"
+                        android:layout_height="wrap_content" android:src="@mipmap/icon_locked" android:layout_marginLeft="@dimen/dimen_40dp"/>
+                <TextView android:id="@+id/resetPwdText"
+                          android:layout_width="fill_parent" android:layout_weight="1"  android:gravity="center_vertical" android:layout_height="fill_parent" android:text="@string/profile_reset_passwd"
+                          android:textSize="@dimen/font_size_16" android:layout_marginLeft="@dimen/dimen_15dp" android:layout_marginRight="@dimen/dimen_15dp" android:textColor="@color/gray_4a4f49" />
+                <ImageView android:layout_marginRight="@dimen/dimen_20dp"
+                           android:layout_width="wrap_content" android:layout_gravity="center" android:gravity="center" android:layout_height="wrap_content" android:src="@mipmap/right_arrow" />
+            </LinearLayout>
+
+            <include layout="@layout/line_view"  android:layout_width="fill_parent" android:layout_height="@dimen/dimen_1dp"  />
+        </LinearLayout>
+
+        <Button android:id="@+id/next" android:layout_width="fill_parent" android:textColor="@color/white" android:textSize="@dimen/font_size_18"
+                android:layout_height="@dimen/dimen_38dp" android:background="@drawable/button_red_selector" android:text="@string/home_exit_btn"
+                android:layout_marginTop="@dimen/dimen_30dp" android:layout_marginLeft="@dimen/dimen_70dp" android:layout_marginRight="@dimen/dimen_70dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,9 +1,9 @@
-package com.straw.lession.physical.activity;
+package com.straw.lession.physical.vo;
 
 /**
  * Created by straw on 2016/7/6.
  */
-public class ItemInfo {
+public class CourseItemInfo {
 
     /**
      * id

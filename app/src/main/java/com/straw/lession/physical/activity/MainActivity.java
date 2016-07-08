@@ -14,23 +14,30 @@ import com.straw.lession.physical.activity.base.ThreadBaseActivity;
 import com.straw.lession.physical.app.MainApplication;
 import com.straw.lession.physical.fragment.CourseFragment;
 import com.straw.lession.physical.fragment.ProfileFragment;
+import com.straw.lession.physical.fragment.TodayFragment;
 
 /**
  * Created by straw on 2016/7/5.
  */
 public class MainActivity extends ThreadBaseActivity implements View.OnClickListener {
+    private LinearLayout ll_today;
     private LinearLayout ll_course;
     private LinearLayout ll_profile;
 
+    private ImageView iv_today;
     private ImageView iv_course;
     private ImageView iv_profile;
 
+    private TextView tv_today;
     private TextView tv_course;
     private TextView tv_profile;
+
     private Toolbar toolbar;
     private ImageButton leftbtn ;
     private TextView textView ;
     private ImageButton rightbtn ;
+
+    private TodayFragment todayFragment;
     private CourseFragment courseFragment;
     private ProfileFragment profileFragment;
 
@@ -59,6 +66,16 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         hideFragment(transaction);
         switch (index) {
             case 0:
+                textView.setText(R.string.toolbar_today);
+                if (todayFragment == null) {
+                    todayFragment = new TodayFragment();
+                    transaction.add(R.id.fl_content, todayFragment);
+                } else {
+                    transaction.show(todayFragment);
+                }
+                break;
+            case 1:
+                textView.setText(R.string.toolbar_course);
                 if (courseFragment == null) {
                     courseFragment = new CourseFragment();
                     transaction.add(R.id.fl_content, courseFragment);
@@ -66,7 +83,8 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
                     transaction.show(courseFragment);
                 }
                 break;
-            case 1:
+            case 2:
+                textView.setText(R.string.toolbar_profile);
                 if (profileFragment == null) {
                     profileFragment = new ProfileFragment();
                     transaction.add(R.id.fl_content, profileFragment);
@@ -86,6 +104,9 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
 
     //隐藏Fragment
     private void hideFragment(FragmentTransaction transaction) {
+        if (todayFragment != null) {
+            transaction.hide(todayFragment);
+        }
         if (courseFragment != null) {
             transaction.hide(courseFragment);
         }
@@ -98,27 +119,28 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         // 设置按钮监听
         ll_course.setOnClickListener(this);
         ll_profile.setOnClickListener(this);
-
+        ll_today.setOnClickListener(this);
     }
 
     private void initView() {
         // 底部菜单4个Linearlayout
+        this.ll_today = (LinearLayout) findViewById(R.id.id_today);
         this.ll_course = (LinearLayout) findViewById(R.id.id_lesson);
         this.ll_profile = (LinearLayout) findViewById(R.id.id_profile);
 
         // 底部菜单4个ImageView
+        this.iv_today = (ImageView) findViewById(R.id.id_today_img);
         this.iv_course = (ImageView) findViewById(R.id.id_lesson_img);
         this.iv_profile = (ImageView) findViewById(R.id.id_profile_img);
 
         // 底部菜单4个菜单标题
+        this.tv_today = (TextView) findViewById(R.id.id_today_txt);
         this.tv_course = (TextView) findViewById(R.id.id_lesson_txt);
         this.tv_profile = (TextView) findViewById(R.id.id_profile_txt);
 
         leftbtn = (ImageButton) findViewById(R.id.leftbtn);
         textView = (TextView) findViewById(R.id.textView);
         rightbtn = (ImageButton) findViewById(R.id.rightbtn);
-        leftbtn.setVisibility(View.GONE);
-        textView.setText(R.string.index_text);
     }
 
     @Override
@@ -127,15 +149,20 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         restartBotton();
         // ImageView和TetxView置为绿色，页面随之跳转
         switch (v.getId()) {
+            case R.id.id_today:
+                iv_today.setImageResource(R.mipmap.icon_kc);
+                tv_today.setTextColor(getResources().getColor(R.color.toolbar_btn_pressed));
+                initFragment(0);
+                break;
             case R.id.id_lesson:
                 iv_course.setImageResource(R.mipmap.icon_kc);
                 tv_course.setTextColor(getResources().getColor(R.color.toolbar_btn_pressed));
-                initFragment(0);
+                initFragment(1);
                 break;
             case R.id.id_profile:
                 iv_profile.setImageResource(R.mipmap.icon_wo);
                 tv_profile.setTextColor(getResources().getColor(R.color.toolbar_btn_pressed));
-                initFragment(1);
+                initFragment(2);
                 break;
 
             default:
@@ -145,9 +172,11 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
 
     private void restartBotton() {
         // ImageView置为灰色
+        iv_today.setImageResource(R.mipmap.icon_kc_gray);
         iv_course.setImageResource(R.mipmap.icon_kc_gray);
         iv_profile.setImageResource(R.mipmap.icon_wo_gray);
         // TextView置为白色
+        tv_today.setTextColor(getResources().getColor(R.color.toolbar_btn_gray));
         tv_course.setTextColor(getResources().getColor(R.color.toolbar_btn_gray));
         tv_profile.setTextColor(getResources().getColor(R.color.toolbar_btn_gray));
     }

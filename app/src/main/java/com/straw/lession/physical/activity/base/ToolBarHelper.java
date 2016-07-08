@@ -55,6 +55,7 @@ public class ToolBarHelper {
         mToolBar = (Toolbar) toolbar.findViewById(R.id.id_tool_bar);
     }
 
+    @SuppressWarnings("ResourceType")
     private void initUserView(int id) {
         mUserView = mInflater.inflate(id, null);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);

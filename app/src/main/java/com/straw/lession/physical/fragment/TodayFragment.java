@@ -17,9 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by straw on 2016/7/7.
+ * Created by straw on 2016/7/8.
  */
-public class CourseFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener{
+public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener{
     private View layoutView;
     private SwipeRefreshLayout swipeLayout;
     private ListView listView;
@@ -27,7 +27,7 @@ public class CourseFragment extends BaseFragment implements SwipeRefreshLayout.O
     private List<CourseItemInfo> infoList;
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        layoutView = inflater.inflate(R.layout.fragment_course, container, false);
+        layoutView = inflater.inflate(R.layout.fragment_today, container, false);
         return layoutView;
     }
 
@@ -40,9 +40,11 @@ public class CourseFragment extends BaseFragment implements SwipeRefreshLayout.O
         swipeLayout = (SwipeRefreshLayout) layoutView.findViewById(R.id.swipe_refresh);
         swipeLayout.setOnRefreshListener(this);
         infoList = new ArrayList<CourseItemInfo>();
-        CourseItemInfo info = new CourseItemInfo();
-        info.setName("coin");
-        infoList.add(info);
+        CourseItemInfo info = null;
+        for(int i = 0; i < 4; i ++) {
+            info = new CourseItemInfo();
+            infoList.add(info);
+        }
         listView = (ListView) layoutView.findViewById(R.id.listview);
         adapter = new CourseListViewAdapter(layoutView.getContext(), infoList);
         listView.setAdapter(adapter);
