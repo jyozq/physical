@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Bundle;
 
 import com.straw.lession.physical.R;
+import com.straw.lession.physical.activity.base.ThreadBaseActivity;
 
 public class SplashActivity extends ThreadBaseActivity {
 
@@ -17,7 +18,7 @@ public class SplashActivity extends ThreadBaseActivity {
 
     private Handler mHandler = new Handler() {
         public void handleMessage(android.os.Message msg) {
-            startActivity(new Intent(SplashActivity.this, MainActivity.class));
+            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
             finish();
         };
     };

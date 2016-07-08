@@ -1,4 +1,4 @@
-package com.straw.lession.physical.activity;
+package com.straw.lession.physical.activity.base;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -18,7 +18,6 @@ import com.straw.lession.physical.http.HttpResponseBean;
 import com.straw.lession.physical.utils.ResponseParseUtils;
 
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 

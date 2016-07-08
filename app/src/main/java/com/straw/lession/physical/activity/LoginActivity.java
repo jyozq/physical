@@ -3,29 +3,21 @@ package com.straw.lession.physical.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.straw.lession.physical.R;
+import com.straw.lession.physical.activity.base.ThreadBaseActivity;
 import com.straw.lession.physical.app.MainApplication;
 import com.straw.lession.physical.custom.ClearEditText;
 import com.straw.lession.physical.utils.Utils;
 
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-
 /**
  * Created by straw on 2016/7/2.
  */
-public class LoginActivity extends ThreadBaseActivity{
+public class LoginActivity extends ThreadBaseActivity {
     private final static String TAG = "LoginActivity";
     private Activity mContext = LoginActivity.this;
     private TextView forgetText;
@@ -41,6 +33,15 @@ public class LoginActivity extends ThreadBaseActivity{
         setContentView(R.layout.activity_login);
         MainApplication.getInstance().addActivity(this);
         initViews();
+        login.setOnClickListener(new View.OnClickListener() {
+                                     public void onClick(View v) {
+                                         Intent intent = new Intent();
+                                         intent.setClass(mContext , MainActivity.class);
+                                         MainApplication.getInstance().popCurrentActivity();
+                                         startActivity(intent);
+                                     }
+                                 });
+
 //        forgetText.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -105,7 +106,6 @@ public class LoginActivity extends ThreadBaseActivity{
     }
 
     private void initViews(){
-        closeImage = (ImageView) findViewById(R.id.closeImage);
         login = (Button) findViewById(R.id.login);
         reg = (Button) findViewById(R.id.reg);
         forgetText = (TextView) findViewById(R.id.forget);

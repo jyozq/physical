@@ -62,4 +62,6 @@
     <color name="font_gray_5">#282828</color>
     <color name="font_gray_2">#CCCCCC</color>
     <color name="font_gray_button_state">#999999</color>
+    <color name="toolbar_btn_pressed">#328fde</color>
+    <color name="toolbar_btn_gray">#888888</color>
 </resources>
