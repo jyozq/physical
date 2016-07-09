@@ -121,4 +121,5 @@
     <string name="toolbar_course">课程</string>
     <string name="toolbar_profile">我</string>
     <string name="btn_start_course">开始上课</string>
+    <string name="scan_tips">将二维码图片对准扫描框即可自动扫描</string>
 </resources>

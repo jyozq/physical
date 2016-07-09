@@ -1,10 +1,15 @@
 package com.straw.lession.physical.activity;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.View;
@@ -15,11 +20,13 @@ import com.straw.lession.physical.app.MainApplication;
 import com.straw.lession.physical.fragment.CourseFragment;
 import com.straw.lession.physical.fragment.ProfileFragment;
 import com.straw.lession.physical.fragment.TodayFragment;
+import com.zbar.lib.CaptureActivity;
 
 /**
  * Created by straw on 2016/7/5.
  */
 public class MainActivity extends ThreadBaseActivity implements View.OnClickListener {
+    private static final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 1;
     private LinearLayout ll_today;
     private LinearLayout ll_course;
     private LinearLayout ll_profile;
@@ -36,6 +43,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
     private ImageButton leftbtn ;
     private TextView textView ;
     private ImageButton rightbtn ;
+    private ImageButton btn_choose_school;
 
     private TodayFragment todayFragment;
     private CourseFragment courseFragment;
@@ -120,6 +128,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         ll_course.setOnClickListener(this);
         ll_profile.setOnClickListener(this);
         ll_today.setOnClickListener(this);
+        btn_choose_school.setOnClickListener(this);
     }
 
     private void initView() {
@@ -141,6 +150,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         leftbtn = (ImageButton) findViewById(R.id.leftbtn);
         textView = (TextView) findViewById(R.id.textView);
         rightbtn = (ImageButton) findViewById(R.id.rightbtn);
+        btn_choose_school = (ImageButton) findViewById(R.id.btn_choose_school);
     }
 
     @Override
@@ -164,7 +174,18 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
                 tv_profile.setTextColor(getResources().getColor(R.color.toolbar_btn_pressed));
                 initFragment(2);
                 break;
-
+            case R.id.btn_choose_school:
+                if (ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.CAMERA)
+                        != PackageManager.PERMISSION_GRANTED)
+                {
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.CAMERA},
+                            MY_PERMISSIONS_REQUEST_CALL_PHONE);
+                } else {
+                    startActivity(new Intent(this, CaptureActivity.class));
+                }
+                break;
             default:
                 break;
         }
@@ -213,4 +234,23 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
 
     };
     /**************** 以上实现两次退出逻辑 *********************/
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
+    {
+
+        if (requestCode == MY_PERMISSIONS_REQUEST_CALL_PHONE)
+        {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            {
+                startActivity(new Intent(this, CaptureActivity.class));
+            } else
+            {
+                // Permission Denied
+                Toast.makeText(MainActivity.this, "Permission Denied", Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 }
