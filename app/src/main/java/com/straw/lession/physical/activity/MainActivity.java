@@ -76,6 +76,8 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         switch (index) {
             case 0:
                 textView.setText(R.string.toolbar_today);
+                btn_add_course.setVisibility(View.VISIBLE);
+                btn_sync.setVisibility(View.VISIBLE);
                 if (todayFragment == null) {
                     todayFragment = new TodayFragment();
                     transaction.add(R.id.fl_content, todayFragment);
@@ -85,6 +87,8 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
                 break;
             case 1:
                 textView.setText(R.string.toolbar_course);
+                btn_add_course.setVisibility(View.VISIBLE);
+                btn_sync.setVisibility(View.VISIBLE);
                 if (courseFragment == null) {
                     courseFragment = new CourseFragment();
                     transaction.add(R.id.fl_content, courseFragment);
@@ -94,6 +98,8 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
                 break;
             case 2:
                 textView.setText(R.string.toolbar_profile);
+                btn_add_course.setVisibility(View.GONE);
+                btn_sync.setVisibility(View.GONE);
                 if (profileFragment == null) {
                     profileFragment = new ProfileFragment();
                     transaction.add(R.id.fl_content, profileFragment);
