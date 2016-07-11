@@ -15,9 +15,11 @@ import android.os.Vibrator;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -27,16 +29,7 @@ import com.zbar.lib.camera.CameraManager;
 import com.zbar.lib.decode.CaptureActivityHandler;
 import com.zbar.lib.decode.InactivityTimer;
 
-/**
- * 作者: 陈涛(1076559197@qq.com)
- * 
- * 时间: 2014年5月9日 下午12:25:31
- * 
- * 版本: V_1.0.0
- * 
- * 描述: 扫描界面
- */
-public class CaptureActivity extends Activity implements Callback {
+public class CaptureActivity extends Activity implements Callback,View.OnClickListener {
 
 	private CaptureActivityHandler handler;
 	private boolean hasSurface;
@@ -52,7 +45,9 @@ public class CaptureActivity extends Activity implements Callback {
 	private RelativeLayout mContainer = null;
 	private RelativeLayout mCropLayout = null;
 	private boolean isNeedCapture = false;
-	
+	private Button nextBtn;
+	private Button lightBtn;
+
 	public boolean isNeedCapture() {
 		return isNeedCapture;
 	}
@@ -106,6 +101,11 @@ public class CaptureActivity extends Activity implements Callback {
 
 		mContainer = (RelativeLayout) findViewById(R.id.capture_containter);
 		mCropLayout = (RelativeLayout) findViewById(R.id.capture_crop_layout);
+		nextBtn = (Button) findViewById(R.id.btn_next_student);
+		lightBtn = (Button) findViewById(R.id.btn_light);
+
+		nextBtn.setOnClickListener(this);
+		lightBtn.setOnClickListener(this);
 
 		ImageView mQrLineView = (ImageView) findViewById(R.id.capture_scan_line);
 		TranslateAnimation mAnimation = new TranslateAnimation(TranslateAnimation.ABSOLUTE, 0f, TranslateAnimation.ABSOLUTE, 0f,
@@ -124,10 +124,12 @@ public class CaptureActivity extends Activity implements Callback {
 			flag = false;
 			// 开闪光灯
 			CameraManager.get().openLight();
+			lightBtn.setText(R.string.btn_close_light);
 		} else {
 			flag = true;
 			// 关闪光灯
 			CameraManager.get().offLight();
+			lightBtn.setText(R.string.btn_open_light);
 		}
 
 	}
@@ -173,12 +175,6 @@ public class CaptureActivity extends Activity implements Callback {
 		inactivityTimer.onActivity();
 		playBeepSoundAndVibrate();
 		Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
-
-		Message msg = new Message();
-		msg.what = R.id.restart_preview;
-		getHandler().sendMessage(msg);
-		// 连续扫描，不发送此消息扫描一次结束后就不能再次扫描
-		// handler.sendEmptyMessage(R.id.restart_preview);
 	}
 
 	private void initCamera(SurfaceHolder surfaceHolder) {
@@ -272,4 +268,19 @@ public class CaptureActivity extends Activity implements Callback {
 			mediaPlayer.seekTo(0);
 		}
 	};
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+			case R.id.btn_next_student:
+				// 连续扫描，不发送此消息扫描一次结束后就不能再次扫描
+				handler.sendEmptyMessage(R.id.restart_preview);
+				break;
+			case R.id.btn_light:
+				light();
+				break;
+			default:
+				break;
+		}
+	}
 }

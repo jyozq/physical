@@ -5,23 +5,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 import com.straw.lession.physical.R;
-import com.straw.lession.physical.vo.CourseItemInfo;
+import com.straw.lession.physical.vo.StudentInfo;
 
 import java.util.List;
 
 /**
- * Created by straw on 2016/7/6.
+ * Created by straw on 2016/7/11.
  */
-public class CourseListViewAdapter extends BaseAdapter implements View.OnClickListener{
-
-    private static final String TAG = "CourseListViewAdapter";
+public class StudentListViewAdapter extends BaseAdapter implements View.OnClickListener{
+    private static final String TAG = "StudentListViewAdapter";
     private Context mContext;
-    private List<CourseItemInfo> mContentList;
+    private List<StudentInfo> mContentList;
     private Callback mCallback;
     private LayoutInflater inflater;
 
@@ -39,7 +37,7 @@ public class CourseListViewAdapter extends BaseAdapter implements View.OnClickLi
         public Button button;
     }
 
-    public CourseListViewAdapter(Context context, List<CourseItemInfo> list, Callback callback) {
+    public StudentListViewAdapter(Context context, List<StudentInfo> list, Callback callback) {
 //        super(context, 0, list);
         inflater = LayoutInflater.from(context);
         mContext = context;
@@ -54,7 +52,7 @@ public class CourseListViewAdapter extends BaseAdapter implements View.OnClickLi
     }
 
     @Override
-    public CourseItemInfo getItem(int position) {
+    public StudentInfo getItem(int position) {
         Log.i(TAG, "getItem");
         return mContentList.get(position);
     }
@@ -69,12 +67,12 @@ public class CourseListViewAdapter extends BaseAdapter implements View.OnClickLi
     public View getView(int position, View convertView, ViewGroup parent) {
         Log.i(TAG, "getView");
         ViewHolder holder = null;
-        CourseItemInfo info = getItem(position);
+        StudentInfo info = getItem(position);
 
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.course_item_listview, null);
+            convertView = inflater.inflate(R.layout.student_item_listview, null);
             holder = new ViewHolder();
-            holder.button = (Button) convertView.findViewById(R.id.btn_start_course);
+            holder.button = (Button) convertView.findViewById(R.id.btn_do_start_course);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -87,4 +85,3 @@ public class CourseListViewAdapter extends BaseAdapter implements View.OnClickLi
         return convertView;
     }
 }
-

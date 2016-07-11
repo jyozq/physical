@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.vo.CourseItemInfo;
 import com.straw.lession.physical.adapter.CourseListViewAdapter;
@@ -19,12 +20,13 @@ import java.util.List;
 /**
  * Created by straw on 2016/7/7.
  */
-public class CourseFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener{
+public class CourseFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,CourseListViewAdapter.Callback {
     private View layoutView;
     private SwipeRefreshLayout swipeLayout;
     private ListView listView;
     private CourseListViewAdapter adapter;
     private List<CourseItemInfo> infoList;
+
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         layoutView = inflater.inflate(R.layout.fragment_course, container, false);
@@ -44,7 +46,7 @@ public class CourseFragment extends BaseFragment implements SwipeRefreshLayout.O
         info.setName("coin");
         infoList.add(info);
         listView = (ListView) layoutView.findViewById(R.id.listview);
-        adapter = new CourseListViewAdapter(layoutView.getContext(), infoList);
+        adapter = new CourseListViewAdapter(layoutView.getContext(), infoList, this);
         listView.setAdapter(adapter);
     }
 
@@ -59,5 +61,10 @@ public class CourseFragment extends BaseFragment implements SwipeRefreshLayout.O
                 adapter.notifyDataSetChanged();
             }
         }, 500);
+    }
+
+    @Override
+    public void click(View v) {
+
     }
 }

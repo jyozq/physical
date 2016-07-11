@@ -21,9 +21,8 @@ public  abstract class ToolBarActivity extends AppCompatActivity implements View
     private ToolBarHelper mToolBarHelper ;
     public Toolbar toolbar ;
 
-    private ImageButton leftbtn;
+    private ImageButton btn_back;
     private TextView textView;
-    protected ImageButton rightbtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,25 +40,23 @@ public  abstract class ToolBarActivity extends AppCompatActivity implements View
         setSupportActionBar(toolbar);
         /*自定义的一些操作*/
         onCreateCustomToolBar(toolbar) ;
-        leftbtn = (ImageButton) toolbar.findViewById(R.id.leftbtn);
+        btn_back = (ImageButton) toolbar.findViewById(R.id.btn_back);
         textView = (TextView) toolbar.findViewById(R.id.textView);
-        rightbtn = (ImageButton) toolbar.findViewById(R.id.rightbtn);
     }
 
     public void initToolBar(String titleText){
         textView.setText( titleText );
-        leftbtn.setOnClickListener(this);
-        rightbtn.setOnClickListener(this);
+        btn_back.setOnClickListener(this);
     }
 
     public void initToolBar(int titleRes){
         textView.setText( getResources().getString( titleRes ) );
-        leftbtn.setOnClickListener(this);
+        btn_back.setOnClickListener(this);
     }
 
     public void initToolBar(int titleRes , int rightText ){
         textView.setText( getResources().getString( titleRes ) );
-        leftbtn.setOnClickListener(this);
+        btn_back.setOnClickListener(this);
     }
 
     public void onCreateCustomToolBar(Toolbar toolbar){
@@ -78,10 +75,10 @@ public  abstract class ToolBarActivity extends AppCompatActivity implements View
    @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.leftbtn:
+            case R.id.btn_back:
                 leftEvent();
                 break;
-            case R.id.rightbtn:
+            case R.id.btn_sync:
                 rightEvent();
                 break;
         }

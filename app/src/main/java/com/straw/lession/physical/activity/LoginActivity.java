@@ -29,7 +29,7 @@ public class LoginActivity extends ThreadBaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utils.getInstance().systemBarTintUpdate(LoginActivity.this , R.drawable.shape_gradient );
+//        Utils.getInstance().systemBarTintUpdate(LoginActivity.this , R.drawable.shape_gradient );
         setContentView(R.layout.activity_login);
         MainApplication.getInstance().addActivity(this);
         initViews();

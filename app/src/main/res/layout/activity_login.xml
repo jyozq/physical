@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:fillViewport="true" android:clipToPadding="false"
-    android:layout_width="match_parent" android:layout_height="match_parent" >
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center_horizontal"
     android:fitsSystemWindows="true" android:orientation="vertical" android:background="@mipmap/login_bg">
@@ -41,5 +39,3 @@
         android:layout_height="@dimen/dimen_50dp" android:background="@color/transparent" android:text="@string/forget_text"  />
 
 </LinearLayout>
-</ScrollView>
-

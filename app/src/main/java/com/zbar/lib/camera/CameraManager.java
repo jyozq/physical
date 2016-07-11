@@ -9,15 +9,6 @@ import android.hardware.Camera.Parameters;
 import android.os.Handler;
 import android.view.SurfaceHolder;
 
-/**
- * 作者: 陈涛(1076559197@qq.com)
- * 
- * 时间: 2014年5月9日 下午12:22:25
- *
- * 版本: V_1.0.0
- *
- * 描述: 相机管理
- */
 public final class CameraManager {
 	private static CameraManager cameraManager;
 

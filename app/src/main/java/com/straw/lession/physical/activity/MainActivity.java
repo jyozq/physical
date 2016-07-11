@@ -1,6 +1,7 @@
 package com.straw.lession.physical.activity;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.View;
@@ -26,7 +28,6 @@ import com.zbar.lib.CaptureActivity;
  * Created by straw on 2016/7/5.
  */
 public class MainActivity extends ThreadBaseActivity implements View.OnClickListener {
-    private static final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 1;
     private LinearLayout ll_today;
     private LinearLayout ll_course;
     private LinearLayout ll_profile;
@@ -40,10 +41,10 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
     private TextView tv_profile;
 
     private Toolbar toolbar;
-    private ImageButton leftbtn ;
+    private ImageButton btn_back ;
+    private ImageButton btn_add_course;
     private TextView textView ;
-    private ImageButton rightbtn ;
-    private ImageButton btn_choose_school;
+    private ImageButton btn_sync;
 
     private TodayFragment todayFragment;
     private CourseFragment courseFragment;
@@ -128,7 +129,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         ll_course.setOnClickListener(this);
         ll_profile.setOnClickListener(this);
         ll_today.setOnClickListener(this);
-        btn_choose_school.setOnClickListener(this);
+        btn_sync.setOnClickListener(this);
     }
 
     private void initView() {
@@ -147,10 +148,12 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         this.tv_course = (TextView) findViewById(R.id.id_lesson_txt);
         this.tv_profile = (TextView) findViewById(R.id.id_profile_txt);
 
-        leftbtn = (ImageButton) findViewById(R.id.leftbtn);
+        btn_back = (ImageButton) findViewById(R.id.btn_back);
         textView = (TextView) findViewById(R.id.textView);
-        rightbtn = (ImageButton) findViewById(R.id.rightbtn);
-        btn_choose_school = (ImageButton) findViewById(R.id.btn_choose_school);
+        btn_add_course = (ImageButton) findViewById(R.id.btn_add_course);
+        btn_sync = (ImageButton) findViewById(R.id.btn_sync);
+        btn_back.setVisibility(View.GONE);
+        btn_add_course.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -160,7 +163,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         // ImageView和TetxView置为绿色，页面随之跳转
         switch (v.getId()) {
             case R.id.id_today:
-                iv_today.setImageResource(R.mipmap.icon_kc);
+                iv_today.setImageResource(R.mipmap.icon_today);
                 tv_today.setTextColor(getResources().getColor(R.color.toolbar_btn_pressed));
                 initFragment(0);
                 break;
@@ -174,17 +177,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
                 tv_profile.setTextColor(getResources().getColor(R.color.toolbar_btn_pressed));
                 initFragment(2);
                 break;
-            case R.id.btn_choose_school:
-                if (ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.CAMERA)
-                        != PackageManager.PERMISSION_GRANTED)
-                {
-                    ActivityCompat.requestPermissions(this,
-                            new String[]{Manifest.permission.CAMERA},
-                            MY_PERMISSIONS_REQUEST_CALL_PHONE);
-                } else {
-                    startActivity(new Intent(this, CaptureActivity.class));
-                }
+            case R.id.btn_sync:
                 break;
             default:
                 break;
@@ -193,7 +186,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
 
     private void restartBotton() {
         // ImageView置为灰色
-        iv_today.setImageResource(R.mipmap.icon_kc_gray);
+        iv_today.setImageResource(R.mipmap.icon_today_gray);
         iv_course.setImageResource(R.mipmap.icon_kc_gray);
         iv_profile.setImageResource(R.mipmap.icon_wo_gray);
         // TextView置为白色
@@ -234,23 +227,4 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
 
     };
     /**************** 以上实现两次退出逻辑 *********************/
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
-    {
-
-        if (requestCode == MY_PERMISSIONS_REQUEST_CALL_PHONE)
-        {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-            {
-                startActivity(new Intent(this, CaptureActivity.class));
-            } else
-            {
-                // Permission Denied
-                Toast.makeText(MainActivity.this, "Permission Denied", Toast.LENGTH_SHORT).show();
-            }
-            return;
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
 }

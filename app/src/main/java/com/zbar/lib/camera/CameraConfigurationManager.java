@@ -10,15 +10,6 @@ import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
-/**
- * 作者: 陈涛(1076559197@qq.com)
- * 
- * 时间: 2014年5月9日 下午12:22:12
- *
- * 版本: V_1.0.0
- *
- * 描述: 相机参数配置
- */
 final class CameraConfigurationManager {
 
 	private static final String TAG = CameraConfigurationManager.class

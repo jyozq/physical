@@ -1,10 +1,9 @@
 package com.straw.lession.physical.vo;
 
 /**
- * Created by straw on 2016/7/6.
+ * Created by straw on 2016/7/11.
  */
-public class CourseItemInfo {
-
+public class StudentInfo {
     /**
      * id
      */
@@ -30,5 +29,4 @@ public class CourseItemInfo {
     public void setName(String name) {
         this.name = name;
     }
-
 }

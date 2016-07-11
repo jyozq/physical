@@ -1,5 +1,6 @@
 package com.straw.lession.physical.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -8,7 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 import com.straw.lession.physical.R;
+import com.straw.lession.physical.activity.StartCourseActivity;
 import com.straw.lession.physical.vo.CourseItemInfo;
 import com.straw.lession.physical.adapter.CourseListViewAdapter;
 import com.straw.lession.physical.fragment.base.BaseFragment;
@@ -19,7 +22,7 @@ import java.util.List;
 /**
  * Created by straw on 2016/7/8.
  */
-public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener{
+public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,CourseListViewAdapter.Callback{
     private View layoutView;
     private SwipeRefreshLayout swipeLayout;
     private ListView listView;
@@ -46,7 +49,7 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
             infoList.add(info);
         }
         listView = (ListView) layoutView.findViewById(R.id.listview);
-        adapter = new CourseListViewAdapter(layoutView.getContext(), infoList);
+        adapter = new CourseListViewAdapter(layoutView.getContext(), infoList, this);
         listView.setAdapter(adapter);
     }
 
@@ -61,5 +64,18 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
                 adapter.notifyDataSetChanged();
             }
         }, 500);
+    }
+
+    @Override
+    public void click(View v) {
+//        Toast.makeText(
+//                getContext(),
+//                "listview的内部的按钮被点击了！，位置是-->" + (Integer) v.getTag() + ",内容是-->"
+//                        + infoList.get((Integer) v.getTag()),
+//                Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent();
+        intent.setClass(getContext() , StartCourseActivity.class);
+        intent.putExtra("course_id" , infoList.get((Integer) v.getTag()).getId());
+        getContext().startActivity(intent);
     }
 }
