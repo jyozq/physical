@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.app.MainApplication;
@@ -23,6 +24,7 @@ public  abstract class ToolBarActivity extends AppCompatActivity implements View
 
     private ImageButton btn_back;
     private TextView textView;
+    private Spinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,8 @@ public  abstract class ToolBarActivity extends AppCompatActivity implements View
         onCreateCustomToolBar(toolbar) ;
         btn_back = (ImageButton) toolbar.findViewById(R.id.btn_back);
         textView = (TextView) toolbar.findViewById(R.id.textView);
+        spinner = (Spinner) toolbar.findViewById(R.id.spinner_school);
+        spinner.setVisibility(View.GONE);
     }
 
     public void initToolBar(String titleText){

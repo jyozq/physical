@@ -1,17 +1,10 @@
 package com.straw.lession.physical.activity;
 
-import android.Manifest;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.View;
@@ -25,7 +18,6 @@ import com.straw.lession.physical.fragment.CourseFragment;
 import com.straw.lession.physical.fragment.ProfileFragment;
 import com.straw.lession.physical.fragment.TodayFragment;
 import com.straw.lession.physical.vo.SchoolInfo;
-import com.zbar.lib.CaptureActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -166,8 +158,29 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         ll_course.setOnClickListener(this);
         ll_profile.setOnClickListener(this);
         ll_today.setOnClickListener(this);
+        ll_class.setOnClickListener(this);
         btn_add_course.setOnClickListener(this);
         btn_sync.setOnClickListener(this);
+
+        final List<SchoolInfo> schoolInfoList = new ArrayList<SchoolInfo>();
+        schoolInfoList.add(new SchoolInfo("一小","one"));
+        schoolInfoList.add(new SchoolInfo("二小","two"));
+        schoolInfoList.add(new SchoolInfo("三小","three"));
+        SchoolSpinnerAdapter schoolSpinnerAdapter = new SchoolSpinnerAdapter(this, spinner, schoolInfoList);
+        schoolSpinnerAdapter.setDropDownViewResource(R.layout.school_item_spinner_dropdown);
+        spinner.setAdapter(schoolSpinnerAdapter);
+        spinner.setDropDownVerticalOffset(15);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int pos, long id) {
+                Toast.makeText(MainActivity.this, "你点击的是:"+schoolInfoList.get(pos).getName(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
     }
 
     private void initView() {
@@ -197,24 +210,6 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         btn_back.setVisibility(View.GONE);
         btn_add_course.setVisibility(View.VISIBLE);
         spinner = (Spinner) findViewById(R.id.spinner_school);
-        final List<SchoolInfo> schoolInfoList = new ArrayList<SchoolInfo>();
-        schoolInfoList.add(new SchoolInfo("一小","one"));
-        schoolInfoList.add(new SchoolInfo("二小","two"));
-        schoolInfoList.add(new SchoolInfo("三小","three"));
-        SchoolSpinnerAdapter schoolSpinnerAdapter = new SchoolSpinnerAdapter(this, spinner, schoolInfoList);
-        schoolSpinnerAdapter.setDropDownViewResource(R.layout.school_item_spinner_dropdown);
-        spinner.setAdapter(schoolSpinnerAdapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view,
-                                       int pos, long id) {
-                Toast.makeText(MainActivity.this, "你点击的是:"+schoolInfoList.get(pos).getName(), Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
     }
 
     @Override
