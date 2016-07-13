@@ -18,11 +18,16 @@ import android.view.View;
 import android.widget.*;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.base.ThreadBaseActivity;
+import com.straw.lession.physical.adapter.SchoolSpinnerAdapter;
 import com.straw.lession.physical.app.MainApplication;
 import com.straw.lession.physical.fragment.CourseFragment;
 import com.straw.lession.physical.fragment.ProfileFragment;
 import com.straw.lession.physical.fragment.TodayFragment;
+import com.straw.lession.physical.vo.SchoolInfo;
 import com.zbar.lib.CaptureActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by straw on 2016/7/5.
@@ -49,6 +54,8 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
     private TodayFragment todayFragment;
     private CourseFragment courseFragment;
     private ProfileFragment profileFragment;
+
+    private Spinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,6 +161,25 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         btn_sync = (ImageButton) findViewById(R.id.btn_sync);
         btn_back.setVisibility(View.GONE);
         btn_add_course.setVisibility(View.VISIBLE);
+        spinner = (Spinner) findViewById(R.id.spinner_school);
+        final List<SchoolInfo> schoolInfoList = new ArrayList<SchoolInfo>();
+        schoolInfoList.add(new SchoolInfo("一小","one"));
+        schoolInfoList.add(new SchoolInfo("二小","two"));
+        schoolInfoList.add(new SchoolInfo("三小","three"));
+        SchoolSpinnerAdapter schoolSpinnerAdapter = new SchoolSpinnerAdapter(this, schoolInfoList);
+        schoolSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(schoolSpinnerAdapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int pos, long id) {
+                Toast.makeText(MainActivity.this, "你点击的是:"+schoolInfoList.get(pos).getName(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
     }
 
     @Override

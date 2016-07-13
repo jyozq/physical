@@ -19,8 +19,14 @@
             android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge" android:id="@+id/textView"
             android:textColor="@color/black" android:layout_gravity="center_horizontal"
-            android:layout_centerVertical="true" android:layout_centerHorizontal="true" />
-
+            android:layout_centerVertical="true" android:layout_centerHorizontal="true"
+            android:visibility="gone"
+        />
+        <Spinner
+                android:id="@+id/spinner_school" android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true" android:layout_gravity="center_horizontal"
+        />
         <ImageButton
                 android:id="@+id/btn_sync" android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
