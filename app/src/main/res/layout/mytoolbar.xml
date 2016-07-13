@@ -4,17 +4,18 @@
     android:layout_width="match_parent" android:id="@+id/id_tool_bar"
     android:layout_height="?attr/actionBarSize" android:background="?attr/colorPrimary" android:minHeight="?attr/actionBarSize">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"  android:layout_height="match_parent">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+                    android:layout_height="match_parent" android:gravity="center_vertical">
         <ImageButton
-            android:layout_width="@dimen/dimen_50dp" android:layout_height="match_parent"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:id="@+id/btn_back" android:layout_centerVertical="true"
             android:layout_alignParentLeft="true" android:layout_alignParentStart="true"
             android:background="@color/transparent"  android:src="@mipmap/back"/>
         <ImageButton
-                android:layout_width="@dimen/dimen_50dp" android:layout_height="match_parent"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:id="@+id/btn_add_course" android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true" android:layout_alignParentStart="true" android:visibility="gone"
-                android:background="@color/transparent"  android:src="@mipmap/toolbar_add_btn"/>
+                android:background="@color/transparent"  android:src="@android:drawable/ic_input_add"/>
         <TextView
             android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge" android:id="@+id/textView"
@@ -26,11 +27,12 @@
                 android:id="@+id/spinner_school" android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true" android:layout_gravity="center_horizontal"
+                android:spinnerMode="dropdown"
         />
         <ImageButton
                 android:id="@+id/btn_sync" android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/transparent" android:src="@mipmap/toolbar_choose_btn"
+                android:background="@color/transparent" android:src="@mipmap/toolbar_upload_cloud"
                 android:layout_marginRight="@dimen/dimen_15dp"
                 android:layout_centerVertical="true" android:layout_alignParentRight="true"/>
     </RelativeLayout>

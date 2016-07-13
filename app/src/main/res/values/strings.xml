@@ -50,8 +50,9 @@
     <string name="version_desc2">您当前有新版本%s , 需要下载更新！</string>
     <string name="system_exit">再按一次退出软件！</string>
 
-    <string name="toolbar_today">今日</string>
-    <string name="toolbar_course">课程</string>
+    <string name="toolbar_today">今日课程</string>
+    <string name="toolbar_course">课程计划</string>
+    <string name="toolbar_class">班级</string>
     <string name="toolbar_profile">我</string>
 
     <string name="btn_start_course">开始上课</string>

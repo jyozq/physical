@@ -20,6 +20,7 @@ import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.base.ThreadBaseActivity;
 import com.straw.lession.physical.adapter.SchoolSpinnerAdapter;
 import com.straw.lession.physical.app.MainApplication;
+import com.straw.lession.physical.fragment.ClassFragment;
 import com.straw.lession.physical.fragment.CourseFragment;
 import com.straw.lession.physical.fragment.ProfileFragment;
 import com.straw.lession.physical.fragment.TodayFragment;
@@ -36,19 +37,23 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
     private static final int CURRENT_PAGE_TODAY = 0;
     private static final int CURRENT_PAGE_SCHEDULE = 1;
     private static final int CURRENT_PAGE_PROFILE = 2;
+    private static final int CURRENT_PAGE_CLASS = 3;
     private int currentPage;
 
     private LinearLayout ll_today;
     private LinearLayout ll_course;
     private LinearLayout ll_profile;
+    private LinearLayout ll_class;
 
     private ImageView iv_today;
     private ImageView iv_course;
     private ImageView iv_profile;
+    private ImageView iv_class;
 
     private TextView tv_today;
     private TextView tv_course;
     private TextView tv_profile;
+    private TextView tv_class;
 
     private Toolbar toolbar;
     private ImageButton btn_back ;
@@ -59,6 +64,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
     private TodayFragment todayFragment;
     private CourseFragment courseFragment;
     private ProfileFragment profileFragment;
+    private ClassFragment classFragment;
 
     private Spinner spinner;
 
@@ -119,9 +125,18 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
                 } else {
                     transaction.show(profileFragment);
                 }
-
                 break;
-
+            case CURRENT_PAGE_CLASS:
+                textView.setText(R.string.toolbar_class);
+                btn_add_course.setVisibility(View.GONE);
+                btn_sync.setVisibility(View.GONE);
+                if (classFragment == null) {
+                    classFragment = new ClassFragment();
+                    transaction.add(R.id.fl_content, classFragment);
+                } else {
+                    transaction.show(classFragment);
+                }
+                break;
             default:
                 break;
         }
@@ -141,6 +156,9 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         if (profileFragment != null) {
             transaction.hide(profileFragment);
         }
+        if (classFragment != null) {
+            transaction.hide(classFragment);
+        }
     }
 
     private void initEvent() {
@@ -157,17 +175,21 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         this.ll_today = (LinearLayout) findViewById(R.id.id_today);
         this.ll_course = (LinearLayout) findViewById(R.id.id_lesson);
         this.ll_profile = (LinearLayout) findViewById(R.id.id_profile);
+        this.ll_class = (LinearLayout) findViewById(R.id.id_class);
 
         // 底部菜单4个ImageView
         this.iv_today = (ImageView) findViewById(R.id.id_today_img);
         this.iv_course = (ImageView) findViewById(R.id.id_lesson_img);
         this.iv_profile = (ImageView) findViewById(R.id.id_profile_img);
+        this.iv_class = (ImageView) findViewById(R.id.id_class_img);
 
         // 底部菜单4个菜单标题
         this.tv_today = (TextView) findViewById(R.id.id_today_txt);
         this.tv_course = (TextView) findViewById(R.id.id_lesson_txt);
         this.tv_profile = (TextView) findViewById(R.id.id_profile_txt);
+        this.tv_class = (TextView) findViewById(R.id.id_class_txt);
 
+        // 顶部工具栏
         btn_back = (ImageButton) findViewById(R.id.btn_back);
         textView = (TextView) findViewById(R.id.textView);
         btn_add_course = (ImageButton) findViewById(R.id.btn_add_course);
@@ -179,8 +201,8 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         schoolInfoList.add(new SchoolInfo("一小","one"));
         schoolInfoList.add(new SchoolInfo("二小","two"));
         schoolInfoList.add(new SchoolInfo("三小","three"));
-        SchoolSpinnerAdapter schoolSpinnerAdapter = new SchoolSpinnerAdapter(this, schoolInfoList);
-        schoolSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        SchoolSpinnerAdapter schoolSpinnerAdapter = new SchoolSpinnerAdapter(this, spinner, schoolInfoList);
+        schoolSpinnerAdapter.setDropDownViewResource(R.layout.school_item_spinner_dropdown);
         spinner.setAdapter(schoolSpinnerAdapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -216,6 +238,11 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
                 tv_profile.setTextColor(getResources().getColor(R.color.toolbar_btn_pressed));
                 initFragment(CURRENT_PAGE_PROFILE);
                 break;
+            case R.id.id_class:
+                iv_class.setImageResource(R.mipmap.icon_class);
+                tv_class.setTextColor(getResources().getColor(R.color.toolbar_btn_pressed));
+                initFragment(CURRENT_PAGE_CLASS);
+                break;
             case R.id.btn_add_course:
                 break;
             case R.id.btn_sync:
@@ -230,10 +257,12 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         iv_today.setImageResource(R.mipmap.icon_today_gray);
         iv_course.setImageResource(R.mipmap.icon_kc_gray);
         iv_profile.setImageResource(R.mipmap.icon_wo_gray);
+        iv_class.setImageResource(R.mipmap.icon_class_gray);
         // TextView置为白色
         tv_today.setTextColor(getResources().getColor(R.color.toolbar_btn_gray));
         tv_course.setTextColor(getResources().getColor(R.color.toolbar_btn_gray));
         tv_profile.setTextColor(getResources().getColor(R.color.toolbar_btn_gray));
+        tv_class.setTextColor(getResources().getColor(R.color.toolbar_btn_gray));
     }
 
     /**************** 以下实现两次退出逻辑 *********************/
