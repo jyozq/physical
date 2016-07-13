@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.astuetz.PagerSlidingTabStrip;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.fragment.base.BaseFragment;
+import com.straw.lession.physical.fragment.base.DayCourseFragment;
 
 /**
  * Created by straw on 2016/7/7.
@@ -42,8 +43,15 @@ public class CourseFragment extends BaseFragment {
 
     public class MyPagerAdapter extends FragmentPagerAdapter {
 
-        private final String[] TITLES = { "Categories", "Home", "Top Paid", "Top Free", "Top Grossing", "Top New Paid",
-                "Top New Free", "Trending" };
+        private final String[] TITLES = { "周一", "周二", "周三", "周四", "周五", "周六", "周日"};
+
+        private DayCourseFragment fragment1;
+        private DayCourseFragment fragment2;
+        private DayCourseFragment fragment3;
+        private DayCourseFragment fragment4;
+        private DayCourseFragment fragment5;
+        private DayCourseFragment fragment6;
+        private DayCourseFragment fragment7;
 
         public MyPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -64,16 +72,31 @@ public class CourseFragment extends BaseFragment {
 
 //            current_position = position;
 
-            Fragment fragment = new BaseFragment();
             switch (position) {
                 case 0:
-//                    fragment = new ContainerFragment();
-                    break;
+                    fragment1 = new DayCourseFragment();
+                    return fragment1;
+                case 1:
+                    fragment2 = new DayCourseFragment();
+                    return fragment2;
+                case 2:
+                    fragment3 = new DayCourseFragment();
+                    return fragment3;
+                case 3:
+                    fragment4 = new DayCourseFragment();
+                    return fragment4;
+                case 4:
+                    fragment5 = new DayCourseFragment();
+                    return fragment5;
+                case 5:
+                    fragment6 = new DayCourseFragment();
+                    return fragment6;
+                case 6:
+                    fragment7 = new DayCourseFragment();
+                    return fragment7;
                 default:
-//                    fragment = new CommonFragment(TITLES[position]);
-                    break;
+                    return null;
             }
-            return fragment;
         }
     }
 }
