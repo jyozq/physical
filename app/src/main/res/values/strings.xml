@@ -62,12 +62,4 @@
     <string name="btn_next_student">&#160;&#160;&#160;下一个学生&#160;&#160;&#160;</string>
     <string name="btn_open_light">开灯</string>
     <string name="btn_close_light">关灯</string>
-
-    <string-array name="languages">
-        <item>c语言</item>
-        <item>java </item>
-        <item>php</item>
-        <item>xml</item>
-        <item>html</item>
-    </string-array>
 </resources>

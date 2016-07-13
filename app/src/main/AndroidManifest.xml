@@ -30,14 +30,17 @@
         </activity>
 
         <activity android:windowSoftInputMode="adjustResize|stateHidden" android:configChanges="orientation|keyboardHidden"
-                  android:name="com.straw.lession.physical.activity.MainActivity"
-                  android:label="@string/toolbar_today">
+                  android:name="com.straw.lession.physical.activity.MainActivity">
         </activity>
 
         <activity android:name="com.zbar.lib.CaptureActivity"/>
 
         <activity android:windowSoftInputMode="adjustResize|stateHidden" android:configChanges="orientation|keyboardHidden"
                   android:name="com.straw.lession.physical.activity.StartCourseActivity">
+        </activity>
+
+        <activity android:windowSoftInputMode="adjustResize|stateHidden" android:configChanges="orientation|keyboardHidden"
+                  android:name="com.straw.lession.physical.activity.CourseActivity">
         </activity>
     </application>
 

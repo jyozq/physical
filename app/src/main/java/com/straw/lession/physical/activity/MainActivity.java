@@ -219,22 +219,22 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         // ImageView和TetxView置为绿色，页面随之跳转
         switch (v.getId()) {
             case R.id.id_today:
-                iv_today.setImageResource(R.mipmap.icon_today);
+                iv_today.setImageResource(R.mipmap.bottom_toolbar_icon_today);
                 tv_today.setTextColor(getResources().getColor(R.color.toolbar_btn_pressed));
                 initFragment(CURRENT_PAGE_TODAY);
                 break;
             case R.id.id_lesson:
-                iv_course.setImageResource(R.mipmap.icon_kc);
+                iv_course.setImageResource(R.mipmap.bottom_toolbar_icon_kc);
                 tv_course.setTextColor(getResources().getColor(R.color.toolbar_btn_pressed));
                 initFragment(CURRENT_PAGE_SCHEDULE);
                 break;
             case R.id.id_profile:
-                iv_profile.setImageResource(R.mipmap.icon_wo);
+                iv_profile.setImageResource(R.mipmap.bottom_toolbar_icon_wo);
                 tv_profile.setTextColor(getResources().getColor(R.color.toolbar_btn_pressed));
                 initFragment(CURRENT_PAGE_PROFILE);
                 break;
             case R.id.id_class:
-                iv_class.setImageResource(R.mipmap.icon_class);
+                iv_class.setImageResource(R.mipmap.bottom_toolbar_icon_class);
                 tv_class.setTextColor(getResources().getColor(R.color.toolbar_btn_pressed));
                 initFragment(CURRENT_PAGE_CLASS);
                 break;
@@ -249,10 +249,10 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
 
     private void restartBotton() {
         // ImageView置为灰色
-        iv_today.setImageResource(R.mipmap.icon_today_gray);
-        iv_course.setImageResource(R.mipmap.icon_kc_gray);
-        iv_profile.setImageResource(R.mipmap.icon_wo_gray);
-        iv_class.setImageResource(R.mipmap.icon_class_gray);
+        iv_today.setImageResource(R.mipmap.bottom_toolbar_icon_today_gray);
+        iv_course.setImageResource(R.mipmap.bottom_toolbar_icon_kc_gray);
+        iv_profile.setImageResource(R.mipmap.bottom_toolbar_icon_wo_gray);
+        iv_class.setImageResource(R.mipmap.bottom_toolbar_icon_class_gray);
         // TextView置为白色
         tv_today.setTextColor(getResources().getColor(R.color.toolbar_btn_gray));
         tv_course.setTextColor(getResources().getColor(R.color.toolbar_btn_gray));
