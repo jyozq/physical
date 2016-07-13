@@ -33,6 +33,11 @@ import java.util.List;
  * Created by straw on 2016/7/5.
  */
 public class MainActivity extends ThreadBaseActivity implements View.OnClickListener {
+    private static final int CURRENT_PAGE_TODAY = 0;
+    private static final int CURRENT_PAGE_SCHEDULE = 1;
+    private static final int CURRENT_PAGE_PROFILE = 2;
+    private int currentPage;
+
     private LinearLayout ll_today;
     private LinearLayout ll_course;
     private LinearLayout ll_profile;
@@ -70,10 +75,11 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         // 初始化底部按钮事件
         initEvent();
         // 初始化并设置当前Fragment
-        initFragment(0);
+        initFragment(CURRENT_PAGE_TODAY);
     }
 
     private void initFragment(int index) {
+        currentPage = index;
         // 由于是引用了V4包下的Fragment，所以这里的管理器要用getSupportFragmentManager获取
         FragmentManager fragmentManager = getSupportFragmentManager();
         // 开启事务
@@ -81,8 +87,10 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         // 隐藏所有Fragment
         hideFragment(transaction);
         switch (index) {
-            case 0:
+            case CURRENT_PAGE_TODAY:
                 textView.setText(R.string.toolbar_today);
+                btn_add_course.setVisibility(View.VISIBLE);
+                btn_sync.setVisibility(View.VISIBLE);
                 if (todayFragment == null) {
                     todayFragment = new TodayFragment();
                     transaction.add(R.id.fl_content, todayFragment);
@@ -90,8 +98,10 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
                     transaction.show(todayFragment);
                 }
                 break;
-            case 1:
+            case CURRENT_PAGE_SCHEDULE:
                 textView.setText(R.string.toolbar_course);
+                btn_add_course.setVisibility(View.VISIBLE);
+                btn_sync.setVisibility(View.VISIBLE);
                 if (courseFragment == null) {
                     courseFragment = new CourseFragment();
                     transaction.add(R.id.fl_content, courseFragment);
@@ -99,8 +109,10 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
                     transaction.show(courseFragment);
                 }
                 break;
-            case 2:
+            case CURRENT_PAGE_PROFILE:
                 textView.setText(R.string.toolbar_profile);
+                btn_add_course.setVisibility(View.GONE);
+                btn_sync.setVisibility(View.GONE);
                 if (profileFragment == null) {
                     profileFragment = new ProfileFragment();
                     transaction.add(R.id.fl_content, profileFragment);
@@ -136,6 +148,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         ll_course.setOnClickListener(this);
         ll_profile.setOnClickListener(this);
         ll_today.setOnClickListener(this);
+        btn_add_course.setOnClickListener(this);
         btn_sync.setOnClickListener(this);
     }
 
@@ -191,17 +204,19 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
             case R.id.id_today:
                 iv_today.setImageResource(R.mipmap.icon_today);
                 tv_today.setTextColor(getResources().getColor(R.color.toolbar_btn_pressed));
-                initFragment(0);
+                initFragment(CURRENT_PAGE_TODAY);
                 break;
             case R.id.id_lesson:
                 iv_course.setImageResource(R.mipmap.icon_kc);
                 tv_course.setTextColor(getResources().getColor(R.color.toolbar_btn_pressed));
-                initFragment(1);
+                initFragment(CURRENT_PAGE_SCHEDULE);
                 break;
             case R.id.id_profile:
                 iv_profile.setImageResource(R.mipmap.icon_wo);
                 tv_profile.setTextColor(getResources().getColor(R.color.toolbar_btn_pressed));
-                initFragment(2);
+                initFragment(CURRENT_PAGE_PROFILE);
+                break;
+            case R.id.btn_add_course:
                 break;
             case R.id.btn_sync:
                 break;

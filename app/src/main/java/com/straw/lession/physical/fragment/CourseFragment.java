@@ -1,35 +1,34 @@
 package com.straw.lession.physical.fragment;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.Toast;
-import com.straw.lession.physical.R;
-import com.straw.lession.physical.vo.CourseItemInfo;
-import com.straw.lession.physical.adapter.CourseListViewAdapter;
-import com.straw.lession.physical.fragment.base.BaseFragment;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.astuetz.PagerSlidingTabStrip;
+import com.straw.lession.physical.R;
+import com.straw.lession.physical.fragment.base.BaseFragment;
 
 /**
  * Created by straw on 2016/7/7.
  */
-public class CourseFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,CourseListViewAdapter.Callback {
+public class CourseFragment extends BaseFragment {
     private View layoutView;
-    private SwipeRefreshLayout swipeLayout;
-    private ListView listView;
-    private CourseListViewAdapter adapter;
-    private List<CourseItemInfo> infoList;
-
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         layoutView = inflater.inflate(R.layout.fragment_course, container, false);
+        // Initialize the ViewPager and set an adapter
+        ViewPager pager = (ViewPager) layoutView.findViewById(R.id.pager);
+        pager.setAdapter(new MyPagerAdapter(getActivity().getSupportFragmentManager()));
+
+        // Bind the tabs to the ViewPager
+        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) layoutView.findViewById(R.id.tabs);
+        tabs.setViewPager(pager);
         return layoutView;
     }
 
@@ -39,32 +38,42 @@ public class CourseFragment extends BaseFragment implements SwipeRefreshLayout.O
     }
 
     private void initViews() {
-        swipeLayout = (SwipeRefreshLayout) layoutView.findViewById(R.id.swipe_refresh);
-        swipeLayout.setOnRefreshListener(this);
-        infoList = new ArrayList<CourseItemInfo>();
-        CourseItemInfo info = new CourseItemInfo();
-        info.setName("coin");
-        infoList.add(info);
-        listView = (ListView) layoutView.findViewById(R.id.listview);
-        adapter = new CourseListViewAdapter(layoutView.getContext(), infoList, this);
-        listView.setAdapter(adapter);
     }
 
-    @Override
-    public void onRefresh() {
-        new Handler().postDelayed(new Runnable() {
-            public void run() {
-                swipeLayout.setRefreshing(false);
-                CourseItemInfo info = new CourseItemInfo();
-                info.setName("coin-refresh");
-                infoList.add(info);
-                adapter.notifyDataSetChanged();
+    public class MyPagerAdapter extends FragmentPagerAdapter {
+
+        private final String[] TITLES = { "Categories", "Home", "Top Paid", "Top Free", "Top Grossing", "Top New Paid",
+                "Top New Free", "Trending" };
+
+        public MyPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return TITLES[position];
+        }
+
+        @Override
+        public int getCount() {
+            return TITLES.length;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+
+//            current_position = position;
+
+            Fragment fragment = new BaseFragment();
+            switch (position) {
+                case 0:
+//                    fragment = new ContainerFragment();
+                    break;
+                default:
+//                    fragment = new CommonFragment(TITLES[position]);
+                    break;
             }
-        }, 500);
-    }
-
-    @Override
-    public void click(View v) {
-
+            return fragment;
+        }
     }
 }
