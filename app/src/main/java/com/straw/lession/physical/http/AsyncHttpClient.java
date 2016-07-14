@@ -96,21 +96,21 @@ public class AsyncHttpClient implements Runnable {
                 body.put(pair.getName(), pair.getValue());
             }
 
-            if (null !=params2 && params2.size() > 0 ){
-                for (Map.Entry<String, JSONArray> entry : params2.entrySet()) {
-                    String key = entry.getKey();
-                    JSONArray valueArray = entry.getValue();
-                    body.put(key , valueArray );
-                }
-            }
+//            if (null !=params2 && params2.size() > 0 ){
+//                for (Map.Entry<String, JSONArray> entry : params2.entrySet()) {
+//                    String key = entry.getKey();
+//                    JSONArray valueArray = entry.getValue();
+//                    body.put(key , valueArray );
+//                }
+//            }
             String postStr = body.toString();
-            if (isDes){
-                String desStr = EncryptUtil.desEncrypt(postStr , EncryptUtil.SALT_KEY) ;
-                return desStr ;
-            }else {
+//            if (isDes){
+//                String desStr = EncryptUtil.desEncrypt(postStr , EncryptUtil.SALT_KEY) ;
+//                return desStr ;
+//            }else {
                 Log.i("999999999999999" , "999999999999999 param:" + body.toString() );
                 return body.toString();
-            }
+//            }
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -307,8 +307,8 @@ public class AsyncHttpClient implements Runnable {
                     return;
                 }
                 sb.setLength(0);
-                BufferedReader br = new BufferedReader( new InputStreamReader(is));
-                //BufferedReader br = new BufferedReader( new InputStreamReader(is , "UTF-8" ));
+//                BufferedReader br = new BufferedReader( new InputStreamReader(is));
+                BufferedReader br = new BufferedReader( new InputStreamReader(is , "UTF-8" ));
                 String line = null;
                 while ((line = br.readLine()) != null) {
                     sb.append(line);
@@ -327,12 +327,12 @@ public class AsyncHttpClient implements Runnable {
                 		String result = sb.toString();
                 		//result=new  String(result.getBytes("ISO-8859-1"),"UTF-8");
                         //解密
-                        if (isDes){
-                            String desEncryptResult = EncryptUtil.desDecrypt(result , EncryptUtil.SALT_KEY) ;
-                            httpResponseBean.content = desEncryptResult;
-                        }else {
+//                        if (isDes){
+//                            String desEncryptResult = EncryptUtil.desDecrypt(result , EncryptUtil.SALT_KEY) ;
+//                            httpResponseBean.content = desEncryptResult;
+//                        }else {
                             httpResponseBean.content = result;
-                        }
+//                        }
 
                 	}catch(Exception e){
                 		
