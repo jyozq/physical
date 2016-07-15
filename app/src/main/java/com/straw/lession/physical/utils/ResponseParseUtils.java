@@ -7,11 +7,9 @@ package com.straw.lession.physical.utils;
  */
 public class ResponseParseUtils {
 
-    public final static String success = "success";
-	public final static String message = "message";
-    public final static String data = "data";
-
-    
+    //resultCode
+    public final static String RESULT_CODE_SUCCESS = "0";
+    public final static String RESULT_CODE_ERROR = "04";
 
     //exception
     public final static String ERROR1 = "MalformedURLException";
@@ -19,9 +17,6 @@ public class ResponseParseUtils {
     public final static String ERROR3 = "IOException";
     public final static String ERROR4 = "SocketTimeoutException";
 
-
-    
-    
     /*public static boolean parseHeader(JSONObject headerObject){
     	try {
 			if (headerObject.has(ERRORCODE) && !TextUtils.isEmpty(headerObject.getString(ERRORCODE)) 

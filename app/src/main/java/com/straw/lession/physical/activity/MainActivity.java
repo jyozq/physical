@@ -17,7 +17,7 @@ import com.straw.lession.physical.fragment.ClassFragment;
 import com.straw.lession.physical.fragment.CourseFragment;
 import com.straw.lession.physical.fragment.ProfileFragment;
 import com.straw.lession.physical.fragment.TodayFragment;
-import com.straw.lession.physical.vo.SchoolInfo;
+import com.straw.lession.physical.vo.item.SchoolInfo;
 
 import java.util.ArrayList;
 import java.util.List;

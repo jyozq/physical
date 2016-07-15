@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 import com.straw.lession.physical.R;
-import com.straw.lession.physical.vo.StudentInfo;
+import com.straw.lession.physical.vo.item.StudentInfo;
 
 import java.util.List;
 

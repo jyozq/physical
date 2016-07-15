@@ -14,11 +14,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.base.ThreadToolBarBaseActivity;
-import com.straw.lession.physical.adapter.CourseListViewAdapter;
 import com.straw.lession.physical.adapter.StudentListViewAdapter;
 import com.straw.lession.physical.app.MainApplication;
-import com.straw.lession.physical.vo.CourseItemInfo;
-import com.straw.lession.physical.vo.StudentInfo;
+import com.straw.lession.physical.vo.item.StudentInfo;
 import com.zbar.lib.CaptureActivity;
 
 import java.util.ArrayList;

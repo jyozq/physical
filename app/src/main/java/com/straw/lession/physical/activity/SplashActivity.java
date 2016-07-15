@@ -6,6 +6,11 @@ import android.os.Bundle;
 
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.base.ThreadBaseActivity;
+import com.straw.lession.physical.async.CreateDBTask;
+import com.straw.lession.physical.async.CreateDBTaskHandler;
+import com.straw.lession.physical.async.ITask;
+import com.straw.lession.physical.async.TaskWorker;
+import com.straw.lession.physical.db.DBManager;
 
 public class SplashActivity extends ThreadBaseActivity {
 
@@ -13,7 +18,9 @@ public class SplashActivity extends ThreadBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        mHandler.sendEmptyMessageDelayed(0, 2000);
+        ITask task = new CreateDBTask(this,new CreateDBTaskHandler(mHandler));
+        TaskWorker taskWorker = new TaskWorker(task);
+        mThreadPool.submit(taskWorker);
     }
 
     private Handler mHandler = new Handler() {

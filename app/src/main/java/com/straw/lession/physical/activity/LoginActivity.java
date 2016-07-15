@@ -1,6 +1,7 @@
 package com.straw.lession.physical.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -9,11 +10,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.google.gson.Gson;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.base.ThreadBaseActivity;
 import com.straw.lession.physical.app.MainApplication;
-import com.straw.lession.physical.constant.ReqConstant;
+import com.straw.lession.physical.constant.ParamConstant;
 import com.straw.lession.physical.custom.AlertDialogUtil;
 import com.straw.lession.physical.custom.ClearEditText;
 import com.straw.lession.physical.http.AsyncHttpClient;
@@ -23,9 +24,8 @@ import com.straw.lession.physical.utils.AppPreference;
 import com.straw.lession.physical.utils.ResponseParseUtils;
 import com.straw.lession.physical.utils.TimeUtils;
 import com.straw.lession.physical.utils.Utils;
-
+import com.straw.lession.physical.vo.LoginInfo;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -130,10 +130,7 @@ public class LoginActivity extends ThreadBaseActivity {
         final ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
         params.add(new BasicNameValuePair("mobile", userName  ));
         params.add(new BasicNameValuePair("password", password  ));
-        //params.add(new BasicNameValuePair("weixinId", ""  ));
-        params.add(new BasicNameValuePair("dataInterface", ReqConstant.DATA_INTERFACE  ));
 
-        final String METHOD = "users.login";
         final String URL = "http://114.55.100.149:8080/api/auth/teacher/login";
 
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.POST, URL ,params , new AsyncHttpResponseHandler() {
@@ -143,26 +140,22 @@ public class LoginActivity extends ThreadBaseActivity {
                 try{
                     hideProgressDialog();
                     JSONObject contentObject = new JSONObject(httpResponseBean.content);
-                    boolean success = contentObject.getBoolean(ResponseParseUtils.success);
-                    if (success ){ //登录成功
+                    String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
+                    if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){ //登录成功
 
-                        JSONObject dataObject = contentObject.getJSONObject(ResponseParseUtils.data);
+                        JSONObject dataObject = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
                         String nowTime = TimeUtils.getCurrentDateStr2();
-                        String username = dataObject.getString("name");
-                        int userid = dataObject.getInt("id");
-                        String mobile = dataObject.getString("mobile");
-                        String business_license = dataObject.getString("business_license");
-                        String merchant_no = dataObject.getString("merchant_no");
-                        String introducer_name = dataObject.getString("introducer_name");
-
-                        AppPreference.saveLoginTime(mContext , nowTime ,username , String.valueOf( userid ) ,String.valueOf(mobile) ,business_license , merchant_no ,introducer_name );
+                        Gson gson = new Gson();
+                        LoginInfo loginInfo = gson.fromJson(dataObject.toString(), LoginInfo.class);
+                        loginInfo.setNowTime(nowTime);
+                        AppPreference.saveLoginInfo(loginInfo);
                         MainApplication.getInstance().popCurrentActivity();
-
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     }else {//登录失败
-                        String errorMessage = contentObject.getString(ResponseParseUtils.message);
+                        String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);
                         AlertDialogUtil.showAlertWindow(mContext, -1, errorMessage , null );
                     }
-                }catch(JSONException e){
+                }catch(Exception e){
                     hideProgressDialog();
                     showErrorMsgInfo(e.toString());
                     e.printStackTrace();

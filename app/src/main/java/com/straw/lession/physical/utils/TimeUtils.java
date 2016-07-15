@@ -1,8 +1,5 @@
 package com.straw.lession.physical.utils;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -138,36 +135,6 @@ public class TimeUtils {
         }
         return null;
     }
-
-    /**
-     * 判断是否登录
-     * @param mContext
-     * @return
-     */
-    public static boolean isLogin(Context mContext){
-        try{
-            SharedPreferences sharedPreferences = AppPreference.getLoginTime(mContext);
-            String loginTime = sharedPreferences.getString(AppPreference.loginTime,"");
-            if (null ==loginTime || loginTime.equals("")){
-                return false;
-            }
-            Date afterDate = TimeUtils.getNextWeekDate2(loginTime);
-            if (null != afterDate){
-                Date nowDate = new Date();
-                if (nowDate.getTime() >= afterDate.getTime()){  //登录过期
-                    return false;
-                }else {   //有效期内
-                    return true;
-                }
-            }
-            return false;
-        }catch (Exception e){
-            e.printStackTrace();
-            return false;
-        }
-
-    }
-
 
     /**
      * 获取当前日期是星期几<br>

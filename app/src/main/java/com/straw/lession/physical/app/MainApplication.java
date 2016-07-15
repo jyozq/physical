@@ -2,7 +2,9 @@ package com.straw.lession.physical.app;
 
 import android.app.Activity;
 import android.app.Application;
+import android.util.Log;
 import android.view.View;
+import com.anupcowkur.reservoir.Reservoir;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +17,7 @@ import java.util.concurrent.TimeUnit;
  * Created by straw on 2016/7/2.
  */
 public class MainApplication extends Application{
+    private static final String TAG = "MainApplication";
     // 全局线程池
     private ThreadPoolExecutor mThreadPool;
     private final int core_thread_num = 5;
@@ -59,6 +62,12 @@ public class MainApplication extends Application{
             mThreadPool = new ThreadPoolExecutor(core_thread_num,
                     max_thread_num, keep_alive_time, TimeUnit.MILLISECONDS,
                     blockQueue, new ThreadPoolExecutor.DiscardOldestPolicy());
+        }
+
+        try{
+            Reservoir.init(this, 10240);
+        }catch (Exception e){
+            Log.e(TAG,e.getMessage());
         }
     }
 

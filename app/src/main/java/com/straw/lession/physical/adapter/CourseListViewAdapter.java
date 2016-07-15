@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 import com.straw.lession.physical.R;
-import com.straw.lession.physical.vo.CourseItemInfo;
+import com.straw.lession.physical.vo.item.CourseItemInfo;
 
 import java.util.List;
 
@@ -79,8 +79,10 @@ public class CourseListViewAdapter extends BaseAdapter implements View.OnClickLi
             holder = (ViewHolder) convertView.getTag();
         }
 
-//        TextView name = (TextView) convertView.findViewById(R.id.item_name);
-//        name.setText(info.getName());
+        TextView name = (TextView) convertView.findViewById(R.id.class_name);
+        name.setText(info.getName());
+        TextView location = (TextView) convertView.findViewById(R.id.location);
+        location.setText(info.getLocation());
         holder.button.setOnClickListener(this);
         holder.button.setTag(position);
         return convertView;

@@ -1,4 +1,4 @@
-package com.straw.lession.physical.vo;
+package com.straw.lession.physical.vo.item;
 
 /**
  * Created by straw on 2016/7/12.

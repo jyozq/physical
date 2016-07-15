@@ -14,7 +14,9 @@
         <TableRow android:layout_width="match_parent"
                   android:layout_height="wrap_content">
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                      android:text="三年四班" android:textStyle="bold" android:textSize="20sp"/>
+                      android:text="三年四班" android:textStyle="bold" android:textSize="20sp"
+                      android:id="@+id/class_name"
+            />
             <Button android:id="@+id/btn_start_course"
                     android:layout_width="wrap_content" android:textColor="@color/white" android:textSize="@dimen/font_size_14"
                     android:layout_height="@dimen/dimen_30dp" android:background="@color/blue17"
@@ -40,7 +42,7 @@
                 <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"
                            android:src="@mipmap/icon_pin"/>
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                          android:text="篮球馆"/>
+                          android:text="篮球馆" android:id="@+id/location"/>
             </LinearLayout>
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                       android:text="篮球 0|40"/>

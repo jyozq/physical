@@ -1,4 +1,4 @@
-package com.straw.lession.physical.vo;
+package com.straw.lession.physical.vo.item;
 
 /**
  * Created by straw on 2016/7/6.
@@ -14,6 +14,8 @@ public class CourseItemInfo {
      * name
      */
     private String name;
+
+    private String location;
 
     public long getId() {
         return id;
@@ -31,4 +33,11 @@ public class CourseItemInfo {
         this.name = name;
     }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
 }

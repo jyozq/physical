@@ -26,7 +26,6 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -53,7 +52,7 @@ public class AsyncHttpClient implements Runnable {
 	private ArrayList<BasicNameValuePair> basicNameValuePairs;
 
     private HashMap<String ,JSONArray> params2 = new HashMap<>();
-    private boolean isDes = true;  //是否要加密
+    private boolean isDes = false;  //是否要加密
     
     public AsyncHttpClient(RequestType type , String requestString,
                            ArrayList<BasicNameValuePair> basicNameValuePairs , AsyncHttpResponseHandler callback ) {
@@ -104,13 +103,13 @@ public class AsyncHttpClient implements Runnable {
 //                }
 //            }
             String postStr = body.toString();
-//            if (isDes){
-//                String desStr = EncryptUtil.desEncrypt(postStr , EncryptUtil.SALT_KEY) ;
-//                return desStr ;
-//            }else {
+            if (isDes){
+                String desStr = EncryptUtil.desEncrypt(postStr , EncryptUtil.SALT_KEY) ;
+                return desStr ;
+            }else {
                 Log.i("999999999999999" , "999999999999999 param:" + body.toString() );
                 return body.toString();
-//            }
+            }
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -327,12 +326,12 @@ public class AsyncHttpClient implements Runnable {
                 		String result = sb.toString();
                 		//result=new  String(result.getBytes("ISO-8859-1"),"UTF-8");
                         //解密
-//                        if (isDes){
-//                            String desEncryptResult = EncryptUtil.desDecrypt(result , EncryptUtil.SALT_KEY) ;
-//                            httpResponseBean.content = desEncryptResult;
-//                        }else {
+                        if (isDes){
+                            String desEncryptResult = EncryptUtil.desDecrypt(result , EncryptUtil.SALT_KEY) ;
+                            httpResponseBean.content = desEncryptResult;
+                        }else {
                             httpResponseBean.content = result;
-//                        }
+                        }
 
                 	}catch(Exception e){
                 		
