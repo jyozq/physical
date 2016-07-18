@@ -18,6 +18,11 @@ android {
     }
     productFlavors {
     }
+    sourceSets {
+        main {
+            java.srcDirs = ['src/main/java', 'src/main/java-gen']
+        }
+    }
 }
 
 dependencies {
@@ -30,4 +35,5 @@ dependencies {
     compile 'com.android.support:design:23.1.1'
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
     compile 'com.anupcowkur:reservoir:3.0.0'
+    compile 'org.greenrobot:greendao:3.0.1'
 }

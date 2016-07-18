@@ -1,6 +1,8 @@
 package com.straw.lession.physical.fragment;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -11,16 +13,14 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.StartCourseActivity;
-import com.straw.lession.physical.db.DBManager;
-import com.straw.lession.physical.vo.db.Course;
+import com.straw.lession.physical.db.CourseDefineDao;
+import com.straw.lession.physical.vo.db.CourseDefine;
 import com.straw.lession.physical.vo.item.CourseItemInfo;
 import com.straw.lession.physical.adapter.CourseListViewAdapter;
 import com.straw.lession.physical.fragment.base.BaseFragment;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by straw on 2016/7/8.
@@ -31,7 +31,28 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
     private ListView listView;
     private CourseListViewAdapter adapter;
     private List<CourseItemInfo> infoList;
-    private DBManager mgr;
+    private CourseDefineDao mgr;
+    private boolean isConnectNet;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mgr = new CourseDefineDao(getActivity());
+        ConnectivityManager manager = (ConnectivityManager)mActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        isConnectNet = manager.getActiveNetworkInfo().isAvailable();
+        if(!isConnectNet){  //未连接网络则读取缓存
+            readDataFromLocal();
+        }else{
+            readDateFromService();
+        }
+    }
+
+    private void readDateFromService() {
+
+    }
+
+    private void readDataFromLocal() {
+    }
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         layoutView = inflater.inflate(R.layout.fragment_today, container, false);
@@ -40,20 +61,19 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mgr = new DBManager(getActivity());
 
-        List<Course> courses = new ArrayList<>();
-        Course course = new Course();
-        course.setCourseName("测试课程1");
-        course.setCourseCode("测试编码1");
-        courses.add(course);
+        List<CourseDefine> courseDefines = new ArrayList<>();
+        CourseDefine courseDefine = new CourseDefine();
+        courseDefine.setName("测试课程1");
+        courseDefine.setCode("测试编码1");
+        courseDefines.add(courseDefine);
 
-        course = new Course();
-        course.setCourseName("测试课程2");
-        course.setCourseCode("测试编码2");
-        courses.add(course);
+        courseDefine = new CourseDefine();
+        courseDefine.setName("测试课程2");
+        courseDefine.setCode("测试编码2");
+        courseDefines.add(courseDefine);
 
-        mgr.add(courses);
+        mgr.add(courseDefines);
         initViews();
     }
 
@@ -92,19 +112,19 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
     }
 
     public void query() {
-        List<Course> courses = mgr.query();
+        List<CourseDefine> courseDefines = mgr.queryAll();
         infoList.clear();
-        Course course = null;
-        for(int i = 0; i < courses.size(); i++){
-            course = courses.get(i);
-            infoList.add(toItem(course));
+        CourseDefine courseDefine = null;
+        for(int i = 0; i < courseDefines.size(); i++){
+            courseDefine = courseDefines.get(i);
+            infoList.add(toItem(courseDefine));
         }
     }
 
-    private CourseItemInfo toItem(Course course) {
+    private CourseItemInfo toItem(CourseDefine courseDefine) {
         CourseItemInfo courseItemInfo = new CourseItemInfo();
-        courseItemInfo.setName(course.getCourseName());
-        courseItemInfo.setLocation(course.getCourseCode());
+        courseItemInfo.setName(courseDefine.getName());
+        courseItemInfo.setLocation(courseDefine.getCode());
         return courseItemInfo;
     }
 }

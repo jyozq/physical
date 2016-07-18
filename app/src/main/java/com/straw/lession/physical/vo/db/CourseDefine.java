@@ -5,18 +5,18 @@ import java.util.Date;
 /**
  * Created by straw on 2016/7/15.
  */
-public class Course {
+public class CourseDefine {
     private long courseDefineId;
-    private String courseCode;
-    private String courseType;
-    private String courseName;
+    private String code;
+    private String type;
+    private String name;
     private long instituteId;
     private long classId;
     private long teacherId;
     private int weekDay;
-    private Date courseDate;
-    private int courseSeq;
-    private String courseLocation;
+    private Date date;
+    private int seq;
+    private String location;
     private Date startTime;
     private Date endTime;
     private int useOnce;
@@ -29,28 +29,28 @@ public class Course {
         this.courseDefineId = courseDefineId;
     }
 
-    public String getCourseCode() {
-        return courseCode;
+    public String getCode() {
+        return code;
     }
 
-    public void setCourseCode(String courseCode) {
-        this.courseCode = courseCode;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public String getCourseType() {
-        return courseType;
+    public String getType() {
+        return type;
     }
 
-    public void setCourseType(String courseType) {
-        this.courseType = courseType;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public String getCourseName() {
-        return courseName;
+    public String getName() {
+        return name;
     }
 
-    public void setCourseName(String courseName) {
-        this.courseName = courseName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public long getInstituteId() {
@@ -85,28 +85,28 @@ public class Course {
         this.weekDay = weekDay;
     }
 
-    public Date getCourseDate() {
-        return courseDate;
+    public Date getDate() {
+        return date;
     }
 
-    public void setCourseDate(Date courseDate) {
-        this.courseDate = courseDate;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
-    public int getCourseSeq() {
-        return courseSeq;
+    public int getSeq() {
+        return seq;
     }
 
-    public void setCourseSeq(int courseSeq) {
-        this.courseSeq = courseSeq;
+    public void setSeq(int seq) {
+        this.seq = seq;
     }
 
-    public String getCourseLocation() {
-        return courseLocation;
+    public String getLocation() {
+        return location;
     }
 
-    public void setCourseLocation(String courseLocation) {
-        this.courseLocation = courseLocation;
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public Date getStartTime() {

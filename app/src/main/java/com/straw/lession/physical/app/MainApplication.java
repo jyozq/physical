@@ -5,6 +5,7 @@ import android.app.Application;
 import android.util.Log;
 import android.view.View;
 import com.anupcowkur.reservoir.Reservoir;
+import com.straw.lession.physical.db.DBHelper;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -69,6 +70,7 @@ public class MainApplication extends Application{
         }catch (Exception e){
             Log.e(TAG,e.getMessage());
         }
+        DBHelper.getInstance(this).getWritableDatabase();
     }
 
     public ThreadPoolExecutor getThreadPool() {
