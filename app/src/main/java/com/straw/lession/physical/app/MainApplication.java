@@ -2,10 +2,13 @@ package com.straw.lession.physical.app;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.util.Log;
-import android.view.View;
 import com.anupcowkur.reservoir.Reservoir;
-import com.straw.lession.physical.db.DBHelper;
+import com.straw.lession.physical.db.DaoMaster;
+import com.straw.lession.physical.db.DaoSession;
+
+import org.greenrobot.greendao.database.Database;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -30,8 +33,11 @@ public class MainApplication extends Application{
     private static List<Activity> activitys = null;
     private static MainApplication instance;
 
-
-    public View tipViews;
+    private static DaoMaster daoMaster;
+    private static DaoSession daoSession;
+    public static Database db;
+    //数据库名，表名是自动被创建的
+    public static final String DB_NAME = "sport4kid.db";
 
     public static MainApplication getInstance() {
         if (null == instance) {
@@ -50,8 +56,6 @@ public class MainApplication extends Application{
         activitys = new LinkedList<Activity>();
         instance = this;
         init();
-
-
     }
 
     public static MainApplication getApplication() {
@@ -70,7 +74,6 @@ public class MainApplication extends Application{
         }catch (Exception e){
             Log.e(TAG,e.getMessage());
         }
-        DBHelper.getInstance(this).getWritableDatabase();
     }
 
     public ThreadPoolExecutor getThreadPool() {
@@ -155,6 +158,36 @@ public class MainApplication extends Application{
             }
             activitys.clear();
         }
+    }
+
+    public DaoMaster getDaoMaster(Context context) {
+        if (daoMaster == null) {
+            DaoMaster.OpenHelper helper = new DaoMaster.DevOpenHelper(context,DB_NAME, null);
+            daoMaster = new DaoMaster(helper.getWritableDatabase());
+        }
+        return daoMaster;
+    }
+
+
+    public DaoSession getDaoSession(Context context) {
+        if (daoSession == null) {
+            if (daoMaster == null) {
+                daoMaster = getDaoMaster(context);
+            }
+            daoSession = daoMaster.newSession();
+        }
+        return daoSession;
+    }
+
+
+    public Database getSQLDatebase(Context context) {
+        if (daoSession == null) {
+            if (daoMaster == null) {
+                daoMaster = getDaoMaster(context);
+            }
+            db = daoMaster.getDatabase();
+        }
+        return db;
     }
 
 }

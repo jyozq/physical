@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.StartCourseActivity;
-import com.straw.lession.physical.db.CourseDefineDao;
+import com.straw.lession.physical.app.MainApplication;
 import com.straw.lession.physical.vo.db.CourseDefine;
 import com.straw.lession.physical.vo.item.CourseItemInfo;
 import com.straw.lession.physical.adapter.CourseListViewAdapter;
@@ -31,13 +31,11 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
     private ListView listView;
     private CourseListViewAdapter adapter;
     private List<CourseItemInfo> infoList;
-    private CourseDefineDao mgr;
     private boolean isConnectNet;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mgr = new CourseDefineDao(getActivity());
         ConnectivityManager manager = (ConnectivityManager)mActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
         isConnectNet = manager.getActiveNetworkInfo().isAvailable();
         if(!isConnectNet){  //未连接网络则读取缓存
@@ -62,18 +60,18 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        List<CourseDefine> courseDefines = new ArrayList<>();
+        CourseDefine[] courseDefines = new CourseDefine[2];
         CourseDefine courseDefine = new CourseDefine();
         courseDefine.setName("测试课程1");
         courseDefine.setCode("测试编码1");
-        courseDefines.add(courseDefine);
+        courseDefines[0] = courseDefine;
 
         courseDefine = new CourseDefine();
         courseDefine.setName("测试课程2");
         courseDefine.setCode("测试编码2");
-        courseDefines.add(courseDefine);
+        courseDefines[1] = courseDefine;
 
-        mgr.add(courseDefines);
+        MainApplication.getInstance().getDaoSession(getActivity()).getCourseDefineDao().insertOrReplaceInTx(courseDefines);
         initViews();
     }
 
@@ -112,7 +110,7 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
     }
 
     public void query() {
-        List<CourseDefine> courseDefines = mgr.queryAll();
+        List<CourseDefine> courseDefines = MainApplication.getInstance().getDaoSession(getActivity()).getCourseDefineDao().loadAll();
         infoList.clear();
         CourseDefine courseDefine = null;
         for(int i = 0; i < courseDefines.size(); i++){
