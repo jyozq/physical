@@ -15,6 +15,7 @@ import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.base.ThreadBaseActivity;
 import com.straw.lession.physical.app.MainApplication;
 import com.straw.lession.physical.constant.ParamConstant;
+import com.straw.lession.physical.constant.ReqConstant;
 import com.straw.lession.physical.custom.AlertDialogUtil;
 import com.straw.lession.physical.custom.ClearEditText;
 import com.straw.lession.physical.http.AsyncHttpClient;
@@ -25,6 +26,8 @@ import com.straw.lession.physical.utils.ResponseParseUtils;
 import com.straw.lession.physical.utils.TimeUtils;
 import com.straw.lession.physical.utils.Utils;
 import com.straw.lession.physical.vo.LoginInfo;
+import com.straw.lession.physical.vo.TokenInfo;
+
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
@@ -116,6 +119,16 @@ public class LoginActivity extends ThreadBaseActivity {
 
     }
 
+    @Override
+    protected void loadDataFromService() {
+
+    }
+
+    @Override
+    protected void loadDataFromLocal() {
+
+    }
+
     private void initViews(){
         login = (Button) findViewById(R.id.login);
         reg = (Button) findViewById(R.id.reg);
@@ -131,9 +144,9 @@ public class LoginActivity extends ThreadBaseActivity {
         params.add(new BasicNameValuePair("mobile", userName  ));
         params.add(new BasicNameValuePair("password", password  ));
 
-        final String URL = "http://114.55.100.149:8080/api/auth/teacher/login";
+        final String URL = ReqConstant.URL_BASE + "/auth/teacher/login";
 
-        AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.POST, URL ,params , new AsyncHttpResponseHandler() {
+        AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.POST, URL ,params , null, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(HttpResponseBean httpResponseBean) {
                 super.onSuccess(httpResponseBean);
@@ -144,9 +157,12 @@ public class LoginActivity extends ThreadBaseActivity {
                     if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){ //登录成功
 
                         JSONObject dataObject = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
+                        String userToken = dataObject.getString(ParamConstant.USER_TOKEN);
+                        AppPreference.saveToken(new TokenInfo(userToken));
+                        JSONObject userObject = dataObject.getJSONObject(ParamConstant.USER_INFO);
                         String nowTime = TimeUtils.getCurrentDateStr2();
                         Gson gson = new Gson();
-                        LoginInfo loginInfo = gson.fromJson(dataObject.toString(), LoginInfo.class);
+                        LoginInfo loginInfo = gson.fromJson(userObject.toString(), LoginInfo.class);
                         loginInfo.setNowTime(nowTime);
                         AppPreference.saveLoginInfo(loginInfo);
                         MainApplication.getInstance().popCurrentActivity();

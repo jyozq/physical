@@ -36,20 +36,6 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ConnectivityManager manager = (ConnectivityManager)mActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
-        isConnectNet = manager.getActiveNetworkInfo().isAvailable();
-        if(!isConnectNet){  //未连接网络则读取缓存
-            readDataFromLocal();
-        }else{
-            readDateFromService();
-        }
-    }
-
-    private void readDateFromService() {
-
-    }
-
-    private void readDataFromLocal() {
     }
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

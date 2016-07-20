@@ -32,4 +32,14 @@ public class SplashActivity extends ThreadBaseActivity {
         TaskWorker taskWorker = new TaskWorker(task);
         mThreadPool.submit(taskWorker);
     }
+
+    @Override
+    protected void loadDataFromService() {
+
+    }
+
+    @Override
+    protected void loadDataFromLocal() {
+
+    }
 }

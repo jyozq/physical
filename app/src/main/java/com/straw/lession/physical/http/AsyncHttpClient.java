@@ -4,6 +4,8 @@ package com.straw.lession.physical.http;/**
 
 import android.util.Log;
 
+import com.straw.lession.physical.constant.ReqConstant;
+import com.straw.lession.physical.utils.Detect;
 import com.straw.lession.physical.utils.EncryptUtil;
 import com.straw.lession.physical.utils.LoggerFile;
 import com.straw.lession.physical.utils.ResponseParseUtils;
@@ -48,19 +50,20 @@ public class AsyncHttpClient implements Runnable {
     private AsyncHttpResponseHandler mCallback;
     private RequestType type;
     private RequestParams params;
+    private String token;
 
 	private ArrayList<BasicNameValuePair> basicNameValuePairs;
 
-    private HashMap<String ,JSONArray> params2 = new HashMap<>();
     private boolean isDes = false;  //是否要加密
     
     public AsyncHttpClient(RequestType type , String requestString,
-                           ArrayList<BasicNameValuePair> basicNameValuePairs , AsyncHttpResponseHandler callback ) {
+                           ArrayList<BasicNameValuePair> basicNameValuePairs , String token, AsyncHttpResponseHandler callback ) {
     		this.requestUrl = requestString;
     		this.mCallback = callback;
     		this.type = type;
     		this.basicNameValuePairs = basicNameValuePairs;
     		this.logger4j = LoggerFile.getLog4j(TAG);
+            this.token = token;
         }
 
     public AsyncHttpClient(RequestType type , String requestString,
@@ -73,17 +76,6 @@ public class AsyncHttpClient implements Runnable {
         this.isDes = isDes;
     }
 
-    public AsyncHttpClient(RequestType type , String requestString,
-                           ArrayList<BasicNameValuePair> basicNameValuePairs , HashMap<String ,JSONArray> params2 ,
-                           AsyncHttpResponseHandler callback ) {
-        this.requestUrl = requestString;
-        this.mCallback = callback;
-        this.type = type;
-        this.basicNameValuePairs = basicNameValuePairs;
-        this.params2 = params2;
-        this.logger4j = LoggerFile.getLog4j(TAG);
-    }
-    
     private String createPOSTString() {
 		try {
 			if (basicNameValuePairs == null) {
@@ -150,15 +142,15 @@ public class AsyncHttpClient implements Runnable {
                 || type == RequestType.GET_IMAGE) {
             // GET请求
             try {
-            	//String poststring = createPOSTString();   //leiupdate 2015-07-24
                 String getstring  = createGetString();
                 String newurl = requestUrl + getstring;
-                //logger4j.info("GET url:" + requestUrl);
                 URL url = new URL(newurl);
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setConnectTimeout(CONNECT_TIME_OUT);
                 conn.setReadTimeout(READ_TIME_OUT);
-                conn.connect();
+                if(Detect.notEmpty(token)) {
+                    conn.setRequestProperty("Authorization", ReqConstant.TOKEN_PREFIX + token);
+                }
                 InputStream is = conn.getInputStream();
                 if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
                     if (mCallback != null) {
@@ -177,20 +169,12 @@ public class AsyncHttpClient implements Runnable {
                     if (mCallback != null) {
                     	HttpResponseBean httpResponseBean = new HttpResponseBean();
                     	try{
-                    		/*JSONObject res = new JSONObject(sb.toString());
-                        	if (res.has("header")){
-                        		httpResponseBean.header = res.getJSONObject("header");
-                        	}
-                        	if (res.has("body")){
-                        		httpResponseBean.body = res.getJSONObject("body").toString();
-                        	}*/
                     		httpResponseBean.content = sb.toString();
                     	}catch(Exception e){
                     		
                     	}
                         mCallback.sendSuccessMessage(conn.getResponseCode(), conn.getHeaderFields(), httpResponseBean);
                     }
-                    //logger4j.info("GET 返回:" + sb.toString());
 
                 } else {
                     logger4j.info("GET  有文件下载");
@@ -512,4 +496,13 @@ public class AsyncHttpClient implements Runnable {
         /** post请求，上传数据为audio */
         POST_AUDIO;
     }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
 }

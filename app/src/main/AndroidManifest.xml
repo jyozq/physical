@@ -33,22 +33,31 @@
             </intent-filter>
         </activity>
 
-        <activity android:windowSoftInputMode="adjustResize|stateHidden" android:configChanges="orientation|keyboardHidden"
+        <activity android:windowSoftInputMode="adjustResize|stateHidden"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait"
             android:name="com.straw.lession.physical.activity.LoginActivity" android:theme="@style/SplashTheme2">
         </activity>
 
-        <activity android:windowSoftInputMode="adjustResize|stateHidden" android:configChanges="orientation|keyboardHidden"
-                  android:name="com.straw.lession.physical.activity.MainActivity">
+        <activity android:windowSoftInputMode="adjustResize|stateHidden"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:name="com.straw.lession.physical.activity.MainActivity">
         </activity>
 
-        <activity android:name="com.zbar.lib.CaptureActivity"/>
+        <activity android:name="com.zbar.lib.CaptureActivity"
+            android:screenOrientation="portrait"/>
 
-        <activity android:windowSoftInputMode="adjustResize|stateHidden" android:configChanges="orientation|keyboardHidden"
-                  android:name="com.straw.lession.physical.activity.StartCourseActivity">
+        <activity android:windowSoftInputMode="adjustResize|stateHidden"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
+            android:name="com.straw.lession.physical.activity.StartCourseActivity">
         </activity>
 
-        <activity android:windowSoftInputMode="adjustResize|stateHidden" android:configChanges="orientation|keyboardHidden"
-                  android:name="com.straw.lession.physical.activity.CourseActivity">
+        <activity android:windowSoftInputMode="adjustResize|stateHidden"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:name="com.straw.lession.physical.activity.CourseActivity">
         </activity>
     </application>
 

@@ -6,19 +6,35 @@ import android.os.Message;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.*;
+
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.base.ThreadBaseActivity;
 import com.straw.lession.physical.adapter.SchoolSpinnerAdapter;
 import com.straw.lession.physical.app.MainApplication;
+import com.straw.lession.physical.constant.ParamConstant;
+import com.straw.lession.physical.constant.ReqConstant;
+import com.straw.lession.physical.custom.AlertDialogUtil;
 import com.straw.lession.physical.fragment.ClassFragment;
 import com.straw.lession.physical.fragment.CourseFragment;
 import com.straw.lession.physical.fragment.ProfileFragment;
 import com.straw.lession.physical.fragment.TodayFragment;
+import com.straw.lession.physical.http.AsyncHttpClient;
+import com.straw.lession.physical.http.AsyncHttpResponseHandler;
+import com.straw.lession.physical.http.HttpResponseBean;
+import com.straw.lession.physical.utils.AppPreference;
+import com.straw.lession.physical.utils.ResponseParseUtils;
+import com.straw.lession.physical.utils.Utils;
+import com.straw.lession.physical.vo.TokenInfo;
 import com.straw.lession.physical.vo.item.SchoolInfo;
 
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +42,7 @@ import java.util.List;
  * Created by straw on 2016/7/5.
  */
 public class MainActivity extends ThreadBaseActivity implements View.OnClickListener {
+    private static final String TAG = "MainActivity";
     private static final int CURRENT_PAGE_TODAY = 0;
     private static final int CURRENT_PAGE_SCHEDULE = 1;
     private static final int CURRENT_PAGE_PROFILE = 2;
@@ -67,13 +84,65 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         toolbar = (Toolbar)this.findViewById(R.id.id_tool_bar);
         setSupportActionBar(toolbar);
         MainApplication.getInstance().addActivity(this);
-
+        getDataByNetSate();
         // 初始化控件
         initView();
         // 初始化底部按钮事件
         initEvent();
         // 初始化并设置当前Fragment
         initFragment(CURRENT_PAGE_TODAY);
+    }
+
+    @Override
+    protected void loadDataFromService() {
+        showProgressDialog(getResources().getString(R.string.loading));
+        TokenInfo tokenInfo = null;
+        try {
+            tokenInfo = AppPreference.getUserToken();
+            checkTokenInfo(tokenInfo);
+        } catch (IOException e) {
+            Log.e(TAG,"获取token出错",e);
+            e.printStackTrace();
+            return;
+        }
+        final ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+        String URL = ReqConstant.URL_BASE + "/course/define/full";
+        AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.GET, URL ,params , tokenInfo.getToken(), new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(HttpResponseBean httpResponseBean) {
+                super.onSuccess(httpResponseBean);
+                try{
+                    hideProgressDialog();
+                    JSONObject contentObject = new JSONObject(httpResponseBean.content);
+                    String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
+                    if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){ //登录成功
+
+
+                    }else {//登录失败
+                        String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);
+                        AlertDialogUtil.showAlertWindow(mContext, -1, errorMessage , null );
+                    }
+                }catch(Exception e){
+                    hideProgressDialog();
+                    showErrorMsgInfo(e.toString());
+                    e.printStackTrace();
+                }
+            }
+            @Override
+            public void onFailure(Throwable error, String content) {
+                super.onFailure(error, content);
+                hideProgressDialog();
+                String errorContent = Utils.parseErrorMessage(mContext, content);
+                showErrorMsgInfo(errorContent);
+                Log.e(TAG, content);
+            }
+        });
+        mThreadPool.execute(asyncHttpClient);
+    }
+
+    @Override
+    protected void loadDataFromLocal() {
+
     }
 
     private void initFragment(int index) {
