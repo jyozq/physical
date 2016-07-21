@@ -15,6 +15,10 @@ public class ClassInfo {
     private String name;
     private Integer type;
     private Integer totalNum;
+    private Long classIdR;
+    private Long instituteId;
+    private Long instituteIdR;
+    private Long loginId;
 
     @Generated
     public ClassInfo() {
@@ -25,12 +29,16 @@ public class ClassInfo {
     }
 
     @Generated
-    public ClassInfo(Long id, String code, String name, Integer type, Integer totalNum) {
+    public ClassInfo(Long id, String code, String name, Integer type, Integer totalNum, Long classIdR, Long instituteId, Long instituteIdR, Long loginId) {
         this.id = id;
         this.code = code;
         this.name = name;
         this.type = type;
         this.totalNum = totalNum;
+        this.classIdR = classIdR;
+        this.instituteId = instituteId;
+        this.instituteIdR = instituteIdR;
+        this.loginId = loginId;
     }
 
     public Long getId() {
@@ -71,6 +79,38 @@ public class ClassInfo {
 
     public void setTotalNum(Integer totalNum) {
         this.totalNum = totalNum;
+    }
+
+    public Long getClassIdR() {
+        return classIdR;
+    }
+
+    public void setClassIdR(Long classIdR) {
+        this.classIdR = classIdR;
+    }
+
+    public Long getInstituteId() {
+        return instituteId;
+    }
+
+    public void setInstituteId(Long instituteId) {
+        this.instituteId = instituteId;
+    }
+
+    public Long getInstituteIdR() {
+        return instituteIdR;
+    }
+
+    public void setInstituteIdR(Long instituteIdR) {
+        this.instituteIdR = instituteIdR;
+    }
+
+    public Long getLoginId() {
+        return loginId;
+    }
+
+    public void setLoginId(Long loginId) {
+        this.loginId = loginId;
     }
 
 }

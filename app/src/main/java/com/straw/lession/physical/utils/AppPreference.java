@@ -1,34 +1,49 @@
 package com.straw.lession.physical.utils;
 
-import android.content.Intent;
+import android.content.Context;
 import android.util.Log;
-
 import com.anupcowkur.reservoir.Reservoir;
-import com.google.gson.Gson;
-import com.straw.lession.physical.activity.MainActivity;
 import com.straw.lession.physical.app.MainApplication;
-import com.straw.lession.physical.constant.ParamConstant;
-import com.straw.lession.physical.constant.ReqConstant;
-import com.straw.lession.physical.custom.AlertDialogUtil;
-import com.straw.lession.physical.http.AsyncHttpClient;
-import com.straw.lession.physical.http.AsyncHttpResponseHandler;
-import com.straw.lession.physical.http.HttpResponseBean;
+import com.straw.lession.physical.async.ITask;
+import com.straw.lession.physical.async.TaskHandler;
+import com.straw.lession.physical.async.TaskResult;
+import com.straw.lession.physical.async.TaskWorker;
+import com.straw.lession.physical.task.SaveLoginInfoTask;
 import com.straw.lession.physical.vo.LoginInfo;
 import com.straw.lession.physical.vo.TokenInfo;
-
-import org.json.JSONObject;
-
 import java.io.IOException;
 
-/**
- * Created by Administrator on 2015/12/21.
- */
 public class AppPreference {
+    private static final String TAG = "AppPreference";
     public static final String LOGIN_INFO_KEY = "logininfo";
     public static final String TOKEN_INFO_KEY = "tokeninfo";
 
-    public static void saveLoginInfo(LoginInfo loginInfo) throws Exception {
-        Reservoir.put(LOGIN_INFO_KEY, loginInfo);
+    public static void saveLoginInfo(Context context, final LoginInfo loginInfo) throws Exception {
+        ITask task = new SaveLoginInfoTask(context, new TaskHandler() {
+            @Override
+            public void onSuccess(TaskResult result) {
+                try {
+                    Reservoir.put(LOGIN_INFO_KEY, loginInfo);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.e(TAG,"",e);
+                    throw new IllegalStateException(e.getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable error, String content) {
+                Log.e(TAG,"",error);
+                throw new IllegalStateException(error.getMessage());
+            }
+
+            @Override
+            protected void onSelf() {
+
+            }
+        }, loginInfo);
+        TaskWorker taskWorker = new TaskWorker(task);
+        MainApplication.getInstance().getThreadPool().submit(taskWorker);
     }
 
     public static void saveToken(TokenInfo tokenInfo) throws Exception{
@@ -37,5 +52,9 @@ public class AppPreference {
 
     public static TokenInfo getUserToken() throws IOException {
         return Reservoir.get(TOKEN_INFO_KEY, TokenInfo.class);
+    }
+
+    public static LoginInfo getLoginInfo() throws IOException{
+        return Reservoir.get(LOGIN_INFO_KEY, LoginInfo.class);
     }
 }

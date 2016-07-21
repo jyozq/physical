@@ -87,6 +87,15 @@ public class LoginInfo {
         this.institutes = institutes;
     }
 
+    public long getTeacherId() {
+        return teacherId;
+    }
+
+    public void setTeacherId(long teacherId) {
+        this.teacherId = teacherId;
+    }
+
+    private long teacherId;
     private String birthday;
     private int gender;
     private String lastLoginIp;

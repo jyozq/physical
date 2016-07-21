@@ -13,6 +13,8 @@ public class Institute {
     private Long id;
     private String code;
     private String name;
+    private Long instituteIdR;
+    private Long loginId;
 
     @Generated
     public Institute() {
@@ -23,10 +25,12 @@ public class Institute {
     }
 
     @Generated
-    public Institute(Long id, String code, String name) {
+    public Institute(Long id, String code, String name, Long instituteIdR, Long loginId) {
         this.id = id;
         this.code = code;
         this.name = name;
+        this.instituteIdR = instituteIdR;
+        this.loginId = loginId;
     }
 
     public Long getId() {
@@ -51,6 +55,22 @@ public class Institute {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Long getInstituteIdR() {
+        return instituteIdR;
+    }
+
+    public void setInstituteIdR(Long instituteIdR) {
+        this.instituteIdR = instituteIdR;
+    }
+
+    public Long getLoginId() {
+        return loginId;
+    }
+
+    public void setLoginId(Long loginId) {
+        this.loginId = loginId;
     }
 
 }

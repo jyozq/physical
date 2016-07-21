@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import com.straw.lession.physical.R;
+import com.straw.lession.physical.vo.LoginInfo;
 import com.straw.lession.physical.vo.item.SchoolInfo;
 
 import java.util.List;
@@ -19,11 +20,11 @@ import java.util.List;
  */
 public class SchoolSpinnerAdapter extends ArrayAdapter{
     private static final String TAG = "SchoolSpinnerAdapter";
-    private List<SchoolInfo> mList;
+    private List<LoginInfo.Institute> mList;
     private Context mContext;
     private Spinner spinner;
 
-    public SchoolSpinnerAdapter(Context pContext, Spinner spinner, List<SchoolInfo> pList){
+    public SchoolSpinnerAdapter(Context pContext, Spinner spinner, List<LoginInfo.Institute> pList){
         super(pContext,android.R.layout.simple_spinner_item,pList);
         this.mContext = pContext;
         this.mList = pList;
@@ -51,8 +52,8 @@ public class SchoolSpinnerAdapter extends ArrayAdapter{
         convertView=_LayoutInflater.inflate(R.layout.school_item_spinner, null);
         if(convertView!=null) {
             TextView school_label = (TextView)convertView.findViewById(R.id.school_label);
-            Log.i(TAG,mList.get(position).getName());
-            school_label.setText(mList.get(position).getName());
+            Log.i(TAG,mList.get(position).getInsName());
+            school_label.setText(mList.get(position).getInsName());
         }
         return convertView;
     }
@@ -65,7 +66,7 @@ public class SchoolSpinnerAdapter extends ArrayAdapter{
                 .findViewById(R.id.school_label);
         ImageView check = (ImageView) view
                 .findViewById(R.id.school_checked_image);
-        label.setText(mList.get(position).getName());
+        label.setText(mList.get(position).getInsName());
         if (spinner.getSelectedItemPosition() == position) {
             check.setVisibility(View.VISIBLE);
             check.setImageResource(R.mipmap.checkmark_icon);

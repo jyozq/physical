@@ -16,6 +16,9 @@ public class Student {
     private Integer gender;
     private java.util.Date birthday;
     private Long classId;
+    private Long classIdR;
+    private Long studentIdR;
+    private Long loginId;
 
     @Generated
     public Student() {
@@ -26,13 +29,16 @@ public class Student {
     }
 
     @Generated
-    public Student(Long id, String code, String name, Integer gender, java.util.Date birthday, Long classId) {
+    public Student(Long id, String code, String name, Integer gender, java.util.Date birthday, Long classId, Long classIdR, Long studentIdR, Long loginId) {
         this.id = id;
         this.code = code;
         this.name = name;
         this.gender = gender;
         this.birthday = birthday;
         this.classId = classId;
+        this.classIdR = classIdR;
+        this.studentIdR = studentIdR;
+        this.loginId = loginId;
     }
 
     public Long getId() {
@@ -81,6 +87,30 @@ public class Student {
 
     public void setClassId(Long classId) {
         this.classId = classId;
+    }
+
+    public Long getClassIdR() {
+        return classIdR;
+    }
+
+    public void setClassIdR(Long classIdR) {
+        this.classIdR = classIdR;
+    }
+
+    public Long getStudentIdR() {
+        return studentIdR;
+    }
+
+    public void setStudentIdR(Long studentIdR) {
+        this.studentIdR = studentIdR;
+    }
+
+    public Long getLoginId() {
+        return loginId;
+    }
+
+    public void setLoginId(Long loginId) {
+        this.loginId = loginId;
     }
 
 }

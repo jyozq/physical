@@ -23,10 +23,11 @@ public class MyDaoGenerator {
         addClassInfoDefine(schema);
         addStudentDefine(schema);
         addInstitudeDefine(schema);
-
+        addTeacherDefine(schema);
         // 最后我们将使用 DAOGenerator 类的 generateAll() 方法自动生成代码，此处你需要根据自己的情况更改输出目录（既之前创建的 java-gen)。
         // 其实，输出目录的路径可以在 build.gradle 中设置，有兴趣的朋友可以自行搜索，这里就不再详解。
-        new DaoGenerator().generateAll(schema, "H:\\androidprojects\\mine\\physical\\app\\src\\main\\java");
+//        new DaoGenerator().generateAll(schema, "H:\\androidprojects\\mine\\physical\\app\\src\\main\\java");
+        new DaoGenerator().generateAll(schema, "D:\\work\\AndroidStudioProjects\\mine\\physical\\app\\src\\main\\java");
     }
 
     private static void addInstitudeDefine(Schema schema) {
@@ -42,6 +43,8 @@ public class MyDaoGenerator {
         // 与在 Java 中使用驼峰命名法不同，默认数据库中的命名是使用大写和下划线来分割单词的。
         // For example, a property called “creationDate” will become a database column “CREATION_DATE”.
         note.addStringProperty("name");
+        note.addLongProperty("instituteIdR");
+        note.addLongProperty("loginId");
     }
 
     private static void addStudentDefine(Schema schema) {
@@ -60,6 +63,9 @@ public class MyDaoGenerator {
         note.addIntProperty("gender");
         note.addDateProperty("birthday");
         note.addLongProperty("classId");
+        note.addLongProperty("classIdR");
+        note.addLongProperty("studentIdR");
+        note.addLongProperty("loginId");
     }
 
     private static void addClassInfoDefine(Schema schema) {
@@ -77,6 +83,10 @@ public class MyDaoGenerator {
         note.addStringProperty("name");
         note.addIntProperty("type");
         note.addIntProperty("totalNum");
+        note.addLongProperty("classIdR");
+        note.addLongProperty("instituteId");
+        note.addLongProperty("instituteIdR");
+        note.addLongProperty("loginId");
     }
 
     private static void addCourseDefine(Schema schema) {
@@ -94,7 +104,9 @@ public class MyDaoGenerator {
         note.addStringProperty("name");
         note.addStringProperty("type");
         note.addLongProperty("instituteId");
+        note.addLongProperty("instituteIdR");
         note.addLongProperty("classId");
+        note.addLongProperty("classIdR");
         note.addLongProperty("teacherId");
         note.addIntProperty("weekDay");
         note.addDateProperty("date");
@@ -103,5 +115,16 @@ public class MyDaoGenerator {
         note.addDateProperty("startTime");
         note.addDateProperty("endTime");
         note.addIntProperty("useOnce");
+        note.addLongProperty("courseDefineIdR");
+        note.addLongProperty("loginId");
+    }
+
+    private static void addTeacherDefine(Schema schema){
+        Entity note = schema.addEntity("Teacher");
+        note.addIdProperty();
+        note.addStringProperty("name");
+        note.addStringProperty("mobile");
+        note.addDateProperty("last_login_time");
+        note.addLongProperty("teacherIdR");
     }
 }

@@ -15,7 +15,9 @@ public class CourseDefine {
     private String name;
     private String type;
     private Long instituteId;
+    private Long instituteIdR;
     private Long classId;
+    private Long classIdR;
     private Long teacherId;
     private Integer weekDay;
     private java.util.Date date;
@@ -24,6 +26,8 @@ public class CourseDefine {
     private java.util.Date startTime;
     private java.util.Date endTime;
     private Integer useOnce;
+    private Long courseDefineIdR;
+    private Long loginId;
 
     @Generated
     public CourseDefine() {
@@ -34,13 +38,15 @@ public class CourseDefine {
     }
 
     @Generated
-    public CourseDefine(Long id, String code, String name, String type, Long instituteId, Long classId, Long teacherId, Integer weekDay, java.util.Date date, Integer seq, String location, java.util.Date startTime, java.util.Date endTime, Integer useOnce) {
+    public CourseDefine(Long id, String code, String name, String type, Long instituteId, Long instituteIdR, Long classId, Long classIdR, Long teacherId, Integer weekDay, java.util.Date date, Integer seq, String location, java.util.Date startTime, java.util.Date endTime, Integer useOnce, Long courseDefineIdR, Long loginId) {
         this.id = id;
         this.code = code;
         this.name = name;
         this.type = type;
         this.instituteId = instituteId;
+        this.instituteIdR = instituteIdR;
         this.classId = classId;
+        this.classIdR = classIdR;
         this.teacherId = teacherId;
         this.weekDay = weekDay;
         this.date = date;
@@ -49,6 +55,8 @@ public class CourseDefine {
         this.startTime = startTime;
         this.endTime = endTime;
         this.useOnce = useOnce;
+        this.courseDefineIdR = courseDefineIdR;
+        this.loginId = loginId;
     }
 
     public Long getId() {
@@ -91,12 +99,28 @@ public class CourseDefine {
         this.instituteId = instituteId;
     }
 
+    public Long getInstituteIdR() {
+        return instituteIdR;
+    }
+
+    public void setInstituteIdR(Long instituteIdR) {
+        this.instituteIdR = instituteIdR;
+    }
+
     public Long getClassId() {
         return classId;
     }
 
     public void setClassId(Long classId) {
         this.classId = classId;
+    }
+
+    public Long getClassIdR() {
+        return classIdR;
+    }
+
+    public void setClassIdR(Long classIdR) {
+        this.classIdR = classIdR;
     }
 
     public Long getTeacherId() {
@@ -161,6 +185,22 @@ public class CourseDefine {
 
     public void setUseOnce(Integer useOnce) {
         this.useOnce = useOnce;
+    }
+
+    public Long getCourseDefineIdR() {
+        return courseDefineIdR;
+    }
+
+    public void setCourseDefineIdR(Long courseDefineIdR) {
+        this.courseDefineIdR = courseDefineIdR;
+    }
+
+    public Long getLoginId() {
+        return loginId;
+    }
+
+    public void setLoginId(Long loginId) {
+        this.loginId = loginId;
     }
 
 }

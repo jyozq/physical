@@ -15,6 +15,10 @@ import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.base.ThreadBaseActivity;
 import com.straw.lession.physical.adapter.SchoolSpinnerAdapter;
 import com.straw.lession.physical.app.MainApplication;
+import com.straw.lession.physical.async.ITask;
+import com.straw.lession.physical.async.TaskHandler;
+import com.straw.lession.physical.async.TaskResult;
+import com.straw.lession.physical.async.TaskWorker;
 import com.straw.lession.physical.constant.ParamConstant;
 import com.straw.lession.physical.constant.ReqConstant;
 import com.straw.lession.physical.custom.AlertDialogUtil;
@@ -25,13 +29,22 @@ import com.straw.lession.physical.fragment.TodayFragment;
 import com.straw.lession.physical.http.AsyncHttpClient;
 import com.straw.lession.physical.http.AsyncHttpResponseHandler;
 import com.straw.lession.physical.http.HttpResponseBean;
+import com.straw.lession.physical.task.AddDataToDBTask;
+import com.straw.lession.physical.task.DeleteAllDataTask;
 import com.straw.lession.physical.utils.AppPreference;
+import com.straw.lession.physical.utils.DateUtil;
 import com.straw.lession.physical.utils.ResponseParseUtils;
 import com.straw.lession.physical.utils.Utils;
+import com.straw.lession.physical.vo.LoginInfo;
 import com.straw.lession.physical.vo.TokenInfo;
-import com.straw.lession.physical.vo.item.SchoolInfo;
 
+import com.straw.lession.physical.vo.db.ClassInfo;
+import com.straw.lession.physical.vo.db.CourseDefine;
+import com.straw.lession.physical.vo.db.Institute;
+import com.straw.lession.physical.vo.db.Student;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -76,10 +89,25 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
     private ClassFragment classFragment;
 
     private Spinner spinner;
+    private LoginInfo loginInfo;
+    private TokenInfo tokenInfo;
+    private List<Institute> institutes = new ArrayList<>();
+    private List<CourseDefine> courseDefines = new ArrayList<>();
+    private List<ClassInfo> classes = new ArrayList<>();
+    private List<Student> students = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            loginInfo = AppPreference.getLoginInfo();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e(TAG,"",e);
+        }
+        if(loginInfo == null){
+            return;
+        }
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar)this.findViewById(R.id.id_tool_bar);
         setSupportActionBar(toolbar);
@@ -96,7 +124,6 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
     @Override
     protected void loadDataFromService() {
         showProgressDialog(getResources().getString(R.string.loading));
-        TokenInfo tokenInfo = null;
         try {
             tokenInfo = AppPreference.getUserToken();
             checkTokenInfo(tokenInfo);
@@ -105,6 +132,31 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
             e.printStackTrace();
             return;
         }
+
+        //有网络的情况下，可重新获取所有的数据，需要先删除之前的旧数据
+        deleteAllData();
+    }
+
+    private void deleteAllData() {
+        ITask deleteAllDataTask = new DeleteAllDataTask(this, new TaskHandler(){
+            @Override
+            public void onSuccess(TaskResult result) {
+                getInstituteCoursedefineClassStudentInfo();
+            }
+
+            @Override
+            public void onFailure(Throwable error, String content) {
+
+            }
+
+            @Override
+            protected void onSelf() {
+
+            }
+        },loginInfo);
+    }
+
+    private void getInstituteCoursedefineClassStudentInfo() {
         final ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
         String URL = ReqConstant.URL_BASE + "/course/define/full";
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.GET, URL ,params , tokenInfo.getToken(), new AsyncHttpResponseHandler() {
@@ -116,8 +168,9 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
                     JSONObject contentObject = new JSONObject(httpResponseBean.content);
                     String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
                     if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){ //登录成功
-
-
+                        JSONObject dataObject = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
+                        assembleData(dataObject);
+                        addDataToDB();
                     }else {//登录失败
                         String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);
                         AlertDialogUtil.showAlertWindow(mContext, -1, errorMessage , null );
@@ -138,6 +191,202 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
             }
         });
         mThreadPool.execute(asyncHttpClient);
+    }
+
+    private void addDataToDB() {
+        ITask addInstitudeTask = new AddDataToDBTask(this, new TaskHandler() {
+            @Override
+            public void onSuccess(TaskResult result) {
+                for(int i = 0; i < classes.size(); i ++){
+                    ClassInfo classInfo = classes.get(i);
+                    for(int j = 0; j < institutes.size(); j ++){
+                        Institute institute = institutes.get(j);
+                        if(classInfo.getInstituteIdR() == institute.getInstituteIdR()){
+                            classInfo.setInstituteId(institute.getId());
+                            break;
+                        }
+                    }
+                }
+                addClassInfoToDB();
+            }
+
+            @Override
+            public void onFailure(Throwable error, String content) {
+
+            }
+
+            @Override
+            protected void onSelf() {
+
+            }
+        },institutes,Institute.class);
+        TaskWorker taskWorker = new TaskWorker(addInstitudeTask);
+        mThreadPool.submit(taskWorker);
+    }
+
+    private void addClassInfoToDB() {
+        ITask addClassInfoTask = new AddDataToDBTask(this, new TaskHandler() {
+            @Override
+            public void onSuccess(TaskResult result) {
+                for(int i = 0; i < students.size(); i ++){
+                    Student student = students.get(i);
+                    for(int j = 0; j < classes.size(); j ++){
+                        ClassInfo classInfo = classes.get(j);
+                        if(student.getClassIdR() == classInfo.getClassIdR()){
+                            student.setClassId(classInfo.getId());
+                            break;
+                        }
+                    }
+                }
+                addStudentToDB();
+            }
+
+            @Override
+            public void onFailure(Throwable error, String content) {
+
+            }
+
+            @Override
+            protected void onSelf() {
+
+            }
+        },classes,ClassInfo.class);
+        TaskWorker taskWorker = new TaskWorker(addClassInfoTask);
+        mThreadPool.submit(taskWorker);
+    }
+
+    private void addStudentToDB() {
+        ITask addClassInfoTask = new AddDataToDBTask(this, new TaskHandler() {
+            @Override
+            public void onSuccess(TaskResult result) {
+                for(int i = 0; i < courseDefines.size(); i ++){
+                    CourseDefine courseDefine = courseDefines.get(i);
+                    for(int j = 0; j < institutes.size(); j ++){
+                        Institute institute = institutes.get(j);
+                        if(courseDefine.getInstituteIdR() == institute.getInstituteIdR()){
+                            courseDefine.setInstituteId(institute.getId());
+                            break;
+                        }
+                    }
+
+                    for(int j = 0; j < classes.size(); j ++){
+                        ClassInfo classInfo = classes.get(j);
+                        if(courseDefine.getClassIdR() == classInfo.getClassIdR()){
+                            courseDefine.setClassId(classInfo.getId());
+                            break;
+                        }
+                    }
+                }
+
+                addCourseDefineToDB();
+            }
+
+            @Override
+            public void onFailure(Throwable error, String content) {
+
+            }
+
+            @Override
+            protected void onSelf() {
+
+            }
+        },students,Student.class);
+        TaskWorker taskWorker = new TaskWorker(addClassInfoTask);
+        mThreadPool.submit(taskWorker);
+    }
+
+    private void addCourseDefineToDB() {
+        ITask addClassInfoTask = new AddDataToDBTask(this, new TaskHandler() {
+            @Override
+            public void onSuccess(TaskResult result) {
+            }
+
+            @Override
+            public void onFailure(Throwable error, String content) {
+
+            }
+
+            @Override
+            protected void onSelf() {
+
+            }
+        },courseDefines,CourseDefine.class);
+        TaskWorker taskWorker = new TaskWorker(addClassInfoTask);
+        mThreadPool.submit(taskWorker);
+    }
+
+    private void assembleData(JSONObject dataObject) throws JSONException {
+        JSONArray instituteArr = dataObject.getJSONArray("institutes");
+        for(int i = 0; i < instituteArr.length(); i ++){
+            JSONObject instituteObj = instituteArr.getJSONObject(i);
+            Institute institute = new Institute();
+            assembleInstitute(institute, instituteObj);
+            institutes.add(institute);
+        }
+    }
+
+    private void assembleInstitute(Institute institute, JSONObject instituteObj) throws JSONException {
+        institute.setInstituteIdR(instituteObj.getLong("instituteId"));
+        institute.setName(instituteObj.getString("instituteName"));
+        institute.setLoginId(loginInfo.getTeacherId());
+
+        JSONArray classArr = instituteObj.getJSONArray("classes");
+        for(int i = 0; i < classArr.length(); i ++){
+            JSONObject classObj = classArr.getJSONObject(i);
+            ClassInfo classInfo = new ClassInfo();
+            assembleClass(classInfo, classObj);
+            classInfo.setInstituteIdR(institute.getInstituteIdR());
+            classes.add(classInfo);
+        }
+
+        JSONArray courseArr = instituteObj.getJSONArray("courseDefines");
+        for(int i = 0; i < courseArr.length(); i ++){
+            JSONObject courseObj = courseArr.getJSONObject(i);
+            CourseDefine courseDefine = new CourseDefine();
+            assembleCourseDefine(courseDefine, courseObj);
+            courseDefines.add(courseDefine);
+        }
+    }
+
+    private void assembleCourseDefine(CourseDefine courseDefine, JSONObject courseObj) throws JSONException {
+        courseDefine.setClassIdR(courseObj.getLong("classId"));
+        courseDefine.setCode(courseObj.getString("courseCode"));
+        courseDefine.setCourseDefineIdR(courseObj.getLong("courseDefineId"));
+        courseDefine.setLocation(courseObj.getString("courseLocation"));
+        courseDefine.setName(courseObj.getString("courseName"));
+        courseDefine.setSeq(courseObj.getInt("courseSeq"));
+        courseDefine.setType(courseObj.getString("courseType"));
+        courseDefine.setInstituteIdR(courseObj.getLong("instituteId"));
+        courseDefine.setUseOnce(courseObj.getInt("useOnce"));
+        courseDefine.setWeekDay(courseObj.getInt("weekday"));
+        courseDefine.setLoginId(loginInfo.getTeacherId());
+    }
+
+    private void assembleClass(ClassInfo classInfo, JSONObject classObj) throws JSONException {
+        classInfo.setCode(classObj.getString("classCode"));
+        classInfo.setClassIdR(classObj.getLong("classId"));
+        classInfo.setName(classObj.getString("className"));
+        classInfo.setType(classObj.getInt("classType"));
+        classInfo.setTotalNum(classObj.getInt("totalNum"));
+        classInfo.setLoginId(loginInfo.getTeacherId());
+
+        JSONArray studentArr = classObj.getJSONArray("students");
+        for(int i = 0; i < studentArr.length(); i ++){
+            JSONObject studentObj = studentArr.getJSONObject(i);
+            Student student = new Student();
+            assembleStudent(student, studentObj);
+            student.setClassIdR(classInfo.getClassIdR());
+            students.add(student);
+        }
+    }
+
+    private void assembleStudent(Student student, JSONObject studentObj) throws JSONException {
+        student.setName(studentObj.getString("studentName"));
+        student.setCode(studentObj.getString("studentCode"));
+        student.setBirthday(DateUtil.formatSToDate(studentObj.getString("birthday")));
+        student.setGender(studentObj.getInt("gender"));
+        student.setStudentIdR(studentObj.getLong("studentId"));
+        student.setLoginId(loginInfo.getTeacherId());
     }
 
     @Override
@@ -231,11 +480,8 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         btn_add_course.setOnClickListener(this);
         btn_sync.setOnClickListener(this);
 
-        final List<SchoolInfo> schoolInfoList = new ArrayList<SchoolInfo>();
-        schoolInfoList.add(new SchoolInfo("一小","one"));
-        schoolInfoList.add(new SchoolInfo("二小","two"));
-        schoolInfoList.add(new SchoolInfo("三小","three"));
-        SchoolSpinnerAdapter schoolSpinnerAdapter = new SchoolSpinnerAdapter(this, spinner, schoolInfoList);
+        final List<LoginInfo.Institute> institutes = loginInfo.getInstitutes();
+        SchoolSpinnerAdapter schoolSpinnerAdapter = new SchoolSpinnerAdapter(this, spinner, institutes);
         schoolSpinnerAdapter.setDropDownViewResource(R.layout.school_item_spinner_dropdown);
         spinner.setAdapter(schoolSpinnerAdapter);
         spinner.setDropDownVerticalOffset(15);
@@ -243,7 +489,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
             @Override
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int pos, long id) {
-                Toast.makeText(MainActivity.this, "你点击的是:"+schoolInfoList.get(pos).getName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "你点击的是:"+institutes.get(pos).getInsName(), Toast.LENGTH_SHORT).show();
             }
 
             @Override

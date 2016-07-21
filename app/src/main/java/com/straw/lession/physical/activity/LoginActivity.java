@@ -164,7 +164,7 @@ public class LoginActivity extends ThreadBaseActivity {
                         Gson gson = new Gson();
                         LoginInfo loginInfo = gson.fromJson(userObject.toString(), LoginInfo.class);
                         loginInfo.setNowTime(nowTime);
-                        AppPreference.saveLoginInfo(loginInfo);
+                        AppPreference.saveLoginInfo(LoginActivity.this,loginInfo);
                         MainApplication.getInstance().popCurrentActivity();
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     }else {//登录失败

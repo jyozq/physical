@@ -5,7 +5,7 @@ import android.os.Bundle;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.base.ThreadBaseActivity;
 import com.straw.lession.physical.async.*;
-import com.straw.lession.physical.db.CreateDBTask;
+import com.straw.lession.physical.task.CreateDBTask;
 
 public class SplashActivity extends ThreadBaseActivity {
 
