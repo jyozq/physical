@@ -101,7 +101,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         try {
             loginInfo = AppPreference.getLoginInfo();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Log.e(TAG,"",e);
         }
@@ -154,6 +154,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
 
             }
         },loginInfo);
+        mThreadPool.submit(new TaskWorker(deleteAllDataTask));
     }
 
     private void getInstituteCoursedefineClassStudentInfo() {
@@ -383,7 +384,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
     private void assembleStudent(Student student, JSONObject studentObj) throws JSONException {
         student.setName(studentObj.getString("studentName"));
         student.setCode(studentObj.getString("studentCode"));
-        student.setBirthday(DateUtil.formatSToDate(studentObj.getString("birthday")));
+        student.setBirthday(DateUtil.formatStrToDate(studentObj.getString("birthday")));
         student.setGender(studentObj.getInt("gender"));
         student.setStudentIdR(studentObj.getLong("studentId"));
         student.setLoginId(loginInfo.getTeacherId());

@@ -36,15 +36,14 @@ public class SaveLoginInfoTask extends BaseTask{
             List<Teacher> teachers = query.list();
             if(teachers.size() > 0){
                 loginInfo.setTeacherId(teachers.get(0).getId());
+            }else {
+                Teacher teacher = new Teacher();
+                teacher.setLast_login_time(new Date());
+                teacher.setMobile(loginInfo.getMobile());
+                teacher.setName(loginInfo.getPersonName());
+                teacher.setTeacherIdR(loginInfo.getUserId());
+                loginInfo.setTeacherId(teacherDao.insertOrReplace(teacher));
             }
-
-
-            Teacher teacher = new Teacher();
-            teacher.setLast_login_time(new Date());
-            teacher.setMobile(loginInfo.getMobile());
-            teacher.setName(loginInfo.getPersonName());
-            teacher.setTeacherIdR(loginInfo.getUserId());
-            loginInfo.setTeacherId(teacherDao.insert(teacher));
             TaskResult result = new TaskResult();
             result.setResultCode(TaskConstant.SUCCESS_CODE);
             result.setResultMsg("登录信息入库成功");
