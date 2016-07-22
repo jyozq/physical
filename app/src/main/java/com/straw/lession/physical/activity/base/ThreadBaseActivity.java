@@ -199,6 +199,7 @@ public abstract class ThreadBaseActivity extends AppCompatActivity {
                 public void onSuccess(HttpResponseBean httpResponseBean) {
                     super.onSuccess(httpResponseBean);
                     try{
+                        hideProgressDialog();
                         JSONObject contentObject = new JSONObject(httpResponseBean.content);
                         String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
                         if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){ //登录成功

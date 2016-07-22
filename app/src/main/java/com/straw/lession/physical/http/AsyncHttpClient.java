@@ -1,4 +1,5 @@
-package com.straw.lession.physical.http;/**
+package com.straw.lession.physical.http;
+/**
  * Created by Administrator on 2014-10-13.
  */
 
@@ -11,7 +12,6 @@ import com.straw.lession.physical.utils.LoggerFile;
 import com.straw.lession.physical.utils.ResponseParseUtils;
 
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -27,7 +27,6 @@ import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 

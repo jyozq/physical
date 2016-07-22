@@ -29,6 +29,7 @@ import com.straw.lession.physical.fragment.TodayFragment;
 import com.straw.lession.physical.http.AsyncHttpClient;
 import com.straw.lession.physical.http.AsyncHttpResponseHandler;
 import com.straw.lession.physical.http.HttpResponseBean;
+import com.straw.lession.physical.task.AddAllDataToDBTask;
 import com.straw.lession.physical.task.AddDataToDBTask;
 import com.straw.lession.physical.task.DeleteAllDataTask;
 import com.straw.lession.physical.utils.AppPreference;
@@ -115,6 +116,9 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         getDataByNetSate();
         // 初始化控件
         initView();
+    }
+
+    private void goOnLoad(){
         // 初始化底部按钮事件
         initEvent();
         // 初始化并设置当前Fragment
@@ -138,15 +142,20 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
     }
 
     private void deleteAllData() {
+        showProgressDialog(getResources().getString(R.string.loading));
         ITask deleteAllDataTask = new DeleteAllDataTask(this, new TaskHandler(){
             @Override
             public void onSuccess(TaskResult result) {
+                hideProgressDialog();
                 getInstituteCoursedefineClassStudentInfo();
             }
 
             @Override
             public void onFailure(Throwable error, String content) {
-
+                hideProgressDialog();
+                String errorContent = Utils.parseErrorMessage(mContext, content);
+                showErrorMsgInfo(errorContent);
+                Log.e(TAG, content);
             }
 
             @Override
@@ -158,6 +167,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
     }
 
     private void getInstituteCoursedefineClassStudentInfo() {
+        showProgressDialog(getResources().getString(R.string.loading));
         final ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
         String URL = ReqConstant.URL_BASE + "/course/define/full";
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.GET, URL ,params , tokenInfo.getToken(), new AsyncHttpResponseHandler() {
@@ -195,124 +205,28 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
     }
 
     private void addDataToDB() {
-        ITask addInstitudeTask = new AddDataToDBTask(this, new TaskHandler() {
+        showProgressDialog(getResources().getString(R.string.loading));
+        ITask addAllDataToDBTask = new AddAllDataToDBTask(this, new TaskHandler() {
             @Override
             public void onSuccess(TaskResult result) {
-                for(int i = 0; i < classes.size(); i ++){
-                    ClassInfo classInfo = classes.get(i);
-                    for(int j = 0; j < institutes.size(); j ++){
-                        Institute institute = institutes.get(j);
-                        if(classInfo.getInstituteIdR() == institute.getInstituteIdR()){
-                            classInfo.setInstituteId(institute.getId());
-                            break;
-                        }
-                    }
-                }
-                addClassInfoToDB();
+                hideProgressDialog();
+                goOnLoad();
             }
 
             @Override
-            public void onFailure(Throwable error, String content) {
-
+            public void onFailure(Throwable e, String content) {
+                hideProgressDialog();
+                String errorContent = Utils.parseErrorMessage(mContext, content);
+                showErrorMsgInfo(errorContent);
+                Log.e(TAG, content);
             }
 
             @Override
             protected void onSelf() {
 
             }
-        },institutes,Institute.class);
-        TaskWorker taskWorker = new TaskWorker(addInstitudeTask);
-        mThreadPool.submit(taskWorker);
-    }
-
-    private void addClassInfoToDB() {
-        ITask addClassInfoTask = new AddDataToDBTask(this, new TaskHandler() {
-            @Override
-            public void onSuccess(TaskResult result) {
-                for(int i = 0; i < students.size(); i ++){
-                    Student student = students.get(i);
-                    for(int j = 0; j < classes.size(); j ++){
-                        ClassInfo classInfo = classes.get(j);
-                        if(student.getClassIdR() == classInfo.getClassIdR()){
-                            student.setClassId(classInfo.getId());
-                            break;
-                        }
-                    }
-                }
-                addStudentToDB();
-            }
-
-            @Override
-            public void onFailure(Throwable error, String content) {
-
-            }
-
-            @Override
-            protected void onSelf() {
-
-            }
-        },classes,ClassInfo.class);
-        TaskWorker taskWorker = new TaskWorker(addClassInfoTask);
-        mThreadPool.submit(taskWorker);
-    }
-
-    private void addStudentToDB() {
-        ITask addClassInfoTask = new AddDataToDBTask(this, new TaskHandler() {
-            @Override
-            public void onSuccess(TaskResult result) {
-                for(int i = 0; i < courseDefines.size(); i ++){
-                    CourseDefine courseDefine = courseDefines.get(i);
-                    for(int j = 0; j < institutes.size(); j ++){
-                        Institute institute = institutes.get(j);
-                        if(courseDefine.getInstituteIdR() == institute.getInstituteIdR()){
-                            courseDefine.setInstituteId(institute.getId());
-                            break;
-                        }
-                    }
-
-                    for(int j = 0; j < classes.size(); j ++){
-                        ClassInfo classInfo = classes.get(j);
-                        if(courseDefine.getClassIdR() == classInfo.getClassIdR()){
-                            courseDefine.setClassId(classInfo.getId());
-                            break;
-                        }
-                    }
-                }
-
-                addCourseDefineToDB();
-            }
-
-            @Override
-            public void onFailure(Throwable error, String content) {
-
-            }
-
-            @Override
-            protected void onSelf() {
-
-            }
-        },students,Student.class);
-        TaskWorker taskWorker = new TaskWorker(addClassInfoTask);
-        mThreadPool.submit(taskWorker);
-    }
-
-    private void addCourseDefineToDB() {
-        ITask addClassInfoTask = new AddDataToDBTask(this, new TaskHandler() {
-            @Override
-            public void onSuccess(TaskResult result) {
-            }
-
-            @Override
-            public void onFailure(Throwable error, String content) {
-
-            }
-
-            @Override
-            protected void onSelf() {
-
-            }
-        },courseDefines,CourseDefine.class);
-        TaskWorker taskWorker = new TaskWorker(addClassInfoTask);
+        },institutes,classes,students,courseDefines);
+        TaskWorker taskWorker = new TaskWorker(addAllDataToDBTask);
         mThreadPool.submit(taskWorker);
     }
 
@@ -331,21 +245,29 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         institute.setName(instituteObj.getString("instituteName"));
         institute.setLoginId(loginInfo.getTeacherId());
 
-        JSONArray classArr = instituteObj.getJSONArray("classes");
-        for(int i = 0; i < classArr.length(); i ++){
-            JSONObject classObj = classArr.getJSONObject(i);
-            ClassInfo classInfo = new ClassInfo();
-            assembleClass(classInfo, classObj);
-            classInfo.setInstituteIdR(institute.getInstituteIdR());
-            classes.add(classInfo);
+        try{
+            JSONArray classArr = instituteObj.getJSONArray("classes");
+            for(int i = 0; i < classArr.length(); i ++){
+                JSONObject classObj = classArr.getJSONObject(i);
+                ClassInfo classInfo = new ClassInfo();
+                assembleClass(classInfo, classObj);
+                classInfo.setInstituteIdR(institute.getInstituteIdR());
+                classes.add(classInfo);
+            }
+        }catch(Exception e){
+            Log.e(TAG, "", e);
         }
 
-        JSONArray courseArr = instituteObj.getJSONArray("courseDefines");
-        for(int i = 0; i < courseArr.length(); i ++){
-            JSONObject courseObj = courseArr.getJSONObject(i);
-            CourseDefine courseDefine = new CourseDefine();
-            assembleCourseDefine(courseDefine, courseObj);
-            courseDefines.add(courseDefine);
+        try {
+            JSONArray courseArr = instituteObj.getJSONArray("courseDefines");
+            for (int i = 0; i < courseArr.length(); i++) {
+                JSONObject courseObj = courseArr.getJSONObject(i);
+                CourseDefine courseDefine = new CourseDefine();
+                assembleCourseDefine(courseDefine, courseObj);
+                courseDefines.add(courseDefine);
+            }
+        }catch(Exception e){
+            Log.e(TAG,"",e);
         }
     }
 
@@ -371,13 +293,17 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         classInfo.setTotalNum(classObj.getInt("totalNum"));
         classInfo.setLoginId(loginInfo.getTeacherId());
 
-        JSONArray studentArr = classObj.getJSONArray("students");
-        for(int i = 0; i < studentArr.length(); i ++){
-            JSONObject studentObj = studentArr.getJSONObject(i);
-            Student student = new Student();
-            assembleStudent(student, studentObj);
-            student.setClassIdR(classInfo.getClassIdR());
-            students.add(student);
+        try {
+            JSONArray studentArr = classObj.getJSONArray("students");
+            for (int i = 0; i < studentArr.length(); i++) {
+                JSONObject studentObj = studentArr.getJSONObject(i);
+                Student student = new Student();
+                assembleStudent(student, studentObj);
+                student.setClassIdR(classInfo.getClassIdR());
+                students.add(student);
+            }
+        }catch(Exception e){
+            Log.e(TAG,"",e);
         }
     }
 

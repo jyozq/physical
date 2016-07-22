@@ -31,7 +31,6 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
     private ListView listView;
     private CourseListViewAdapter adapter;
     private List<CourseItemInfo> infoList;
-    private boolean isConnectNet;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,19 +44,6 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        CourseDefine[] courseDefines = new CourseDefine[2];
-        CourseDefine courseDefine = new CourseDefine();
-        courseDefine.setName("测试课程1");
-        courseDefine.setCode("测试编码1");
-        courseDefines[0] = courseDefine;
-
-        courseDefine = new CourseDefine();
-        courseDefine.setName("测试课程2");
-        courseDefine.setCode("测试编码2");
-        courseDefines[1] = courseDefine;
-
-        MainApplication.getInstance().getDaoSession(getActivity()).getCourseDefineDao().insertOrReplaceInTx(courseDefines);
         initViews();
     }
 
