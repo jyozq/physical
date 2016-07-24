@@ -13,7 +13,7 @@ public class ClassInfo {
     private Long id;
     private String code;
     private String name;
-    private Integer type;
+    private String type;
     private Integer totalNum;
     private Long classIdR;
     private Long instituteId;
@@ -29,7 +29,7 @@ public class ClassInfo {
     }
 
     @Generated
-    public ClassInfo(Long id, String code, String name, Integer type, Integer totalNum, Long classIdR, Long instituteId, Long instituteIdR, Long loginId) {
+    public ClassInfo(Long id, String code, String name, String type, Integer totalNum, Long classIdR, Long instituteId, Long instituteIdR, Long loginId) {
         this.id = id;
         this.code = code;
         this.name = name;
@@ -65,11 +65,11 @@ public class ClassInfo {
         this.name = name;
     }
 
-    public Integer getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(Integer type) {
+    public void setType(String type) {
         this.type = type;
     }
 

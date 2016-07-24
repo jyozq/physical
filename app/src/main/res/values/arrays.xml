@@ -9,4 +9,33 @@
         <item>周六</item>
         <item>周日</item>
     </string-array>
+    <string-array name="weekday_value">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>0</item>
+    </string-array>
+    <string-array name="seq">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
+    <string-array name="course_type">
+        <item>篮球</item>
+        <item>足球</item>
+        <item>跑步</item>
+    </string-array>
+    <string-array name="course_type_val">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
 </resources>

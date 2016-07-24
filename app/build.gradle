@@ -36,4 +36,5 @@ dependencies {
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
     compile 'com.anupcowkur:reservoir:3.0.0'
     compile 'org.greenrobot:greendao:3.0.1'
+    compile 'com.alibaba:fastjson:1.2.14'
 }

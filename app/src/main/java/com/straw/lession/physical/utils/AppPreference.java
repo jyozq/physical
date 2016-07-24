@@ -46,6 +46,10 @@ public class AppPreference {
         MainApplication.getInstance().getThreadPool().submit(taskWorker);
     }
 
+    public static void saveLoginInfoWithoutDB(LoginInfo loginInfo) throws IOException {
+        Reservoir.put(LOGIN_INFO_KEY, loginInfo);
+    }
+
     public static void saveToken(TokenInfo tokenInfo) throws Exception{
         Reservoir.put(TOKEN_INFO_KEY, tokenInfo);
     }

@@ -11,7 +11,8 @@
                         android:background="@color/transparent_88" android:padding="@dimen/dimen_5dp"
                         android:layout_gravity="bottom" android:gravity="center_vertical">
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                      android:text="三年级（2）班" android:textSize="18sp"/>
+                      android:text="三年级（2）班" android:textSize="18sp"
+                        android:id="@+id/startcourse_className"/>
             <Button android:id="@+id/btn_do_start_course"
                     android:layout_width="wrap_content" android:textColor="@color/white" android:textSize="@dimen/font_size_20"
                     android:layout_height="wrap_content" android:background="@drawable/button_blue_selector" android:text="@string/btn_start_course"
@@ -29,14 +30,18 @@
         <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"
                    android:src="@mipmap/icon_time"/>
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                  android:textSize="16sp" android:text="2016年8月1日 星期一 10:00-11:00"/>
+                  android:textSize="16sp" android:text="2016年8月1日 星期一 10:00-11:00"
+                    android:id="@+id/startcourse_time"
+            />
     </LinearLayout>
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                   android:orientation="horizontal" android:gravity="center_vertical">
         <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"
                    android:src="@mipmap/icon_pin"/>
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                  android:textSize="16sp" android:text="篮球馆 跑步 4/45 未开始"/>
+                  android:textSize="16sp" android:text="篮球馆 跑步 4/45 未开始"
+                    android:id="@+id/startcourse_location"
+            />
     </LinearLayout>
 
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"

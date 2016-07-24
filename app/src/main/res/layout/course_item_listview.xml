@@ -30,10 +30,10 @@
                 <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:src="@mipmap/icon_time"/>
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                          android:text="2016年8月1日"/>
+                          android:text="2016年8月1日" android:id="@+id/date"/>
             </LinearLayout>
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                      android:text="星期二 17:30-18:30"/>
+                      android:text="星期二 17:30-18:30" android:id="@+id/weekdayAndSeq"/>
         </TableRow>
         <TableRow android:layout_width="match_parent"
                   android:layout_height="wrap_content">
@@ -45,7 +45,7 @@
                           android:text="篮球馆" android:id="@+id/location"/>
             </LinearLayout>
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                      android:text="篮球 0|40"/>
+                      android:text="篮球 0|40" android:id="@+id/type"/>
         </TableRow>
     </TableLayout>
 

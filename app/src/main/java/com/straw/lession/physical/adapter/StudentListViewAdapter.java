@@ -78,8 +78,8 @@ public class StudentListViewAdapter extends BaseAdapter implements View.OnClickL
             holder = (ViewHolder) convertView.getTag();
         }
 
-//        TextView name = (TextView) convertView.findViewById(R.id.item_name);
-//        name.setText(info.getName());
+        TextView studentno = (TextView) convertView.findViewById(R.id.studentno);
+        studentno.setText(info.getName());
         holder.button.setOnClickListener(this);
         holder.button.setTag(position);
         return convertView;

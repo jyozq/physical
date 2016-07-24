@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 import com.straw.lession.physical.R;
+import com.straw.lession.physical.constant.Weekday;
 import com.straw.lession.physical.vo.item.CourseItemInfo;
 
 import java.util.List;
@@ -79,10 +80,17 @@ public class CourseListViewAdapter extends BaseAdapter implements View.OnClickLi
             holder = (ViewHolder) convertView.getTag();
         }
 
-        TextView name = (TextView) convertView.findViewById(R.id.class_name);
-        name.setText(info.getName());
+        TextView className = (TextView) convertView.findViewById(R.id.class_name);
+        className.setText(info.getClassName());
+        TextView date = (TextView) convertView.findViewById(R.id.date);
+        date.setText(info.getDate());
+        TextView weekdayAndSeq = (TextView) convertView.findViewById(R.id.weekdayAndSeq);
+        weekdayAndSeq.setText(Weekday.getName(info.getWeekDay())
+                                + "   " + "第" + info.getSeq() + "节");
         TextView location = (TextView) convertView.findViewById(R.id.location);
         location.setText(info.getLocation());
+        TextView type = (TextView) convertView.findViewById(R.id.type);
+        type.setText(info.getType());
         holder.button.setOnClickListener(this);
         holder.button.setTag(position);
         return convertView;

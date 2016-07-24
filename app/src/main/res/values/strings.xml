@@ -62,4 +62,9 @@
     <string name="btn_next_student">&#160;&#160;&#160;下一个学生&#160;&#160;&#160;</string>
     <string name="btn_open_light">开灯</string>
     <string name="btn_close_light">关灯</string>
+    <string name="course_time_label">时间</string>
+    <string name="course_seq_label">班次</string>
+    <string name="course_class_label">班级</string>
+    <string name="course_kc_label">课程名称</string>
+    <string name="course_type_label">活动类型</string>
 </resources>

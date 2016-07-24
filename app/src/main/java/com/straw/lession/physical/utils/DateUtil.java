@@ -1316,4 +1316,10 @@ public final class DateUtil {
         return longRZ;
     }
 
+    public static int getCurrentWeekday(){
+        Calendar now = Calendar.getInstance();
+        now.setFirstDayOfWeek(Calendar.SUNDAY);
+        int weekDay = now.get(Calendar.DAY_OF_WEEK);
+        return weekDay - 1;
+    }
 }

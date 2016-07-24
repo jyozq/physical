@@ -6,30 +6,39 @@
     <LinearLayout android:id="@+id/fragment_container1" android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="vertical" android:layout_weight="1"
                   android:weightSum="1">
         <LinearLayout android:id="@+id/blankLayout" android:layout_width="fill_parent" android:layout_height="wrap_content"
-                      android:orientation="horizontal" android:gravity="center" android:layout_marginTop="@dimen/dimen_20dp"
-                      android:background="@mipmap/profile_back" android:layout_weight="0.15">
+                      android:orientation="horizontal"
+            android:layout_marginTop="@dimen/dimen_20dp"
+                      android:background="@mipmap/profile_back" android:layout_weight="0.15"
+            android:gravity="center_vertical">
             <com.straw.lession.physical.custom.CircleImageView
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:src="@mipmap/ic_launcher"
-            />
+                android:layout_marginLeft="@dimen/dimen_20dp" />
             <LinearLayout android:layout_width="wrap_content" android:layout_height="match_parent"
                           android:orientation="vertical" android:layout_marginLeft="@dimen/dimen_20dp"
-                            android:gravity="center">
+                android:gravity="center_vertical">
                 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal"
                               android:gravity="center">
                     <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@mipmap/icon_me" />
                     <TextView
-                              android:layout_width="fill_parent" android:layout_weight="1"  android:gravity="center_vertical" android:layout_height="fill_parent" android:text="测试账户"
-                              android:textSize="@dimen/font_size_16" android:layout_marginLeft="@dimen/dimen_15dp" android:layout_marginRight="@dimen/dimen_15dp" android:textColor="@color/gray_4a4f49" />
+                              android:layout_width="fill_parent" android:layout_weight="1"
+                                android:gravity="center_vertical" android:layout_height="fill_parent"
+                                android:text="测试账户" android:textSize="@dimen/font_size_16"
+                                android:layout_marginLeft="@dimen/dimen_15dp" android:layout_marginRight="@dimen/dimen_15dp"
+                                android:textColor="@color/gray_4a4f49" android:id="@+id/profile_name"/>
                 </LinearLayout>
 
                 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal"
                                android:gravity="center">
                     <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@mipmap/icon_school" />
                     <TextView
-                            android:layout_width="fill_parent" android:layout_weight="1"  android:gravity="center_vertical" android:layout_height="fill_parent" android:text="XXX大学"
-                            android:textSize="@dimen/font_size_16" android:layout_marginLeft="@dimen/dimen_15dp" android:layout_marginRight="@dimen/dimen_15dp" android:textColor="@color/gray_4a4f49" />
+                            android:layout_width="fill_parent" android:layout_weight="1"
+                            android:gravity="center_vertical" android:layout_height="fill_parent"
+                            android:text="XXX大学 XXX大学 XXX大学" android:id="@+id/profile_institute"
+                            android:textSize="@dimen/font_size_16" android:layout_marginLeft="@dimen/dimen_15dp"
+                            android:layout_marginRight="@dimen/dimen_15dp" android:textColor="@color/gray_4a4f49"
+                        />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

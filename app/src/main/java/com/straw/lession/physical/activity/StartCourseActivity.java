@@ -9,16 +9,29 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.base.ThreadToolBarBaseActivity;
 import com.straw.lession.physical.adapter.StudentListViewAdapter;
 import com.straw.lession.physical.app.MainApplication;
+import com.straw.lession.physical.constant.Weekday;
+import com.straw.lession.physical.db.DaoSession;
+import com.straw.lession.physical.db.StudentDao;
+import com.straw.lession.physical.utils.AppPreference;
+import com.straw.lession.physical.vo.LoginInfo;
+import com.straw.lession.physical.vo.db.Student;
+import com.straw.lession.physical.vo.item.CourseItemInfo;
 import com.straw.lession.physical.vo.item.StudentInfo;
 import com.zbar.lib.CaptureActivity;
 
+import org.greenrobot.greendao.query.Query;
+import org.greenrobot.greendao.query.WhereCondition;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,11 +39,14 @@ import java.util.List;
  * Created by straw on 2016/7/11.
  */
 public class StartCourseActivity extends ThreadToolBarBaseActivity implements SwipeRefreshLayout.OnRefreshListener,StudentListViewAdapter.Callback{
+    private static final String TAG = "StartCourseActivity";
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
     private SwipeRefreshLayout swipeLayout;
     private ListView listView;
-    private List<StudentInfo> infoList;
+    private List<StudentInfo> infoList = new ArrayList<StudentInfo>();
     private StudentListViewAdapter studentListViewAdapter;
+    private CourseItemInfo course;
+    private LoginInfo loginInfo;
 
     @Override
     protected void onCreate(Bundle arg0) {
@@ -38,21 +54,56 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
         setContentView(R.layout.activity_start_course);
         initToolBar("");
         MainApplication.getInstance().addActivity(this);
+        Intent intent = getIntent();
+        course = (CourseItemInfo)intent.getSerializableExtra("course");
         initViews();
     }
 
     private void initViews() {
         swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeLayout.setOnRefreshListener(this);
-        infoList = new ArrayList<StudentInfo>();
-        StudentInfo info = null;
-        for(int i = 0; i < 4; i ++) {
-            info = new StudentInfo();
-            infoList.add(info);
-        }
+
+        TextView startcourse_className = (TextView)findViewById(R.id.startcourse_className);
+        TextView startcourse_time = (TextView)findViewById(R.id.startcourse_time);
+        TextView startcourse_location = (TextView)findViewById(R.id.startcourse_location);
+        startcourse_className.setText(course.getClassName());
+        startcourse_time.setText(Weekday.getName(course.getWeekDay()) + "   第"+course.getSeq()+"节");
+        startcourse_location.setText(course.getLocation() + "   " + course.getType());
+
+        getStudentsInfo();
         listView = (ListView) findViewById(R.id.listview);
         studentListViewAdapter = new StudentListViewAdapter(this, infoList, this);
         listView.setAdapter(studentListViewAdapter);
+    }
+
+    private void getStudentsInfo() {
+        try {
+            loginInfo = AppPreference.getLoginInfo();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e(TAG,"",e);
+            showErrorMsgInfo(e.toString());
+            return;
+        }
+        DaoSession session = MainApplication.getInstance().getDaoSession(this);
+        StudentDao studentDao = session.getStudentDao();
+        Query<Student> query = studentDao.queryBuilder()
+                            .where(StudentDao.Properties.ClassId.eq(course.getClassId()),
+                                    StudentDao.Properties.LoginId.eq(loginInfo.getTeacherId()))
+                            .build();
+        List<Student> students = query.list();
+        Student student = null;
+        for(int i = 0; i < students.size(); i ++){
+            student = students.get(i);
+            infoList.add(toItem(student));
+        }
+
+    }
+
+    private StudentInfo toItem(Student student) {
+        StudentInfo studentInfo = new StudentInfo();
+        studentInfo.setName(student.getCode());
+        return studentInfo;
     }
 
     @Override

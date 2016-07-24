@@ -95,6 +95,14 @@ public class LoginInfo {
         this.teacherId = teacherId;
     }
 
+    public Long getCurrentInstituteId() {
+        return currentInstituteId;
+    }
+
+    public void setCurrentInstituteId(Long currentInstituteId) {
+        this.currentInstituteId = currentInstituteId;
+    }
+
     private long teacherId;
     private String birthday;
     private int gender;
@@ -105,6 +113,7 @@ public class LoginInfo {
     private long userId;
     private int userStatus;
     private String nowTime;
+    private Long currentInstituteId;
     private List<Institute> institutes = new ArrayList<Institute>();
 
     public class Institute{

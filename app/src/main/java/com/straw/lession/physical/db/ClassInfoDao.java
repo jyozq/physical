@@ -27,7 +27,7 @@ public class ClassInfoDao extends AbstractDao<ClassInfo, Long> {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Code = new Property(1, String.class, "code", false, "CODE");
         public final static Property Name = new Property(2, String.class, "name", false, "NAME");
-        public final static Property Type = new Property(3, Integer.class, "type", false, "TYPE");
+        public final static Property Type = new Property(3, String.class, "type", false, "TYPE");
         public final static Property TotalNum = new Property(4, Integer.class, "totalNum", false, "TOTAL_NUM");
         public final static Property ClassIdR = new Property(5, Long.class, "classIdR", false, "CLASS_ID_R");
         public final static Property InstituteId = new Property(6, Long.class, "instituteId", false, "INSTITUTE_ID");
@@ -51,7 +51,7 @@ public class ClassInfoDao extends AbstractDao<ClassInfo, Long> {
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
                 "\"CODE\" TEXT," + // 1: code
                 "\"NAME\" TEXT," + // 2: name
-                "\"TYPE\" INTEGER," + // 3: type
+                "\"TYPE\" TEXT," + // 3: type
                 "\"TOTAL_NUM\" INTEGER," + // 4: totalNum
                 "\"CLASS_ID_R\" INTEGER," + // 5: classIdR
                 "\"INSTITUTE_ID\" INTEGER," + // 6: instituteId
@@ -84,9 +84,9 @@ public class ClassInfoDao extends AbstractDao<ClassInfo, Long> {
             stmt.bindString(3, name);
         }
  
-        Integer type = entity.getType();
+        String type = entity.getType();
         if (type != null) {
-            stmt.bindLong(4, type);
+            stmt.bindString(4, type);
         }
  
         Integer totalNum = entity.getTotalNum();
@@ -134,9 +134,9 @@ public class ClassInfoDao extends AbstractDao<ClassInfo, Long> {
             stmt.bindString(3, name);
         }
  
-        Integer type = entity.getType();
+        String type = entity.getType();
         if (type != null) {
-            stmt.bindLong(4, type);
+            stmt.bindString(4, type);
         }
  
         Integer totalNum = entity.getTotalNum();
@@ -176,7 +176,7 @@ public class ClassInfoDao extends AbstractDao<ClassInfo, Long> {
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // code
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // name
-            cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3), // type
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // type
             cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4), // totalNum
             cursor.isNull(offset + 5) ? null : cursor.getLong(offset + 5), // classIdR
             cursor.isNull(offset + 6) ? null : cursor.getLong(offset + 6), // instituteId
@@ -191,7 +191,7 @@ public class ClassInfoDao extends AbstractDao<ClassInfo, Long> {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setCode(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setName(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setType(cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3));
+        entity.setType(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setTotalNum(cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4));
         entity.setClassIdR(cursor.isNull(offset + 5) ? null : cursor.getLong(offset + 5));
         entity.setInstituteId(cursor.isNull(offset + 6) ? null : cursor.getLong(offset + 6));

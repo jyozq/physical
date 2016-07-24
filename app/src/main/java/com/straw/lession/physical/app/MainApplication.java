@@ -70,7 +70,7 @@ public class MainApplication extends Application{
         }
 
         try{
-            Reservoir.init(this, 10240);
+            Reservoir.init(this, 5120);
         }catch (Exception e){
             Log.e(TAG,e.getMessage());
         }

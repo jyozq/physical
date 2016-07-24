@@ -41,6 +41,10 @@ public class DeleteAllDataTask extends BaseTask{
             deleteQuery = instituteDao.queryBuilder().where(InstituteDao.Properties.LoginId.eq(loginInfo.getTeacherId())).buildDelete();
             deleteQuery.executeDeleteWithoutDetachingEntities();
 
+            CourseDao courseDao = session.getCourseDao();
+            deleteQuery = courseDao.queryBuilder().where(CourseDao.Properties.LoginId.eq(loginInfo.getTeacherId())).buildDelete();
+            deleteQuery.executeDeleteWithoutDetachingEntities();
+
             TaskResult result = new TaskResult();
             result.setResultCode(TaskConstant.SUCCESS_CODE);
             result.setResultMsg("数据删除成功");

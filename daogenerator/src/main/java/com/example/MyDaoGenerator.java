@@ -2,6 +2,7 @@ package com.example;
 
 import org.greenrobot.greendao.generator.DaoGenerator;
 import org.greenrobot.greendao.generator.Entity;
+import org.greenrobot.greendao.generator.Property;
 import org.greenrobot.greendao.generator.Schema;
 
 public class MyDaoGenerator {
@@ -19,18 +20,27 @@ public class MyDaoGenerator {
         // schema2.enableKeepSectionsByDefault();
 
         // 一旦你拥有了一个 Schema 对象后，你便可以使用它添加实体（Entities）了。
-        addCourseDefine(schema);
-        addClassInfoDefine(schema);
-        addStudentDefine(schema);
-        addInstitudeDefine(schema);
-        addTeacherDefine(schema);
+        Entity courseDefine = addCourseDefine(schema);
+        Entity classInfo = addClassInfoDefine(schema);
+        Entity student = addStudentDefine(schema);
+        Entity institute = addInstitudeDefine(schema);
+        Entity teacher = addTeacherDefine(schema);
+        Entity course = addCourse(schema);
+
+        Property property = courseDefine.addLongProperty("classId").getProperty();
+        courseDefine.addToOne(classInfo,property);
+
+        property = course.addLongProperty("courseDefineId").getProperty();
+        course.addToOne(courseDefine,property);
+
+
         // 最后我们将使用 DAOGenerator 类的 generateAll() 方法自动生成代码，此处你需要根据自己的情况更改输出目录（既之前创建的 java-gen)。
         // 其实，输出目录的路径可以在 build.gradle 中设置，有兴趣的朋友可以自行搜索，这里就不再详解。
-//        new DaoGenerator().generateAll(schema, "H:\\androidprojects\\mine\\physical\\app\\src\\main\\java");
-        new DaoGenerator().generateAll(schema, "D:\\work\\AndroidStudioProjects\\mine\\physical\\app\\src\\main\\java");
+        new DaoGenerator().generateAll(schema, "H:\\androidprojects\\mine\\physical\\app\\src\\main\\java");
+//        new DaoGenerator().generateAll(schema, "D:\\work\\AndroidStudioProjects\\mine\\physical\\app\\src\\main\\java");
     }
 
-    private static void addInstitudeDefine(Schema schema) {
+    private static Entity addInstitudeDefine(Schema schema) {
         // 一个实体（类）就关联到数据库中的一张表，此处表名为「Note」（既类名）
         Entity note = schema.addEntity("Institute");
         // 你也可以重新给表命名
@@ -45,9 +55,10 @@ public class MyDaoGenerator {
         note.addStringProperty("name");
         note.addLongProperty("instituteIdR");
         note.addLongProperty("loginId");
+        return note;
     }
 
-    private static void addStudentDefine(Schema schema) {
+    private static Entity addStudentDefine(Schema schema) {
         // 一个实体（类）就关联到数据库中的一张表，此处表名为「Note」（既类名）
         Entity note = schema.addEntity("Student");
         // 你也可以重新给表命名
@@ -66,9 +77,10 @@ public class MyDaoGenerator {
         note.addLongProperty("classIdR");
         note.addLongProperty("studentIdR");
         note.addLongProperty("loginId");
+        return note;
     }
 
-    private static void addClassInfoDefine(Schema schema) {
+    private static Entity addClassInfoDefine(Schema schema) {
         // 一个实体（类）就关联到数据库中的一张表，此处表名为「Note」（既类名）
         Entity note = schema.addEntity("ClassInfo");
         // 你也可以重新给表命名
@@ -81,15 +93,16 @@ public class MyDaoGenerator {
         // 与在 Java 中使用驼峰命名法不同，默认数据库中的命名是使用大写和下划线来分割单词的。
         // For example, a property called “creationDate” will become a database column “CREATION_DATE”.
         note.addStringProperty("name");
-        note.addIntProperty("type");
+        note.addStringProperty("type");
         note.addIntProperty("totalNum");
         note.addLongProperty("classIdR");
         note.addLongProperty("instituteId");
         note.addLongProperty("instituteIdR");
         note.addLongProperty("loginId");
+        return note;
     }
 
-    private static void addCourseDefine(Schema schema) {
+    private static Entity addCourseDefine(Schema schema) {
         // 一个实体（类）就关联到数据库中的一张表，此处表名为「Note」（既类名）
         Entity note = schema.addEntity("CourseDefine");
         // 你也可以重新给表命名
@@ -105,7 +118,6 @@ public class MyDaoGenerator {
         note.addStringProperty("type");
         note.addLongProperty("instituteId");
         note.addLongProperty("instituteIdR");
-        note.addLongProperty("classId");
         note.addLongProperty("classIdR");
         note.addLongProperty("teacherId");
         note.addIntProperty("weekDay");
@@ -117,14 +129,30 @@ public class MyDaoGenerator {
         note.addIntProperty("useOnce");
         note.addLongProperty("courseDefineIdR");
         note.addLongProperty("loginId");
+        return note;
     }
 
-    private static void addTeacherDefine(Schema schema){
+    private static Entity addCourse(Schema schema) {
+        // 一个实体（类）就关联到数据库中的一张表，此处表名为「Note」（既类名）
+        Entity note = schema.addEntity("Course");
+        // 你也可以重新给表命名
+        // note.setTableName("NODE");
+
+        // greenDAO 会自动根据实体类的属性值来创建表字段，并赋予默认值
+        // 接下来你便可以设置表中的字段：
+        note.addIdProperty();
+        note.addLongProperty("loginId");
+        note.addIntProperty("useOnce");
+        return note;
+    }
+
+    private static Entity addTeacherDefine(Schema schema){
         Entity note = schema.addEntity("Teacher");
         note.addIdProperty();
         note.addStringProperty("name");
         note.addStringProperty("mobile");
         note.addDateProperty("last_login_time");
         note.addLongProperty("teacherIdR");
+        return note;
     }
 }
