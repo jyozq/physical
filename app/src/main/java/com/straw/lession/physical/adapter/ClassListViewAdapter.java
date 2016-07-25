@@ -66,6 +66,7 @@ public class ClassListViewAdapter  extends BaseAdapter implements View.OnClickLi
             convertView = inflater.inflate(R.layout.selclass_item_listview, null);
             holder = new ViewHolder();
             holder.textView = (TextView) convertView.findViewById(R.id.selclass_course_name);
+            holder.textView.setText(info.getClassName());
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();

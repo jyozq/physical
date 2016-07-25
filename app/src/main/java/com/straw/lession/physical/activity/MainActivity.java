@@ -455,6 +455,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
                                        int pos, long id) {
                 Toast.makeText(MainActivity.this, "你点击的是:"+institutes.get(pos).getName(), Toast.LENGTH_SHORT).show();
                 loginInfo.setCurrentInstituteId(institutes.get(pos).getId());
+                loginInfo.setCurrentInstituteIdR(institutes.get(pos).getInstituteIdR());
                 try {
                     AppPreference.saveLoginInfoWithoutDB(loginInfo);
                     todayFragment.query();
@@ -475,6 +476,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
     private int getSelInstitutePos(Long currentInstituteId) {
         if(currentInstituteId == null){
             loginInfo.setCurrentInstituteId(institutes.get(0).getId());
+            loginInfo.setCurrentInstituteIdR(institutes.get(0).getInstituteIdR());
             try {
                 AppPreference.saveLoginInfoWithoutDB(loginInfo);
             } catch (IOException e) {

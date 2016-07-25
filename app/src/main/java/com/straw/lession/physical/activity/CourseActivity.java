@@ -18,6 +18,11 @@ public class CourseActivity extends ThreadToolBarBaseActivity{
         initViews();
     }
 
+    @Override
+    public void doAfterGetToken() {
+
+    }
+
     private void initViews() {
     }
 }

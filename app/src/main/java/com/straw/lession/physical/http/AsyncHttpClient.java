@@ -249,6 +249,9 @@ public class AsyncHttpClient implements Runnable {
                 conn.setRequestProperty("Charset", "UTF-8");
                 conn.setRequestProperty("Accept", "application/json");
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                if(Detect.notEmpty(token)) {
+                    conn.setRequestProperty("Authorization", ReqConstant.TOKEN_PREFIX + token);
+                }
 
                 //conn.setRequestProperty("contentType", "GBK");
 

@@ -1,19 +1,33 @@
 package com.straw.lession.physical.activity.base;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.app.MainApplication;
+import com.straw.lession.physical.constant.ParamConstant;
+import com.straw.lession.physical.constant.ReqConstant;
 import com.straw.lession.physical.crouton.Crouton;
+import com.straw.lession.physical.custom.AlertDialogUtil;
 import com.straw.lession.physical.custom.ProgressDialogFragment;
+import com.straw.lession.physical.http.AsyncHttpClient;
+import com.straw.lession.physical.http.AsyncHttpResponseHandler;
+import com.straw.lession.physical.http.HttpResponseBean;
+import com.straw.lession.physical.utils.AppPreference;
+import com.straw.lession.physical.utils.ResponseParseUtils;
+import com.straw.lession.physical.utils.Utils;
+import com.straw.lession.physical.vo.TokenInfo;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Created by Administrator on 2015/12/23.
  */
-public class ThreadToolBarBaseActivity extends ToolBarActivity {
+public abstract class ThreadToolBarBaseActivity extends ToolBarActivity {
     private final static String TAG = "ThreadToolBarBaseActivity";
     protected MainApplication mApp;
     protected ThreadPoolExecutor mThreadPool;
@@ -100,4 +114,57 @@ public class ThreadToolBarBaseActivity extends ToolBarActivity {
         crouton = Crouton.make(mContext, viewTip);
         crouton.show();
     }
+
+    public void checkTokenInfo() {
+        try {
+            final TokenInfo tokenInfo = AppPreference.getUserToken();
+            if(System.currentTimeMillis() - tokenInfo.getTimeStamp() > 20*60*60*1000){
+                String URL = ReqConstant.URL_BASE + "/auth/token/refresh";
+                AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.GET, URL ,null , null, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(HttpResponseBean httpResponseBean) {
+                        super.onSuccess(httpResponseBean);
+                        try{
+                            hideProgressDialog();
+                            JSONObject contentObject = new JSONObject(httpResponseBean.content);
+                            String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
+                            if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){
+                                JSONObject dataObject = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
+                                String newToken = dataObject.getString("newToken");
+                                tokenInfo.setToken(newToken);
+                                tokenInfo.setTimeStamp(System.currentTimeMillis());
+                                AppPreference.saveToken(tokenInfo);
+                                doAfterGetToken();
+                            }else {//登录失败
+                                String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);
+                                AlertDialogUtil.showAlertWindow(mContext, -1, errorMessage , null );
+                                throw new IllegalStateException(errorMessage);
+                            }
+                        }catch(Exception e){
+                            hideProgressDialog();
+                            showErrorMsgInfo(e.toString());
+                            e.printStackTrace();
+                            throw new IllegalStateException(e.toString());
+                        }
+                    }
+                    @Override
+                    public void onFailure(Throwable error, String content) {
+                        super.onFailure(error, content);
+                        hideProgressDialog();
+                        String errorContent = Utils.parseErrorMessage(mContext, content);
+                        showErrorMsgInfo(errorContent);
+                        throw new IllegalStateException(errorContent);
+                    }
+                });
+                mThreadPool.execute(asyncHttpClient);
+            }else{
+                doAfterGetToken();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showErrorMsgInfo("获取token出错");
+        }
+    }
+
+    public abstract void doAfterGetToken();
 }

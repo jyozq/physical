@@ -36,6 +36,7 @@
     <string name="forget_phone">手机号</string>
     <string name="cancel_btn">取&#160;&#160;消</string>
     <string name="ok_btn">确&#160;&#160;定</string>
+    <string name="save_btn">保&#160;&#160;存</string>
 
     <string name="no_btn">否</string>
     <string name="yes_btn">是</string>
@@ -67,4 +68,5 @@
     <string name="course_class_label">班级</string>
     <string name="course_kc_label">课程名称</string>
     <string name="course_type_label">活动类型</string>
+    <string name="course_location_label">上课地点</string>
 </resources>

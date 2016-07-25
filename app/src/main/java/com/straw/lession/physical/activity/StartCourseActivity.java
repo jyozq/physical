@@ -59,6 +59,11 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
         initViews();
     }
 
+    @Override
+    public void doAfterGetToken() {
+
+    }
+
     private void initViews() {
         swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeLayout.setOnRefreshListener(this);
