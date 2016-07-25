@@ -140,6 +140,6 @@ public class SelectClassActivity extends ThreadToolBarBaseActivity
         bundle.putSerializable("classInfo", infoList.get((Integer) v.getTag()));
         intent.putExtras(bundle);
         setResult(RESULT_CODE, intent);
-        finish();
+        MainApplication.getInstance().popCurrentActivity();
     }
 }

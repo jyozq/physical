@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.base.ThreadToolBarBaseActivity;
 import com.straw.lession.physical.app.MainApplication;
@@ -18,6 +17,9 @@ import com.straw.lession.physical.constant.ParamConstant;
 import com.straw.lession.physical.constant.ReqConstant;
 import com.straw.lession.physical.custom.ActionSheetTwoColumnGridDialog;
 import com.straw.lession.physical.custom.AlertDialogUtil;
+import com.straw.lession.physical.db.ClassInfoDao;
+import com.straw.lession.physical.db.CourseDefineDao;
+import com.straw.lession.physical.db.DaoSession;
 import com.straw.lession.physical.dictionary.CourseDictionary;
 import com.straw.lession.physical.http.AsyncHttpClient;
 import com.straw.lession.physical.http.AsyncHttpResponseHandler;
@@ -30,9 +32,11 @@ import com.straw.lession.physical.utils.Utils;
 import com.straw.lession.physical.vo.LoginInfo;
 import com.straw.lession.physical.vo.TokenInfo;
 import com.straw.lession.physical.vo.db.ClassInfo;
+import com.straw.lession.physical.vo.db.CourseDefine;
 import com.straw.lession.physical.vo.item.ClassItemInfo;
 
 import org.apache.http.message.BasicNameValuePair;
+import org.greenrobot.greendao.query.Query;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -98,7 +102,7 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
         weekdayArr = getResources().getStringArray(R.array.weekday);
         weekday_val_arr = getResources().getIntArray(R.array.weekday_value);
         seqArr = getResources().getStringArray(R.array.seq);
-        seq_val_arr = getResources().getIntArray(R.array.seq);
+        seq_val_arr = getResources().getIntArray(R.array.seq_value);
         typeArr = getResources().getStringArray(R.array.course_type);
         type_val_arr = getResources().getIntArray(R.array.course_type_val);
     }
@@ -190,42 +194,50 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
     private void saveCourse() {
         int weekday = -1;
         int seq = -1;
-        int type = -1;
+        String type = null;
         String courseName = null;
         String location = null;
+        final CourseDefine courseDefine = new CourseDefine();
         if(timeTxt.getTag() == null){
             Toast.makeText(mContext, "请选择时间" , Toast.LENGTH_LONG).show();
             return;
         }else{
             weekday = Integer.parseInt((String)timeTxt.getTag());
+            courseDefine.setWeekDay(weekday);
         }
         if(seqTxt.getTag() == null){
             Toast.makeText(mContext, "请选择班次" , Toast.LENGTH_LONG).show();
             return;
         }else{
             seq = Integer.parseInt((String)seqTxt.getTag());
+            courseDefine.setSeq(seq);
         }
         if(classTxt.getText() == null){
             Toast.makeText(mContext, "请选择班级" , Toast.LENGTH_LONG).show();
             return;
+        }else{
+            courseDefine.setClassIdR(selectClassId);
         }
         if(kcTxt.getText() == null){
             Toast.makeText(mContext, "请输入课程名称" , Toast.LENGTH_LONG).show();
             return;
         }else {
             courseName = kcTxt.getText().toString();
+            courseDefine.setName(courseName);
         }
         if(typeTxt.getTag() == null){
             Toast.makeText(mContext, "请选择活动类型" , Toast.LENGTH_LONG).show();
             return;
         }else{
-            type = Integer.parseInt((String)typeTxt.getTag());
+            type = typeTxt.getText().toString();
+            courseDefine.setType(type);
         }
         if(locationTxt.getText() == null){
             Toast.makeText(mContext, "请输入上课地点" , Toast.LENGTH_LONG).show();
             return;
         }else{
             location = locationTxt.getText().toString();
+            courseDefine.setLocation(location);
         }
         LoginInfo loginInfo = null;
         TokenInfo tokenInfo = null;
@@ -237,6 +249,12 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
             showErrorMsgInfo(e.toString());
             return;
         }
+        courseDefine.setInstituteId(loginInfo.getCurrentInstituteId());
+        courseDefine.setInstituteIdR(loginInfo.getCurrentInstituteIdR());
+        courseDefine.setTeacherId(loginInfo.getUserId());
+        courseDefine.setLoginId(loginInfo.getTeacherId());
+        courseDefine.setUseOnce(CourseDictionary.USE_ONCE);
+
         showProgressDialog(getResources().getString(R.string.loading));
         final String URL = ReqConstant.URL_BASE + "/course/define/create";
         final ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
@@ -258,7 +276,25 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
                     hideProgressDialog();
                     JSONObject contentObject = new JSONObject(httpResponseBean.content);
                     String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
-                    if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){ //登录成功
+                    if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){
+                        JSONObject dataObj = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
+                        String courseDefineId = dataObj.getString("courseDefineId");
+                        courseDefine.setCourseDefineIdR(Long.parseLong(courseDefineId));
+
+                        DaoSession daoSession = MainApplication.getInstance()
+                                                .getDaoSession(AddCourseActivity.this);
+                        ClassInfoDao classInfoDao = daoSession.getClassInfoDao();
+                        Query query = classInfoDao.queryBuilder()
+                                .where(ClassInfoDao.Properties.ClassIdR.eq(courseDefine.getClassIdR()))
+                                .build();
+                        List<ClassInfo> classInfos = query.list();
+                        if(Detect.notEmpty(classInfos)){
+                            courseDefine.setClassId(classInfos.get(0).getId());
+                        }
+
+                        CourseDefineDao courseDefineDao = daoSession.getCourseDefineDao();
+                        courseDefineDao.insert(courseDefine);
+
                         Toast.makeText(mContext, "保存成功" , Toast.LENGTH_LONG).show();
                         MainApplication.getInstance().popCurrentActivity();
                     }else {
