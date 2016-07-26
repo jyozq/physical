@@ -7,7 +7,7 @@ import com.straw.lession.physical.async.TaskResult;
 import com.straw.lession.physical.constant.TaskConstant;
 import com.straw.lession.physical.db.DaoSession;
 import com.straw.lession.physical.db.TeacherDao;
-import com.straw.lession.physical.vo.LoginInfo;
+import com.straw.lession.physical.vo.LoginInfoVo;
 import com.straw.lession.physical.vo.db.Teacher;
 import org.greenrobot.greendao.query.DeleteQuery;
 import org.greenrobot.greendao.query.Query;
@@ -19,9 +19,9 @@ import java.util.List;
  * Created by straw on 2016/7/21.
  */
 public class SaveLoginInfoTask extends BaseTask{
-    private LoginInfo loginInfo;
+    private LoginInfoVo loginInfo;
 
-    public SaveLoginInfoTask(Context context, TaskHandler taskHandler, LoginInfo loginInfo) {
+    public SaveLoginInfoTask(Context context, TaskHandler taskHandler, LoginInfoVo loginInfo) {
         super(context, taskHandler);
         this.loginInfo = loginInfo;
     }

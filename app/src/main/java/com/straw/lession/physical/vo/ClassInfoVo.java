@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by straw on 2016/7/24.
  */
-public class ClassInfo {
+public class ClassInfoVo {
     public String getClassCode() {
         return classCode;
     }
@@ -47,12 +47,20 @@ public class ClassInfo {
         this.totalNum = totalNum;
     }
 
-    public List<Student> getStudents() {
+    public List<StudentVo> getStudents() {
         return students;
     }
 
-    public void setStudents(List<Student> students) {
+    public void setStudents(List<StudentVo> students) {
         this.students = students;
+    }
+
+    public String getClassImg() {
+        return classImg;
+    }
+
+    public void setClassImg(String classImg) {
+        this.classImg = classImg;
     }
 
     private String classCode;
@@ -60,7 +68,6 @@ public class ClassInfo {
     private String className;
     private String classType;
     private int totalNum;
-    private List<Student> students = new ArrayList<Student>();
-
-
+    private String classImg;
+    private List<StudentVo> students = new ArrayList<StudentVo>();
 }

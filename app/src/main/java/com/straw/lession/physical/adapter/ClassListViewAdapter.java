@@ -6,8 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.vo.item.ClassItemInfo;
 
@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Created by straw on 2016/7/24.
  */
-public class ClassListViewAdapter  extends BaseAdapter implements View.OnClickListener{
+public class ClassListViewAdapter extends BaseAdapter implements View.OnClickListener{
     private static final String TAG = "ClassListViewAdapter";
     private Context mContext;
     private List<ClassItemInfo> mContentList;
@@ -31,7 +31,8 @@ public class ClassListViewAdapter  extends BaseAdapter implements View.OnClickLi
     }
 
     public class ViewHolder {
-        public TextView textView;
+        public LinearLayout linearLayout;
+        public TextView className;
     }
 
     public interface Callback{
@@ -63,17 +64,18 @@ public class ClassListViewAdapter  extends BaseAdapter implements View.OnClickLi
         ClassItemInfo info = getItem(position);
 
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.selclass_item_listview, null);
+            convertView = inflater.inflate(R.layout.class_item_listview, null);
             holder = new ViewHolder();
-            holder.textView = (TextView) convertView.findViewById(R.id.selclass_course_name);
-            holder.textView.setText(info.getClassName());
+            holder.linearLayout = (LinearLayout) convertView.findViewById(R.id.class_item_view);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.textView.setOnClickListener(this);
-        holder.textView.setTag(position);
+        TextView className = (TextView) convertView.findViewById(R.id.class_item_name);
+        className.setText(info.getClassName());
+        holder.linearLayout.setOnClickListener(this);
+        holder.linearLayout.setTag(position);
         return convertView;
     }
 

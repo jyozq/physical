@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 import com.straw.lession.physical.R;
-import com.straw.lession.physical.vo.item.StudentInfo;
+import com.straw.lession.physical.vo.item.StudentItemInfo;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ import java.util.List;
 public class StudentListViewAdapter extends BaseAdapter implements View.OnClickListener{
     private static final String TAG = "StudentListViewAdapter";
     private Context mContext;
-    private List<StudentInfo> mContentList;
+    private List<StudentItemInfo> mContentList;
     private Callback mCallback;
     private LayoutInflater inflater;
 
@@ -37,7 +37,7 @@ public class StudentListViewAdapter extends BaseAdapter implements View.OnClickL
         public Button button;
     }
 
-    public StudentListViewAdapter(Context context, List<StudentInfo> list, Callback callback) {
+    public StudentListViewAdapter(Context context, List<StudentItemInfo> list, Callback callback) {
 //        super(context, 0, list);
         inflater = LayoutInflater.from(context);
         mContext = context;
@@ -52,7 +52,7 @@ public class StudentListViewAdapter extends BaseAdapter implements View.OnClickL
     }
 
     @Override
-    public StudentInfo getItem(int position) {
+    public StudentItemInfo getItem(int position) {
         Log.i(TAG, "getItem");
         return mContentList.get(position);
     }
@@ -67,7 +67,7 @@ public class StudentListViewAdapter extends BaseAdapter implements View.OnClickL
     public View getView(int position, View convertView, ViewGroup parent) {
         Log.i(TAG, "getView");
         ViewHolder holder = null;
-        StudentInfo info = getItem(position);
+        StudentItemInfo info = getItem(position);
 
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.student_item_listview, null);
@@ -79,7 +79,7 @@ public class StudentListViewAdapter extends BaseAdapter implements View.OnClickL
         }
 
         TextView studentno = (TextView) convertView.findViewById(R.id.studentno);
-        studentno.setText(info.getName());
+        studentno.setText(info.getCode());
         holder.button.setOnClickListener(this);
         holder.button.setTag(position);
         return convertView;

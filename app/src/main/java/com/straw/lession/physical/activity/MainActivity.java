@@ -25,6 +25,7 @@ import com.straw.lession.physical.constant.ParamConstant;
 import com.straw.lession.physical.constant.ReqConstant;
 import com.straw.lession.physical.custom.AlertDialogUtil;
 import com.straw.lession.physical.db.DaoSession;
+import com.straw.lession.physical.db.DbService;
 import com.straw.lession.physical.db.InstituteDao;
 import com.straw.lession.physical.fragment.ClassFragment;
 import com.straw.lession.physical.fragment.CourseFragment;
@@ -34,14 +35,9 @@ import com.straw.lession.physical.http.AsyncHttpClient;
 import com.straw.lession.physical.http.AsyncHttpResponseHandler;
 import com.straw.lession.physical.http.HttpResponseBean;
 import com.straw.lession.physical.task.AddAllDataToDBTask;
-import com.straw.lession.physical.task.AddDataToDBTask;
 import com.straw.lession.physical.task.DeleteAllDataTask;
-import com.straw.lession.physical.utils.AppPreference;
-import com.straw.lession.physical.utils.DateUtil;
-import com.straw.lession.physical.utils.ResponseParseUtils;
-import com.straw.lession.physical.utils.Utils;
-import com.straw.lession.physical.vo.LoginInfo;
-import com.straw.lession.physical.vo.TokenInfo;
+import com.straw.lession.physical.utils.*;
+import com.straw.lession.physical.vo.*;
 
 import com.straw.lession.physical.vo.db.ClassInfo;
 import com.straw.lession.physical.vo.db.CourseDefine;
@@ -95,7 +91,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
     private ClassFragment classFragment;
 
     private Spinner spinner;
-    private LoginInfo loginInfo;
+    private LoginInfoVo loginInfo;
     private TokenInfo tokenInfo;
     private List<Institute> institutes = new ArrayList<>();
     private List<CourseDefine> courseDefines = new ArrayList<>();
@@ -123,6 +119,12 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         initView();
     }
 
+    @Override
+    protected void doAfterGetToken() {
+        //有网络的情况下，可重新获取所有的数据，需要先删除之前的旧数据
+        deleteAllData();
+    }
+
     private void goOnLoad(){
         // 初始化底部按钮事件
         initEvent();
@@ -132,7 +134,6 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
 
     @Override
     protected void loadDataFromService() {
-        showProgressDialog(getResources().getString(R.string.loading));
         try {
             tokenInfo = AppPreference.getUserToken();
             checkTokenInfo(tokenInfo);
@@ -142,9 +143,6 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
             showErrorMsgInfo("获取token出错");
             return;
         }
-
-        //有网络的情况下，可重新获取所有的数据，需要先删除之前的旧数据
-        deleteAllData();
     }
 
     private void deleteAllData() {
@@ -186,10 +184,10 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
                     String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
                     if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){ //登录成功
                         JSONObject dataObject = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
-                        List<com.straw.lession.physical.vo.Institute> instituteVos =
-                            JSON.parseArray(dataObject.getJSONArray("institutes").toString(), com.straw.lession.physical.vo.Institute.class);
-                        assembleData(instituteVos);
-                        addDataToDB();
+                        List<InstituteVo> instituteVos =
+                            JSON.parseArray(dataObject.getJSONArray("institutes").toString(), InstituteVo.class);
+                        assembleInstituteData(instituteVos);
+                        addInstituteDataToDB();
                     }else {//登录失败
                         String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);
                         AlertDialogUtil.showAlertWindow(mContext, -1, errorMessage , null );
@@ -212,13 +210,14 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         mThreadPool.execute(asyncHttpClient);
     }
 
-    private void addDataToDB() {
+    private void addInstituteDataToDB() {
         showProgressDialog(getResources().getString(R.string.loading));
         ITask addAllDataToDBTask = new AddAllDataToDBTask(this, new TaskHandler() {
             @Override
             public void onSuccess(TaskResult result) {
                 hideProgressDialog();
-                goOnLoad();
+                initInstituteSpinner();
+                getAllClassInfoByInstitute();
             }
 
             @Override
@@ -238,8 +237,53 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         mThreadPool.submit(taskWorker);
     }
 
-    private void assembleData(List<com.straw.lession.physical.vo.Institute> instituteVos) throws JSONException {
-        com.straw.lession.physical.vo.Institute instituteVo = null;
+    private void getAllClassInfoByInstitute() {
+        long instituteIdR = loginInfo.getCurrentInstituteIdR();
+        String URL = ReqConstant.URL_BASE + "/class/list";
+        ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+        params.add(new BasicNameValuePair("instituteId", String.valueOf(instituteIdR)));
+        showProgressDialog(getResources().getString(R.string.loading));
+        AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.GET, URL,params,
+                                                tokenInfo.getToken(),new AsyncHttpResponseHandler(){
+            @Override
+            public void onSuccess(HttpResponseBean httpResponseBean) {
+                super.onSuccess(httpResponseBean);
+                try{
+                    JSONObject contentObject = new JSONObject(httpResponseBean.content);
+                    String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
+                    if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){
+                        JSONObject dataObj = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
+                        JSONArray classesArray = dataObj.getJSONArray("classes");
+                        List<ClassInfoVo> classVos =
+                                JSON.parseArray(classesArray.toString(), ClassInfoVo.class);
+                        DbService.getInstance(MainActivity.this).refineClassInfo(classVos);
+                        hideProgressDialog();
+                        goOnLoad();
+                    }else {
+                        String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);
+                        AlertDialogUtil.showAlertWindow(mContext, -1, errorMessage , null );
+                    }
+                }catch(Exception e){
+                    hideProgressDialog();
+                    showErrorMsgInfo(e.toString());
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable error, String content) {
+                super.onFailure(error, content);
+                hideProgressDialog();
+                String errorContent = Utils.parseErrorMessage(mContext, content);
+                showErrorMsgInfo(errorContent);
+                Log.e(TAG, content);
+            }
+        });
+        mThreadPool.execute(asyncHttpClient);
+    }
+
+    private void assembleInstituteData(List<InstituteVo> instituteVos) throws JSONException {
+        InstituteVo instituteVo = null;
         for(int i = 0; i < instituteVos.size(); i ++){
             instituteVo = instituteVos.get(i);
             Institute institute = new Institute();
@@ -252,14 +296,14 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         }
     }
 
-    private void assembleInstitute(Institute institute, com.straw.lession.physical.vo.Institute instituteVo) throws JSONException {
+    private void assembleInstitute(Institute institute, InstituteVo instituteVo) throws JSONException {
         institute.setInstituteIdR(instituteVo.getInstituteId());
         institute.setName(instituteVo.getInstituteName());
         institute.setLoginId(loginInfo.getTeacherId());
 
         try{
-            List<com.straw.lession.physical.vo.ClassInfo> classInfoVos = instituteVo.getClasses();
-            com.straw.lession.physical.vo.ClassInfo classInfoVo = null;
+            List<ClassInfoVo> classInfoVos = instituteVo.getClasses();
+            ClassInfoVo classInfoVo = null;
             for(int i = 0; i < classInfoVos.size(); i ++){
                 classInfoVo = classInfoVos.get(i);
                 ClassInfo classInfo = new ClassInfo();
@@ -276,9 +320,9 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         }
 
         try {
-            List<com.straw.lession.physical.vo.CourseDefine> courseDefineVos
+            List<CourseDefineVo> courseDefineVos
                         = instituteVo.getCourseDefines();
-            com.straw.lession.physical.vo.CourseDefine courseDefineVo = null;
+            CourseDefineVo courseDefineVo = null;
             for (int i = 0; i < courseDefineVos.size(); i++) {
                 courseDefineVo = courseDefineVos.get(i);
                 CourseDefine courseDefine = new CourseDefine();
@@ -294,7 +338,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         }
     }
 
-    private void assembleCourseDefine(CourseDefine courseDefine, com.straw.lession.physical.vo.CourseDefine courseVo) throws JSONException {
+    private void assembleCourseDefine(CourseDefine courseDefine, CourseDefineVo courseVo) throws JSONException {
         courseDefine.setClassIdR(courseVo.getClassId());
         courseDefine.setCode(courseVo.getCourseCode());
         courseDefine.setCourseDefineIdR(courseVo.getCourseDefineId());
@@ -308,7 +352,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         courseDefine.setLoginId(loginInfo.getTeacherId());
     }
 
-    private void assembleClass(ClassInfo classInfo, com.straw.lession.physical.vo.ClassInfo classInfoVo) throws JSONException {
+    private void assembleClass(ClassInfo classInfo, ClassInfoVo classInfoVo) throws JSONException {
         classInfo.setCode(classInfoVo.getClassCode());
         classInfo.setClassIdR(classInfoVo.getClassId());
         classInfo.setName(classInfoVo.getClassName());
@@ -317,8 +361,8 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         classInfo.setLoginId(loginInfo.getTeacherId());
 
         try {
-            List<com.straw.lession.physical.vo.Student> studentVos = classInfoVo.getStudents();
-            com.straw.lession.physical.vo.Student studentVo;
+            List<StudentVo> studentVos = classInfoVo.getStudents();
+            StudentVo studentVo;
             for (int i = 0; i < studentVos.size(); i++) {
                 studentVo = studentVos.get(i);
                 Student student = new Student();
@@ -335,7 +379,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         }
     }
 
-    private void assembleStudent(Student student, com.straw.lession.physical.vo.Student studentVo) throws JSONException {
+    private void assembleStudent(Student student, StudentVo studentVo) throws JSONException {
         student.setName(studentVo.getStudentName());
         student.setCode(studentVo.getStudentCode());
         student.setBirthday(DateUtil.formatStrToDate(studentVo.getBirthday()));
@@ -434,16 +478,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         }
     }
 
-    private void initEvent() {
-        // 设置按钮监听
-        ll_course.setOnClickListener(this);
-        ll_profile.setOnClickListener(this);
-        ll_today.setOnClickListener(this);
-        ll_class.setOnClickListener(this);
-        btn_add_course.setOnClickListener(this);
-        btn_sync.setOnClickListener(this);
-
-//        final List<LoginInfo.Institute> institutes = loginInfo.getInstitutes();
+    private void initInstituteSpinner(){
         SchoolSpinnerAdapter schoolSpinnerAdapter = new SchoolSpinnerAdapter(this, spinner, institutes);
         schoolSpinnerAdapter.setDropDownViewResource(R.layout.school_item_spinner_dropdown);
         spinner.setAdapter(schoolSpinnerAdapter);
@@ -471,6 +506,16 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+    }
+
+    private void initEvent() {
+        // 设置按钮监听
+        ll_course.setOnClickListener(this);
+        ll_profile.setOnClickListener(this);
+        ll_today.setOnClickListener(this);
+        ll_class.setOnClickListener(this);
+        btn_add_course.setOnClickListener(this);
+        btn_sync.setOnClickListener(this);
     }
 
     private int getSelInstitutePos(Long currentInstituteId) {

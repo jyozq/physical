@@ -29,6 +29,12 @@
                 android:layout_centerHorizontal="true" android:layout_gravity="center_horizontal"
                 android:spinnerMode="dropdown"
         />
+        <Spinner
+                android:id="@+id/spinner_class" android:layout_width="wrap_content"
+                android:layout_height="match_parent" android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true" android:layout_gravity="center_horizontal"
+                android:spinnerMode="dropdown" android:visibility="gone"
+        />
         <ImageButton
                 android:id="@+id/btn_sync" android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

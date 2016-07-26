@@ -6,15 +6,15 @@ import com.straw.lession.physical.async.TaskHandler;
 import com.straw.lession.physical.async.TaskResult;
 import com.straw.lession.physical.constant.TaskConstant;
 import com.straw.lession.physical.db.*;
-import com.straw.lession.physical.vo.LoginInfo;
+import com.straw.lession.physical.vo.LoginInfoVo;
 import org.greenrobot.greendao.query.DeleteQuery;
 
 /**
  * Created by straw on 2016/7/21.
  */
 public class DeleteAllDataTask extends BaseTask{
-    private LoginInfo loginInfo;
-    public DeleteAllDataTask(Context context, TaskHandler taskHandler, LoginInfo loginInfo){
+    private LoginInfoVo loginInfo;
+    public DeleteAllDataTask(Context context, TaskHandler taskHandler, LoginInfoVo loginInfo){
         super(context, taskHandler);
         this.loginInfo = loginInfo;
     }

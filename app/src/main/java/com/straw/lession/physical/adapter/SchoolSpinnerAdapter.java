@@ -10,9 +10,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import com.straw.lession.physical.R;
-import com.straw.lession.physical.vo.LoginInfo;
 import com.straw.lession.physical.vo.db.Institute;
-import com.straw.lession.physical.vo.item.SchoolInfo;
 
 import java.util.List;
 

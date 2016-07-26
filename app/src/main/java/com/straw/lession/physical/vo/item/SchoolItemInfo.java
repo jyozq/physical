@@ -3,12 +3,12 @@ package com.straw.lession.physical.vo.item;
 /**
  * Created by straw on 2016/7/12.
  */
-public class SchoolInfo {
+public class SchoolItemInfo {
     private long id;
     private String name;
     private String code;
 
-    public SchoolInfo(String name, String code){
+    public SchoolItemInfo(String name, String code){
         this.name = name;
         this.code = code;
     }

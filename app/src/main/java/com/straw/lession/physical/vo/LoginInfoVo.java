@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by straw on 2016/7/15.
  */
-public class LoginInfo {
+public class LoginInfoVo {
     public String getBirthday() {
         return birthday;
     }

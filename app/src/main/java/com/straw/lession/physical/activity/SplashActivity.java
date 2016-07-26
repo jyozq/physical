@@ -34,6 +34,11 @@ public class SplashActivity extends ThreadBaseActivity {
     }
 
     @Override
+    protected void doAfterGetToken() {
+
+    }
+
+    @Override
     protected void loadDataFromService() {
 
     }

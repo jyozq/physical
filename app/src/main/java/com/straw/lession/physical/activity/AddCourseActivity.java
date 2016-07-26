@@ -2,14 +2,19 @@ package com.straw.lession.physical.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
+import cn.aigestudio.datepicker.cons.DPMode;
+import cn.aigestudio.datepicker.views.DatePicker;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.base.ThreadToolBarBaseActivity;
 import com.straw.lession.physical.app.MainApplication;
@@ -29,11 +34,11 @@ import com.straw.lession.physical.utils.DateUtil;
 import com.straw.lession.physical.utils.Detect;
 import com.straw.lession.physical.utils.ResponseParseUtils;
 import com.straw.lession.physical.utils.Utils;
-import com.straw.lession.physical.vo.LoginInfo;
+import com.straw.lession.physical.vo.LoginInfoVo;
 import com.straw.lession.physical.vo.TokenInfo;
 import com.straw.lession.physical.vo.db.ClassInfo;
 import com.straw.lession.physical.vo.db.CourseDefine;
-import com.straw.lession.physical.vo.item.ClassItemInfo;
+import com.straw.lession.physical.vo.item.SelClassItemInfo;
 
 import org.apache.http.message.BasicNameValuePair;
 import org.greenrobot.greendao.query.Query;
@@ -50,9 +55,9 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
     private static final String TAG = "AddCourseActivity";
     private final int RESULT_CODE=101;
     private final int REQUEST_CODE=1;
-    private LoginInfo loginInfo;
+    private LoginInfoVo loginInfo;
     private ActionSheetTwoColumnGridDialog actionSheetGridDialog;
-    private EditText timeTxt, seqTxt, classTxt, kcTxt, typeTxt, locationTxt;
+    private EditText dateTxt, weekdayTxt, seqTxt, classTxt, kcTxt, typeTxt, locationTxt;
     private MyListener listener = new MyListener();
     private int numColumns = 2;
     private int weekdaySelectionIndex = -1, seqSelectionIndex = -1, typeSelectionIndex = -1;
@@ -70,31 +75,34 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
         setContentView(R.layout.activity_add_course);
-        initToolBar("");
+        initToolBar(getResources().getString(R.string.toolbar_new_class));
         MainApplication.getInstance().addActivity(this);
         initViews();
     }
 
     @Override
     public void doAfterGetToken() {
-
+        saveCourse();
     }
 
     private void initViews() {
-        timeTxt = (EditText) findViewById(R.id.course_time);
+        dateTxt = (EditText) findViewById(R.id.course_date);
+        weekdayTxt = (EditText) findViewById(R.id.course_weekday);
         seqTxt = (EditText) findViewById(R.id.course_seq);
         classTxt = (EditText) findViewById(R.id.course_class);
         kcTxt = (EditText) findViewById(R.id.course_kc);
         typeTxt = (EditText) findViewById(R.id.course_type);
         locationTxt = (EditText) findViewById(R.id.course_location);
         addcourse_save_btn = (Button) findViewById(R.id.addcourse_save_btn);
-        timeTxt.setOnClickListener(listener);
+        dateTxt.setOnClickListener(listener);
+        weekdayTxt.setOnClickListener(listener);
         seqTxt.setOnClickListener(listener);
         classTxt.setOnClickListener(listener);
         typeTxt.setOnClickListener(listener);
         addcourse_save_btn.setOnClickListener(listener);
 
-        timeTxt.setInputType(InputType.TYPE_NULL);
+        dateTxt.setInputType(InputType.TYPE_NULL);
+        weekdayTxt.setInputType(InputType.TYPE_NULL);
         seqTxt.setInputType(InputType.TYPE_NULL);
         classTxt.setInputType(InputType.TYPE_NULL);
         typeTxt.setInputType(InputType.TYPE_NULL);
@@ -111,9 +119,9 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode==REQUEST_CODE) {
             if(resultCode==RESULT_CODE) {
-                ClassItemInfo classItemInfo = (ClassItemInfo) data.getSerializableExtra("classInfo");
-                classTxt.setText(classItemInfo.getClassName());
-                selectClassId = classItemInfo.getClassId();
+                SelClassItemInfo selClassItemInfo = (SelClassItemInfo) data.getSerializableExtra("classInfo");
+                classTxt.setText(selClassItemInfo.getClassName());
+                selectClassId = selClassItemInfo.getClassId();
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -124,8 +132,8 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             String weekday = weekdayArr[position];
             int weekday_value = weekday_val_arr[position];
-            timeTxt.setText(weekday);
-            timeTxt.setTag(String.valueOf(weekday_value));
+            weekdayTxt.setText(weekday);
+            weekdayTxt.setTag(String.valueOf(weekday_value));
             weekdaySelectionIndex = position;
             actionSheetGridDialog.dismiss();
         }
@@ -159,7 +167,25 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-                case R.id.course_time:
+                case R.id.course_date:
+                    final AlertDialog dialog = new AlertDialog.Builder(AddCourseActivity.this).create();
+                    dialog.show();
+                    DatePicker picker = new DatePicker(AddCourseActivity.this);
+                    picker.setDate(2015, 10);
+                    picker.setMode(DPMode.SINGLE);
+                    picker.setOnDatePickedListener(new DatePicker.OnDatePickedListener() {
+                        @Override
+                        public void onDatePicked(String date) {
+                            dateTxt.setText(date);
+                            dialog.dismiss();
+                        }
+                    });
+                    ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    dialog.getWindow().setContentView(picker, params);
+                    dialog.getWindow().setGravity(Gravity.CENTER);
+                    break;
+                case R.id.course_weekday:
                     actionSheetGridDialog = new ActionSheetTwoColumnGridDialog(
                             AddCourseActivity.this, numColumns , weekdayArr ,
                             onWeekdayItemClickListener, weekdaySelectionIndex)
@@ -185,24 +211,32 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
                     actionSheetGridDialog.show();
                     break;
                 case R.id.addcourse_save_btn:
-                    saveCourse();
+                    checkTokenInfo();
                     break;
             }
         }
     }
 
     private void saveCourse() {
+        String dateStr = null;
         int weekday = -1;
         int seq = -1;
         String type = null;
         String courseName = null;
         String location = null;
         final CourseDefine courseDefine = new CourseDefine();
-        if(timeTxt.getTag() == null){
+        if(dateTxt.getText() == null){
+            Toast.makeText(mContext, "请选择日期" , Toast.LENGTH_LONG).show();
+            return;
+        }else{
+            dateStr = dateTxt.getText().toString();
+            courseDefine.setDate(DateUtil.formatStrToDate(dateStr));
+        }
+        if(weekdayTxt.getTag() == null){
             Toast.makeText(mContext, "请选择时间" , Toast.LENGTH_LONG).show();
             return;
         }else{
-            weekday = Integer.parseInt((String)timeTxt.getTag());
+            weekday = Integer.parseInt((String)weekdayTxt.getTag());
             courseDefine.setWeekDay(weekday);
         }
         if(seqTxt.getTag() == null){
@@ -239,7 +273,7 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
             location = locationTxt.getText().toString();
             courseDefine.setLocation(location);
         }
-        LoginInfo loginInfo = null;
+        LoginInfoVo loginInfo = null;
         TokenInfo tokenInfo = null;
         try {
             loginInfo = AppPreference.getLoginInfo();
@@ -255,7 +289,6 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
         courseDefine.setLoginId(loginInfo.getTeacherId());
         courseDefine.setUseOnce(CourseDictionary.USE_ONCE);
 
-        showProgressDialog(getResources().getString(R.string.loading));
         final String URL = ReqConstant.URL_BASE + "/course/define/create";
         final ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
         params.add(new BasicNameValuePair("courseType", String.valueOf(type)));
@@ -263,7 +296,7 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
         params.add(new BasicNameValuePair("instituteId", String.valueOf(loginInfo.getCurrentInstituteIdR())));
         params.add(new BasicNameValuePair("classId", String.valueOf(selectClassId)));
         params.add(new BasicNameValuePair("weekday", String.valueOf(weekday)));
-        params.add(new BasicNameValuePair("courseDate", DateUtil.curDate()));
+        params.add(new BasicNameValuePair("courseDate", dateStr));
         params.add(new BasicNameValuePair("courseSeq", String.valueOf(seq)));
         params.add(new BasicNameValuePair("courseLocation", location));
         params.add(new BasicNameValuePair("useOnce", String.valueOf(CourseDictionary.USE_ONCE)));

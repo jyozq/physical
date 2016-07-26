@@ -3,7 +3,7 @@ package com.straw.lession.physical.vo;
 /**
  * Created by straw on 2016/7/24.
  */
-public class Student {
+public class StudentVo {
     public String getBirthday() {
         return birthday;
     }

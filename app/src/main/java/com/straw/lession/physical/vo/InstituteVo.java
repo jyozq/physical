@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by straw on 2016/7/24.
  */
-public class Institute {
+public class InstituteVo {
     public long getInstituteId() {
         return instituteId;
     }
@@ -23,25 +23,25 @@ public class Institute {
         this.instituteName = instituteName;
     }
 
-    public List<ClassInfo> getClasses() {
+    public List<ClassInfoVo> getClasses() {
         return classes;
     }
 
-    public void setClasses(List<ClassInfo> classes) {
+    public void setClasses(List<ClassInfoVo> classes) {
         this.classes = classes;
     }
 
-    public List<CourseDefine> getCourseDefines() {
+    public List<CourseDefineVo> getCourseDefines() {
         return courseDefines;
     }
 
-    public void setCourseDefines(List<CourseDefine> courseDefines) {
+    public void setCourseDefines(List<CourseDefineVo> courseDefines) {
         this.courseDefines = courseDefines;
     }
 
     private long instituteId;
     private String instituteName;
-    List<ClassInfo> classes = new ArrayList<ClassInfo>();
-    List<CourseDefine> courseDefines = new ArrayList<CourseDefine>();
+    List<ClassInfoVo> classes = new ArrayList<ClassInfoVo>();
+    List<CourseDefineVo> courseDefines = new ArrayList<CourseDefineVo>();
 
 }

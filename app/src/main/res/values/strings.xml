@@ -55,6 +55,7 @@
     <string name="toolbar_course">课程计划</string>
     <string name="toolbar_class">班级</string>
     <string name="toolbar_profile">我</string>
+    <string name="toolbar_new_class">新建课程</string>
 
     <string name="btn_start_course">开始上课</string>
     <string name="btn_end_course">下课</string>
@@ -63,10 +64,14 @@
     <string name="btn_next_student">&#160;&#160;&#160;下一个学生&#160;&#160;&#160;</string>
     <string name="btn_open_light">开灯</string>
     <string name="btn_close_light">关灯</string>
-    <string name="course_time_label">时间</string>
+    <string name="course_date_label">日期</string>
+    <string name="course_weekday_label">时间</string>
     <string name="course_seq_label">班次</string>
     <string name="course_class_label">班级</string>
     <string name="course_kc_label">课程名称</string>
     <string name="course_type_label">活动类型</string>
     <string name="course_location_label">上课地点</string>
+    <string name="resetpwd_origin_label">原密码</string>
+    <string name="resetpwd_new_label">新密码</string>
+    <string name="resetpwd_repnew_label">重复密码</string>
 </resources>

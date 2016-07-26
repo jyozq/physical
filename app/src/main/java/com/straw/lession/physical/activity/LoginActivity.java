@@ -25,7 +25,7 @@ import com.straw.lession.physical.utils.AppPreference;
 import com.straw.lession.physical.utils.ResponseParseUtils;
 import com.straw.lession.physical.utils.TimeUtils;
 import com.straw.lession.physical.utils.Utils;
-import com.straw.lession.physical.vo.LoginInfo;
+import com.straw.lession.physical.vo.LoginInfoVo;
 import com.straw.lession.physical.vo.TokenInfo;
 
 import org.apache.http.message.BasicNameValuePair;
@@ -120,6 +120,11 @@ public class LoginActivity extends ThreadBaseActivity {
     }
 
     @Override
+    protected void doAfterGetToken() {
+
+    }
+
+    @Override
     protected void loadDataFromService() {
 
     }
@@ -154,7 +159,7 @@ public class LoginActivity extends ThreadBaseActivity {
                     hideProgressDialog();
                     JSONObject contentObject = new JSONObject(httpResponseBean.content);
                     String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
-                    if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){ //登录成功
+                    if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){//登录成功
 
                         JSONObject dataObject = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
                         String userToken = dataObject.getString(ParamConstant.USER_TOKEN);
@@ -162,7 +167,7 @@ public class LoginActivity extends ThreadBaseActivity {
                         JSONObject userObject = dataObject.getJSONObject(ParamConstant.USER_INFO);
                         String nowTime = TimeUtils.getCurrentDateStr2();
                         Gson gson = new Gson();
-                        LoginInfo loginInfo = gson.fromJson(userObject.toString(), LoginInfo.class);
+                        LoginInfoVo loginInfo = gson.fromJson(userObject.toString(), LoginInfoVo.class);
                         loginInfo.setNowTime(nowTime);
                         AppPreference.saveLoginInfo(LoginActivity.this,loginInfo);
                         MainApplication.getInstance().popCurrentActivity();

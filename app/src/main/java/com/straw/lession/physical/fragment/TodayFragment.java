@@ -22,7 +22,7 @@ import com.straw.lession.physical.dictionary.CourseDictionary;
 import com.straw.lession.physical.fragment.base.BaseFragment;
 import com.straw.lession.physical.utils.AppPreference;
 import com.straw.lession.physical.utils.DateUtil;
-import com.straw.lession.physical.vo.LoginInfo;
+import com.straw.lession.physical.vo.LoginInfoVo;
 import com.straw.lession.physical.vo.db.ClassInfo;
 import com.straw.lession.physical.vo.db.Course;
 import com.straw.lession.physical.vo.db.CourseDefine;
@@ -100,7 +100,7 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
     }
 
     public void query() {
-        LoginInfo loginInfo = null;
+        LoginInfoVo loginInfo = null;
         try {
             loginInfo = AppPreference.getLoginInfo();
         } catch (IOException e) {

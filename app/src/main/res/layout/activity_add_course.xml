@@ -4,18 +4,38 @@
     android:background="@color/white">
     <LinearLayout android:layout_width="fill_parent" android:layout_height="@dimen/dimen_50dp" android:orientation="horizontal">
         <ImageView
+                android:layout_width="wrap_content" android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/dimen_1dp" android:layout_height="wrap_content"
+                android:src="@mipmap/icon_time" android:layout_marginLeft="@dimen/dimen_40dp"/>
+        <TextView android:layout_width="wrap_content" android:gravity="center_vertical"
+                  android:layout_height="fill_parent" android:text="@string/course_date_label"
+                  android:textSize="@dimen/font_size_16" android:layout_marginLeft="@dimen/dimen_15dp"
+                  android:layout_marginRight="@dimen/dimen_15dp" android:textColor="@color/gray_4a4f49" />
+        <EditText android:id="@+id/course_date" android:background="@color/transparent"
+                  android:layout_width="fill_parent" android:gravity="center_vertical"
+                  android:layout_weight="1" android:layout_height="fill_parent"
+                  android:textSize="@dimen/font_size_16" android:textColor="@color/gray_32"
+                  android:textColorHint="@color/gray_cccccc" android:hint="@string/course_date_label"
+                  android:inputType="none"/>
+        <ImageView android:layout_marginRight="@dimen/dimen_20dp"
+                   android:layout_width="wrap_content" android:layout_gravity="center" android:gravity="center" android:layout_height="wrap_content" android:src="@mipmap/right_arrow" />
+    </LinearLayout>
+    <include layout="@layout/line_view"  android:layout_width="match_parent" android:layout_height="@dimen/dimen_1dp"  />
+
+    <LinearLayout android:layout_width="fill_parent" android:layout_height="@dimen/dimen_50dp" android:orientation="horizontal">
+        <ImageView
             android:layout_width="wrap_content" android:layout_gravity="center_vertical"
             android:layout_marginTop="@dimen/dimen_1dp" android:layout_height="wrap_content"
             android:src="@mipmap/icon_time" android:layout_marginLeft="@dimen/dimen_40dp"/>
         <TextView android:layout_width="wrap_content" android:gravity="center_vertical"
-            android:layout_height="fill_parent" android:text="@string/course_time_label"
+            android:layout_height="fill_parent" android:text="@string/course_weekday_label"
             android:textSize="@dimen/font_size_16" android:layout_marginLeft="@dimen/dimen_15dp"
             android:layout_marginRight="@dimen/dimen_15dp" android:textColor="@color/gray_4a4f49" />
-        <EditText android:id="@+id/course_time" android:background="@color/transparent"
+        <EditText android:id="@+id/course_weekday" android:background="@color/transparent"
             android:layout_width="fill_parent" android:gravity="center_vertical"
             android:layout_weight="1" android:layout_height="fill_parent"
             android:textSize="@dimen/font_size_16" android:textColor="@color/gray_32"
-            android:textColorHint="@color/gray_cccccc" android:hint="@string/course_time_label"
+            android:textColorHint="@color/gray_cccccc" android:hint="@string/course_weekday_label"
             android:inputType="none"/>
         <ImageView android:layout_marginRight="@dimen/dimen_20dp"
             android:layout_width="wrap_content" android:layout_gravity="center" android:gravity="center" android:layout_height="wrap_content" android:src="@mipmap/right_arrow" />

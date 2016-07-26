@@ -194,6 +194,7 @@ public abstract class ThreadBaseActivity extends AppCompatActivity {
     public void checkTokenInfo(final TokenInfo tokenInfo) {
         if(System.currentTimeMillis() - tokenInfo.getTimeStamp() > 60*1000){
             String URL = ReqConstant.URL_BASE + "/auth/token/refresh";
+            showProgressDialog(getResources().getString(R.string.loading));
             AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.GET, URL ,null , null, new AsyncHttpResponseHandler() {
                 @Override
                 public void onSuccess(HttpResponseBean httpResponseBean) {
@@ -208,6 +209,7 @@ public abstract class ThreadBaseActivity extends AppCompatActivity {
                             tokenInfo.setToken(newToken);
                             tokenInfo.setTimeStamp(System.currentTimeMillis());
                             AppPreference.saveToken(tokenInfo);
+                            doAfterGetToken();
                         }else {//登录失败
                             String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);
                             AlertDialogUtil.showAlertWindow(mContext, -1, errorMessage , null );
@@ -231,9 +233,12 @@ public abstract class ThreadBaseActivity extends AppCompatActivity {
                 }
             });
             mThreadPool.execute(asyncHttpClient);
+        }else{
+            doAfterGetToken();
         }
-
     }
+
+    protected abstract void doAfterGetToken();
 
     protected abstract void loadDataFromService();
 

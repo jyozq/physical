@@ -22,14 +22,13 @@ import com.straw.lession.physical.constant.Weekday;
 import com.straw.lession.physical.db.DaoSession;
 import com.straw.lession.physical.db.StudentDao;
 import com.straw.lession.physical.utils.AppPreference;
-import com.straw.lession.physical.vo.LoginInfo;
+import com.straw.lession.physical.vo.LoginInfoVo;
 import com.straw.lession.physical.vo.db.Student;
 import com.straw.lession.physical.vo.item.CourseItemInfo;
-import com.straw.lession.physical.vo.item.StudentInfo;
+import com.straw.lession.physical.vo.item.StudentItemInfo;
 import com.zbar.lib.CaptureActivity;
 
 import org.greenrobot.greendao.query.Query;
-import org.greenrobot.greendao.query.WhereCondition;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,19 +42,19 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
     private SwipeRefreshLayout swipeLayout;
     private ListView listView;
-    private List<StudentInfo> infoList = new ArrayList<StudentInfo>();
+    private List<StudentItemInfo> infoList = new ArrayList<StudentItemInfo>();
     private StudentListViewAdapter studentListViewAdapter;
     private CourseItemInfo course;
-    private LoginInfo loginInfo;
+    private LoginInfoVo loginInfo;
 
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
         setContentView(R.layout.activity_start_course);
-        initToolBar("");
-        MainApplication.getInstance().addActivity(this);
         Intent intent = getIntent();
         course = (CourseItemInfo)intent.getSerializableExtra("course");
+        initToolBar(course.getName());
+        MainApplication.getInstance().addActivity(this);
         initViews();
     }
 
@@ -105,10 +104,14 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
 
     }
 
-    private StudentInfo toItem(Student student) {
-        StudentInfo studentInfo = new StudentInfo();
-        studentInfo.setName(student.getCode());
-        return studentInfo;
+    private StudentItemInfo toItem(Student student) {
+        StudentItemInfo studentItemInfo = new StudentItemInfo();
+        studentItemInfo.setCode(student.getCode());
+        studentItemInfo.setName(student.getName());
+        studentItemInfo.setGender(student.getGender());
+        studentItemInfo.setId(student.getId());
+        studentItemInfo.setStudentIdR(student.getStudentIdR());
+        return studentItemInfo;
     }
 
     @Override

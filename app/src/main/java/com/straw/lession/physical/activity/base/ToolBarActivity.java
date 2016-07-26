@@ -20,11 +20,15 @@ import com.straw.lession.physical.utils.Utils;
 public  abstract class ToolBarActivity extends AppCompatActivity implements View.OnClickListener {
     protected Activity mContext = ToolBarActivity.this;
     private ToolBarHelper mToolBarHelper ;
-    public Toolbar toolbar ;
+    protected Toolbar toolbar ;
 
     private ImageButton btn_back;
+    private ImageButton btn_add_course;
     private TextView textView;
-    private Spinner spinner;
+    private Spinner spinner_school;
+    private Spinner spinner_class;
+    private ImageButton btn_sync;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,24 +47,28 @@ public  abstract class ToolBarActivity extends AppCompatActivity implements View
         /*自定义的一些操作*/
         onCreateCustomToolBar(toolbar) ;
         btn_back = (ImageButton) toolbar.findViewById(R.id.btn_back);
+        btn_add_course = (ImageButton) toolbar.findViewById(R.id.btn_add_course);
         textView = (TextView) toolbar.findViewById(R.id.textView);
-        spinner = (Spinner) toolbar.findViewById(R.id.spinner_school);
-        spinner.setVisibility(View.GONE);
+        spinner_school = (Spinner) toolbar.findViewById(R.id.spinner_school);
+        spinner_class = (Spinner) toolbar.findViewById(R.id.spinner_class);
+        btn_sync = (ImageButton) toolbar.findViewById(R.id.btn_sync);
+    }
+
+    public void hideToolBarView(){
+        btn_back.setVisibility(View.GONE);
+        btn_add_course.setVisibility(View.GONE);
+        textView.setVisibility(View.GONE);
+        spinner_school.setVisibility(View.GONE);
+        spinner_class.setVisibility(View.GONE);
+        btn_sync.setVisibility(View.GONE);
     }
 
     public void initToolBar(String titleText){
+        hideToolBarView();
         textView.setText( titleText );
         btn_back.setOnClickListener(this);
-    }
-
-    public void initToolBar(int titleRes){
-        textView.setText( getResources().getString( titleRes ) );
-        btn_back.setOnClickListener(this);
-    }
-
-    public void initToolBar(int titleRes , int rightText ){
-        textView.setText( getResources().getString( titleRes ) );
-        btn_back.setOnClickListener(this);
+        textView.setVisibility(View.VISIBLE);
+        btn_back.setVisibility(View.VISIBLE);
     }
 
     public void onCreateCustomToolBar(Toolbar toolbar){

@@ -3,7 +3,7 @@ package com.straw.lession.physical.vo;
 /**
  * Created by straw on 2016/7/24.
  */
-public class CourseDefine {
+public class CourseDefineVo {
     public long getClassId() {
         return classId;
     }
