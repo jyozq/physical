@@ -6,9 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.straw.lession.physical.R;
+import com.straw.lession.physical.constant.Gender;
 import com.straw.lession.physical.vo.item.StudentItemInfo;
 
 import java.util.List;
@@ -22,6 +23,13 @@ public class StudentCommentListViewAdapter  extends BaseAdapter implements View.
     private List<StudentItemInfo> mContentList;
     private Callback mCallback;
     private LayoutInflater inflater;
+
+    public StudentCommentListViewAdapter(Context context, List<StudentItemInfo> list, Callback callback) {
+        inflater = LayoutInflater.from(context);
+        mContext = context;
+        mContentList = list;
+        mCallback = callback;
+    }
 
     @Override
     public int getCount() {
@@ -38,7 +46,7 @@ public class StudentCommentListViewAdapter  extends BaseAdapter implements View.
     @Override
     public long getItemId(int position) {
         Log.i(TAG, "getItemId");
-        return position;
+        return mContentList.get(position).getStudentIdR();
     }
 
     @Override
@@ -50,16 +58,20 @@ public class StudentCommentListViewAdapter  extends BaseAdapter implements View.
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.student_comment_item_listview, null);
             holder = new ViewHolder();
-            holder.button = (Button) convertView.findViewById(R.id.btn_do_start_course);
+            holder.linearLayout = (LinearLayout) convertView.findViewById(R.id.student_comment_view);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
+        TextView studentname = (TextView) convertView.findViewById(R.id.studentname);
         TextView studentno = (TextView) convertView.findViewById(R.id.studentno);
-        studentno.setText(info.getName());
-        holder.button.setOnClickListener(this);
-        holder.button.setTag(position);
+        TextView gender = (TextView) convertView.findViewById(R.id.gender);
+        studentname.setText(info.getName());
+        studentno.setText(info.getCode());
+        gender.setText(Gender.getName(info.getGender()));
+        holder.linearLayout.setOnClickListener(this);
+        holder.linearLayout.setTag(position);
         return convertView;
     }
 
@@ -73,7 +85,6 @@ public class StudentCommentListViewAdapter  extends BaseAdapter implements View.
     }
 
     public class ViewHolder {
-        public TextView textView;
-        public Button button;
+        public LinearLayout linearLayout;
     }
 }

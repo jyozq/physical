@@ -493,7 +493,11 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
                 loginInfo.setCurrentInstituteIdR(institutes.get(pos).getInstituteIdR());
                 try {
                     AppPreference.saveLoginInfoWithoutDB(loginInfo);
-                    todayFragment.query();
+                    if(todayFragment.isVisible()) {
+                        todayFragment.query();
+                    }else if(classFragment.isVisible()) {
+                        classFragment.query();
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                     Log.e(TAG,"",e);

@@ -44,10 +44,19 @@ public class StudentVo {
         this.studentName = studentName;
     }
 
+    public String getStudentImg() {
+        return studentImg;
+    }
+
+    public void setStudentImg(String studentImg) {
+        this.studentImg = studentImg;
+    }
+
     private String birthday;
     private int gender;
     private String studentCode;
     private long studentId;
     private String studentName;
+    private String studentImg;
 
 }

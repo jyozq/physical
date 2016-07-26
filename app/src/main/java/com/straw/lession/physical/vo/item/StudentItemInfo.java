@@ -1,9 +1,11 @@
 package com.straw.lession.physical.vo.item;
 
+import java.io.Serializable;
+
 /**
  * Created by straw on 2016/7/11.
  */
-public class StudentItemInfo {
+public class StudentItemInfo implements Serializable{
     private long id;
     private String name;
     private String code;

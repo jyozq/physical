@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 import com.alibaba.fastjson.JSON;
 import com.straw.lession.physical.R;
+import com.straw.lession.physical.activity.MainActivity;
 import com.straw.lession.physical.activity.StudentCommentListActivity;
 import com.straw.lession.physical.activity.base.ThreadToolBarBaseActivity;
 import com.straw.lession.physical.adapter.ClassListViewAdapter;
@@ -48,12 +49,12 @@ public class ClassFragment extends BaseFragment implements SwipeRefreshLayout.On
     private ListView listView;
     private ClassListViewAdapter adapter;
     private List<ClassItemInfo> infoList = new ArrayList<ClassItemInfo>();
-    private ThreadToolBarBaseActivity mContext;
+    private MainActivity mContext;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mContext = (ThreadToolBarBaseActivity) getActivity();
+        mContext = (MainActivity) getActivity();
     }
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -69,13 +70,13 @@ public class ClassFragment extends BaseFragment implements SwipeRefreshLayout.On
     private void initViews() {
         swipeLayout = (SwipeRefreshLayout) layoutView.findViewById(R.id.swipe_refresh);
         swipeLayout.setOnRefreshListener(this);
-        listView = (ListView) layoutView.findViewById(R.id.listview);
+        listView = (ListView) layoutView.findViewById(R.id.class_listview);
         adapter = new ClassListViewAdapter(layoutView.getContext(), infoList, this);
-        query();
         listView.setAdapter(adapter);
+        query();
     }
 
-    private void query() {
+    public void query() {
         final LoginInfoVo loginInfoVo;
         final TokenInfo tokenInfo;
         try {
@@ -96,7 +97,6 @@ public class ClassFragment extends BaseFragment implements SwipeRefreshLayout.On
             @Override
             public void onSuccess(HttpResponseBean httpResponseBean) {
                 try{
-                    mContext.hideProgressDialog();
                     JSONObject contentObject = new JSONObject(httpResponseBean.content);
                     String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
                     if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){//登录成功
@@ -111,6 +111,7 @@ public class ClassFragment extends BaseFragment implements SwipeRefreshLayout.On
                         for(ClassInfo classInfo:classInfos){
                             infoList.add(toItem(classInfo));
                         }
+                        mContext.hideProgressDialog();
                         adapter.notifyDataSetChanged();
                     }else {//登录失败
                         String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);
@@ -131,6 +132,7 @@ public class ClassFragment extends BaseFragment implements SwipeRefreshLayout.On
                 Log.e(TAG, content);
             }
         });
+        mThreadPool.execute(asyncHttpClient);
     }
 
     private ClassItemInfo toItem(ClassInfo classInfo) {

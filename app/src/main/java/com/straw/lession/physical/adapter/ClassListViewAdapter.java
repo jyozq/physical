@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.straw.lession.physical.R;
@@ -31,8 +32,7 @@ public class ClassListViewAdapter extends BaseAdapter implements View.OnClickLis
     }
 
     public class ViewHolder {
-        public LinearLayout linearLayout;
-        public TextView className;
+        public ImageView rightImageView;
     }
 
     public interface Callback{
@@ -66,7 +66,7 @@ public class ClassListViewAdapter extends BaseAdapter implements View.OnClickLis
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.class_item_listview, null);
             holder = new ViewHolder();
-            holder.linearLayout = (LinearLayout) convertView.findViewById(R.id.class_item_view);
+            holder.rightImageView = (ImageView) convertView.findViewById(R.id.right_arrow);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -74,8 +74,8 @@ public class ClassListViewAdapter extends BaseAdapter implements View.OnClickLis
 
         TextView className = (TextView) convertView.findViewById(R.id.class_item_name);
         className.setText(info.getClassName());
-        holder.linearLayout.setOnClickListener(this);
-        holder.linearLayout.setTag(position);
+        holder.rightImageView.setOnClickListener(this);
+        holder.rightImageView.setTag(position);
         return convertView;
     }
 
