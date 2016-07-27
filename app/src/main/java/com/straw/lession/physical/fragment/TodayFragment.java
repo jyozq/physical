@@ -29,6 +29,7 @@ import com.straw.lession.physical.vo.db.CourseDefine;
 import com.straw.lession.physical.vo.item.CourseItemInfo;
 
 import org.greenrobot.greendao.query.DeleteQuery;
+import org.greenrobot.greendao.query.Query;
 import org.greenrobot.greendao.query.QueryBuilder;
 import org.greenrobot.greendao.query.WhereCondition;
 
@@ -112,11 +113,9 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
         CourseDefineDao courseDefineDao = session.getCourseDefineDao();
         CourseDao courseDao = session.getCourseDao();
 
-        //先删除之前插入的今日课程（非临时课程）
-        DeleteQuery delteQuery = courseDao.queryBuilder()
-                .where(CourseDao.Properties.UseOnce.eq(CourseDictionary.USE_ONCE_NOT),
-                        CourseDao.Properties.LoginId.eq(loginInfo.getTeacherId())).buildDelete();
-        delteQuery.executeDeleteWithoutDetachingEntities();
+        Query courseQuery = courseDao.queryBuilder()
+                .where(CourseDao.Properties.LoginId.eq(loginInfo.getTeacherId())).build();
+        List<Course> courses = courseQuery.list();
 
         QueryBuilder.LOG_SQL=true;
         QueryBuilder.LOG_VALUES=true;
@@ -127,30 +126,49 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
                                     CourseDefineDao.Properties.WeekDay.eq(DateUtil.getCurrentWeekday()));
         List<CourseDefine> courseDefines = qb.where(wc).list();
 
-        Course course = null;
-        CourseDefine courseDefine = null;
-        for(int i = 0; i < courseDefines.size(); i ++){
-            course = new Course();
-            courseDefine = courseDefines.get(i);
-            course.setCourseDefine(courseDefine);
-            course.setCourseDefineId(courseDefine.getId());
-            course.setLoginId(loginInfo.getTeacherId());
-            course.setUseOnce(CourseDictionary.USE_ONCE_NOT);
-            courses.add(course);
-        }
-        courseDao.insertInTx(courses);
+        for(Course course:courses){
+            boolean notDel = false;
+            for(CourseDefine courseDefine : courseDefines){
+                if(course.getCourseDefineId() == courseDefine.getId()){
+                    notDel = true;
+                    break;
+                }
+            }
 
+            if(!notDel){
+                courseDao.delete(course);
+            }
+        }
+
+        for(CourseDefine courseDefine : courseDefines){
+            boolean isAdd = true;
+            for(Course course:courses){
+                if(course.getCourseDefineId() == courseDefine.getId()){
+                    isAdd = false;
+                    break;
+                }
+            }
+            if(isAdd){
+                Course newCourse = new Course();
+                newCourse.setLoginId(loginInfo.getTeacherId());
+                newCourse.setUseOnce(courseDefine.getUseOnce());
+                newCourse.setCourseDefineId(courseDefine.getId());
+                courseDao.insert(newCourse);
+            }
+        }
+
+        courses = courseQuery.list();
         infoList.clear();
-        for(int i = 0; i < courseDefines.size(); i++){
-            courseDefine = courseDefines.get(i);
-            infoList.add(toItem(courseDefine));
+        for(Course course : courses){
+            infoList.add(toItem(course));
         }
         adapter.notifyDataSetChanged();
     }
 
-    private CourseItemInfo toItem(CourseDefine courseDefine) {
+    private CourseItemInfo toItem(Course course) {
         CourseItemInfo courseItemInfo = new CourseItemInfo();
-        courseItemInfo.setId(courseDefine.getId());
+        CourseDefine courseDefine = course.getCourseDefine();
+        courseItemInfo.setId(course.getCourseDefineId());
         courseItemInfo.setName(courseDefine.getName());
         courseItemInfo.setLocation(courseDefine.getLocation());
         courseItemInfo.setDate(DateUtil.dateToStr(new Date()));

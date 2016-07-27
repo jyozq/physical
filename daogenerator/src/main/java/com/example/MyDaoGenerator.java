@@ -26,7 +26,6 @@ public class MyDaoGenerator {
         Entity institute = addInstitudeDefine(schema);
         Entity teacher = addTeacherDefine(schema);
         Entity course = addCourse(schema);
-        Entity comment = addComment(schema);
 
         Property property = courseDefine.addLongProperty("classId").getProperty();
         courseDefine.addToOne(classInfo,property);
@@ -39,18 +38,6 @@ public class MyDaoGenerator {
         // 其实，输出目录的路径可以在 build.gradle 中设置，有兴趣的朋友可以自行搜索，这里就不再详解。
         new DaoGenerator().generateAll(schema, "H:\\androidprojects\\mine\\physical\\app\\src\\main\\java");
 //        new DaoGenerator().generateAll(schema, "D:\\work\\AndroidStudioProjects\\mine\\physical\\app\\src\\main\\java");
-    }
-
-    private static Entity addComment(Schema schema) {
-        Entity note = schema.addEntity("Comment");
-        note.addIdProperty();
-        note.addLongProperty("commentIdR");
-        note.addLongProperty("teacherIdR");
-        note.addStringProperty("teacherName");
-        note.addStringProperty("teacherComment");
-        note.addDateProperty("commentTime");
-        note.addLongProperty("loginId");
-        return note;
     }
 
     private static Entity addInstitudeDefine(Schema schema) {

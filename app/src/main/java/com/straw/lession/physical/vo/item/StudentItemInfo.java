@@ -11,6 +11,7 @@ public class StudentItemInfo implements Serializable{
     private String code;
     private int gender;
     private long studentIdR;
+    private long classIdR;
     private String className;
 
     public String getClassName() {
@@ -59,5 +60,13 @@ public class StudentItemInfo implements Serializable{
 
     public void setStudentIdR(long studentIdR) {
         this.studentIdR = studentIdR;
+    }
+
+    public long getClassIdR() {
+        return classIdR;
+    }
+
+    public void setClassIdR(long classIdR) {
+        this.classIdR = classIdR;
     }
 }

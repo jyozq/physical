@@ -74,4 +74,6 @@
     <string name="resetpwd_origin_label">原密码</string>
     <string name="resetpwd_new_label">新密码</string>
     <string name="resetpwd_repnew_label">重复密码</string>
+    <string name="student_coment">评论</string>
+    <string name="btn_submit">提交</string>
 </resources>
