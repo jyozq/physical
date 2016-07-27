@@ -414,6 +414,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
                     todayFragment = new TodayFragment();
                     transaction.add(R.id.fl_content, todayFragment);
                 } else {
+                    todayFragment.query();
                     transaction.show(todayFragment);
                 }
                 break;
@@ -451,6 +452,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
                     classFragment = new ClassFragment();
                     transaction.add(R.id.fl_content, classFragment);
                 } else {
+                    classFragment.query();
                     transaction.show(classFragment);
                 }
                 break;

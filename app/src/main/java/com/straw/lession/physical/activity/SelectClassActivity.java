@@ -37,9 +37,19 @@ public class SelectClassActivity extends ThreadToolBarBaseActivity
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
         setContentView(R.layout.activity_select_class);
-        initToolBar("");
+        initToolBar(getResources().getString(R.string.course_class_label));
         MainApplication.getInstance().addActivity(this);
         initViews();
+    }
+
+    @Override
+    protected void loadDataFromLocal() {
+
+    }
+
+    @Override
+    protected void loadDataFromService() {
+
     }
 
     private void initViews() {
@@ -107,7 +117,7 @@ public class SelectClassActivity extends ThreadToolBarBaseActivity
 //            }
 //        });
 //        mThreadPool.execute(asyncHttpClient);
-        List<ClassInfo> classInfos = DbService.getInstance(this).getAllClass(loginInfo.getTeacherId(),
+        List<ClassInfo> classInfos = DbService.getInstance(this).getClassByInstituteAndTeacher(loginInfo.getTeacherId(),
                                                                                 loginInfo.getCurrentInstituteId());
         for(ClassInfo classInfo : classInfos) {
             infoList.add(toItemInfo(classInfo));

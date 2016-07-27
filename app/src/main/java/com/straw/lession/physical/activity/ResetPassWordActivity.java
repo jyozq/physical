@@ -45,6 +45,16 @@ public class ResetPassWordActivity extends ThreadToolBarBaseActivity{
         initViews();
     }
 
+    @Override
+    protected void loadDataFromLocal() {
+
+    }
+
+    @Override
+    protected void loadDataFromService() {
+
+    }
+
     private void initViews() {
         originPasswd = (EditText) findViewById(R.id.resetpwd_origin);
         newPasswd = (EditText) findViewById(R.id.resetpwd_new);

@@ -11,6 +11,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.parser.Feature;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.base.ThreadToolBarBaseActivity;
 import com.straw.lession.physical.adapter.ClassSpinnerAdapter;
@@ -31,6 +32,7 @@ import com.straw.lession.physical.vo.LoginInfoVo;
 import com.straw.lession.physical.vo.StudentVo;
 import com.straw.lession.physical.vo.TokenInfo;
 import com.straw.lession.physical.vo.db.ClassInfo;
+import com.straw.lession.physical.vo.db.Student;
 import com.straw.lession.physical.vo.item.ClassItemInfo;
 import com.straw.lession.physical.vo.item.StudentItemInfo;
 
@@ -59,13 +61,14 @@ public class StudentCommentListActivity extends ThreadToolBarBaseActivity implem
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
-        setContentView(R.layout.activity_student_list);
+        setContentView(R.layout.activity_coment_student_list);
         Intent intent = getIntent();
         classItemInfo = (ClassItemInfo)intent.getSerializableExtra("classInfo");
         initToolBar();
         MainApplication.getInstance().addActivity(this);
         try {
             loginInfoVo = AppPreference.getLoginInfo();
+            tokenInfo = AppPreference.getUserToken();
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(this,"获取登录信息出错",Toast.LENGTH_SHORT).show();
@@ -74,9 +77,19 @@ public class StudentCommentListActivity extends ThreadToolBarBaseActivity implem
         initViews();
     }
 
+    @Override
+    protected void loadDataFromLocal() {
+
+    }
+
+    @Override
+    protected void loadDataFromService() {
+
+    }
+
     private void initToolBar() {
         hideToolBarView();
-        toolbar.findViewById(R.id.btn_back).setVisibility(View.VISIBLE);
+        displayBackBtn();
         spinner_class = (Spinner) toolbar.findViewById(R.id.spinner_class);
         spinner_class.setVisibility(View.VISIBLE);
     }
@@ -93,7 +106,7 @@ public class StudentCommentListActivity extends ThreadToolBarBaseActivity implem
 
     private void initClassSpinner() {
         classInfos = DbService.getInstance(this)
-                .getAllClass(loginInfoVo.getTeacherId(),loginInfoVo.getCurrentInstituteId());
+                .getClassByInstituteAndTeacher(loginInfoVo.getTeacherId(),loginInfoVo.getCurrentInstituteId());
         ClassSpinnerAdapter schoolSpinnerAdapter = new ClassSpinnerAdapter(this, spinner_class, classInfos);
         schoolSpinnerAdapter.setDropDownViewResource(R.layout.school_item_spinner_dropdown);
         spinner_class.setAdapter(schoolSpinnerAdapter);
@@ -126,24 +139,18 @@ public class StudentCommentListActivity extends ThreadToolBarBaseActivity implem
         checkTokenInfo();
     }
 
-    private StudentItemInfo toItemInfo(StudentVo studentVo) {
+    private StudentItemInfo toItemInfo(Student student) {
         StudentItemInfo studentItemInfo = new StudentItemInfo();
-        studentItemInfo.setName(studentVo.getStudentName());
-        studentItemInfo.setCode(studentVo.getStudentCode());
-        studentItemInfo.setGender(studentVo.getGender());
-        studentItemInfo.setStudentIdR(studentVo.getStudentId());
+        studentItemInfo.setName(student.getName());
+        studentItemInfo.setCode(student.getCode());
+        studentItemInfo.setGender(student.getGender());
+        studentItemInfo.setStudentIdR(student.getStudentIdR());
+        studentItemInfo.setClassName(classItemInfo.getClassName());
         return studentItemInfo;
     }
 
     @Override
     public void doAfterGetToken() {
-        try {
-            tokenInfo = AppPreference.getUserToken();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this,"获取token出错",Toast.LENGTH_SHORT).show();
-            return;
-        }
         String URL = ReqConstant.URL_BASE + "/class/student/list";
         ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
         params.add(new BasicNameValuePair("instituteId", String.valueOf(loginInfoVo.getCurrentInstituteIdR())));
@@ -159,11 +166,13 @@ public class StudentCommentListActivity extends ThreadToolBarBaseActivity implem
                     String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
                     if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){//登录成功
                         JSONObject dataObject = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
-                        ClassInfoVo classInfoVo = JSON.parseObject(dataObject.toString(), ClassInfoVo.class, null);
+                        ClassInfoVo classInfoVo = JSON.parseObject(dataObject.toString(), ClassInfoVo.class, new Feature[0]);
                         List<StudentVo> studentVos = classInfoVo.getStudents();
+                        DbService.getInstance(mContext).refineStudentInfo(classInfoVo, studentVos);
+                        List<Student> students = DbService.getInstance(mContext).getStudentByClass(classItemInfo.getClassId());
                         infoList.clear();
-                        for(StudentVo studentVo : studentVos){
-                            infoList.add(toItemInfo(studentVo));
+                        for(Student student : students){
+                            infoList.add(toItemInfo(student));
                         }
                         adapter.notifyDataSetChanged();
                     }else {//登录失败
@@ -196,10 +205,10 @@ public class StudentCommentListActivity extends ThreadToolBarBaseActivity implem
     @Override
     public void click(View v) {
         StudentItemInfo studentItemInfo = infoList.get((Integer) v.getTag());
-        Intent intent = new Intent(this, StudentCommentListActivity.class);
+        Intent intent = new Intent(this, StudentCommentActivity.class);
         Bundle b = new Bundle();
         b.putSerializable("studentInfo", studentItemInfo);
         intent.putExtras(b);
-//        startActivity(intent);
+        startActivity(intent);
     }
 }

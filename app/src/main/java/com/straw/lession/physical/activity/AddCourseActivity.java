@@ -81,6 +81,16 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
     }
 
     @Override
+    protected void loadDataFromLocal() {
+
+    }
+
+    @Override
+    protected void loadDataFromService() {
+
+    }
+
+    @Override
     public void doAfterGetToken() {
         saveCourse();
     }

@@ -11,6 +11,15 @@ public class StudentItemInfo implements Serializable{
     private String code;
     private int gender;
     private long studentIdR;
+    private String className;
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
 
     public long getId() {
         return id;

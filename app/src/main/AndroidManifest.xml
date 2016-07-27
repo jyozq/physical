@@ -55,15 +55,9 @@
         </activity>
 
         <activity android:windowSoftInputMode="adjustResize|stateHidden"
-            android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="portrait"
-            android:name="com.straw.lession.physical.activity.CourseActivity">
-        </activity>
-
-        <activity android:windowSoftInputMode="adjustResize|stateHidden"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboardHidden"
-            android:name="com.straw.lession.physical.activity.AddCourseActivity">
+                  android:screenOrientation="portrait"
+                  android:configChanges="orientation|keyboardHidden"
+                  android:name="com.straw.lession.physical.activity.AddCourseActivity">
         </activity>
 
         <activity android:windowSoftInputMode="adjustResize|stateHidden"
@@ -80,7 +74,12 @@
         <activity android:windowSoftInputMode="adjustResize|stateHidden"
                   android:screenOrientation="portrait"
                   android:configChanges="orientation|keyboardHidden"
-                  android:name=".activity.StudentCommentListActivity">
+                  android:name="com.straw.lession.physical.activity.StudentCommentListActivity">
+        </activity>
+        <activity android:windowSoftInputMode="adjustResize|stateHidden"
+                  android:screenOrientation="portrait"
+                  android:configChanges="orientation|keyboardHidden"
+                  android:name="com.straw.lession.physical.activity.StudentCommentActivity">
         </activity>
     </application>
 

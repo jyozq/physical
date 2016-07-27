@@ -1,6 +1,12 @@
 package com.straw.lession.physical.activity.base;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -114,6 +120,64 @@ public abstract class ThreadToolBarBaseActivity extends ToolBarActivity {
         crouton = Crouton.make(mContext, viewTip);
         crouton.show();
     }
+
+    /**
+     * 对网络连接状态进行判断
+     * @return  true, 可用； false， 不可用
+     */
+    public boolean isOpenNetwork() {
+        ConnectivityManager connManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(connManager.getActiveNetworkInfo() != null) {
+            return connManager.getActiveNetworkInfo().isAvailable();
+        }
+
+        return false;
+    }
+
+
+    // 判断网络是否可用
+    public void getDataByNetSate(){
+        if(isOpenNetwork() == true) {
+            loadDataFromService();
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(ThreadToolBarBaseActivity.this);
+            builder.setTitle("没有可用的网络").setMessage("是否对网络进行设置?");
+
+            builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = null;
+
+                    try {
+                        String sdkVersion = android.os.Build.VERSION.SDK;
+                        if(Integer.valueOf(sdkVersion) > 10) {
+                            intent = new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS);
+                        }else {
+                            intent = new Intent();
+                            ComponentName comp = new ComponentName("com.android.settings", "com.android.settings.WirelessSettings");
+                            intent.setComponent(comp);
+                            intent.setAction("android.intent.action.VIEW");
+                        }
+                        ThreadToolBarBaseActivity.this.startActivity(intent);
+                    } catch (Exception e) {
+                        Log.w(TAG, "open network settings failed, please check...");
+                        e.printStackTrace();
+                    }
+                }
+            }).setNegativeButton("否", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    loadDataFromLocal();
+                    dialog.cancel();
+                    finish();
+                }
+            }).show();
+        }
+    }
+
+    protected abstract void loadDataFromLocal();
+
+    protected abstract void loadDataFromService();
 
     public void checkTokenInfo() {
         try {

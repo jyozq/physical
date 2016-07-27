@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <LinearLayout android:id="@+id/blankLayout" android:layout_width="fill_parent" android:layout_height="wrap_content"
+                  android:orientation="horizontal"
+                  android:background="@mipmap/profile_back"
+                  android:gravity="center">
+        <TableLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                     android:gravity="center" android:stretchColumns="0,1,2">
+            <TableRow android:layout_width="match_parent"
+                      android:layout_height="wrap_content">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                          android:text="班级" android:textStyle="bold" android:textSize="20sp"
+                          android:gravity="center" android:textColor="@color/white"
+                />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                          android:text="姓名" android:textStyle="bold" android:textSize="20sp"
+                          android:gravity="center" android:textColor="@color/white"
+                />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                          android:text="学号" android:textStyle="bold" android:textSize="20sp"
+                          android:gravity="center" android:textColor="@color/white"
+                />
+            </TableRow>
+            <TableRow android:layout_width="match_parent"
+                      android:layout_height="wrap_content">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                          android:text="三年四班" android:textStyle="bold" android:textSize="20sp"
+                          android:gravity="center" android:textColor="@color/white"
+                />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                          android:text="三年四班" android:textStyle="bold" android:textSize="20sp"
+                          android:gravity="center" android:textColor="@color/white"
+                />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                          android:text="三年四班" android:textStyle="bold" android:textSize="20sp"
+                          android:gravity="center" android:textColor="@color/white"
+                />
+            </TableRow>
+        </TableLayout>
+    </LinearLayout>
+    <android.support.v4.widget.SwipeRefreshLayout android:id="@+id/swipe_refresh" android:layout_width="match_parent"
+                                                  android:layout_height="match_parent" android:layout_weight="1">
+        <ListView android:layout_width="match_parent" android:layout_height="match_parent" android:id="@+id/listview"></ListView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+</LinearLayout>

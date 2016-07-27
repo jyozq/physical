@@ -59,6 +59,16 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
     }
 
     @Override
+    protected void loadDataFromLocal() {
+
+    }
+
+    @Override
+    protected void loadDataFromService() {
+
+    }
+
+    @Override
     public void doAfterGetToken() {
 
     }

@@ -63,6 +63,11 @@ public  abstract class ToolBarActivity extends AppCompatActivity implements View
         btn_sync.setVisibility(View.GONE);
     }
 
+    public void displayBackBtn(){
+        btn_back.setOnClickListener(this);
+        btn_back.setVisibility(View.VISIBLE);
+    }
+
     public void initToolBar(String titleText){
         hideToolBarView();
         textView.setText( titleText );

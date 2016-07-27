@@ -14,7 +14,6 @@ import com.alibaba.fastjson.JSON;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.MainActivity;
 import com.straw.lession.physical.activity.StudentCommentListActivity;
-import com.straw.lession.physical.activity.base.ThreadToolBarBaseActivity;
 import com.straw.lession.physical.adapter.ClassListViewAdapter;
 import com.straw.lession.physical.constant.ParamConstant;
 import com.straw.lession.physical.constant.ReqConstant;
@@ -105,7 +104,7 @@ public class ClassFragment extends BaseFragment implements SwipeRefreshLayout.On
                                 JSON.parseArray(dataObject.getJSONArray("classes").toString(), ClassInfoVo.class);
                         DbService.getInstance(mContext).refineClassInfo(classInfoVos);
                         List<ClassInfo> classInfos = DbService.getInstance(mContext)
-                                                                .getAllClass(loginInfoVo.getTeacherId(),
+                                                                .getClassByInstituteAndTeacher(loginInfoVo.getTeacherId(),
                                                                             loginInfoVo.getCurrentInstituteId());
                         infoList.clear();
                         for(ClassInfo classInfo:classInfos){
