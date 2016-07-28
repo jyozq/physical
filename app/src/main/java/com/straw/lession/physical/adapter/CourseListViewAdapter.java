@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 import com.straw.lession.physical.R;
+import com.straw.lession.physical.constant.CourseStatus;
 import com.straw.lession.physical.constant.Weekday;
 import com.straw.lession.physical.vo.item.CourseItemInfo;
 
@@ -91,8 +92,14 @@ public class CourseListViewAdapter extends BaseAdapter implements View.OnClickLi
         location.setText(info.getLocation());
         TextView type = (TextView) convertView.findViewById(R.id.type);
         type.setText(info.getType());
-        holder.button.setOnClickListener(this);
-        holder.button.setTag(position);
+        if(info.getStatus() == CourseStatus.STARTED.getValue()
+                || info.getStatus() == CourseStatus.OVER.getValue()){
+            holder.button.setOnClickListener(null);
+        }else{
+            holder.button.setOnClickListener(this);
+            holder.button.setTag(position);
+        }
+        holder.button.setText(CourseStatus.getName(info.getStatus()));
         return convertView;
     }
 }

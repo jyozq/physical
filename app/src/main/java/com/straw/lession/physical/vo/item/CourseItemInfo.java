@@ -6,7 +6,8 @@ import java.io.Serializable;
  * Created by straw on 2016/7/6.
  */
 public class CourseItemInfo implements Serializable{
-    private long id;
+    private long courseId;
+    private long courseDefineId;
     private String name;
     private String date;
     private int weekDay;
@@ -15,13 +16,30 @@ public class CourseItemInfo implements Serializable{
     private String location;
     private String className;
     private long classId;
+    private int status;
 
-    public long getId() {
-        return id;
+    public int getStatus() {
+        return status;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public long getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(long courseId) {
+        this.courseId = courseId;
+    }
+
+    public long getCourseDefineId() {
+        return courseDefineId;
+    }
+
+    public void setCourseDefineId(long courseDefineId) {
+        this.courseDefineId = courseDefineId;
     }
 
     public String getName() {

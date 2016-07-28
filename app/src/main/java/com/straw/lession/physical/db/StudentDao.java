@@ -1,13 +1,20 @@
 package com.straw.lession.physical.db;
 
+import java.util.List;
+import java.util.ArrayList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.Property;
+import org.greenrobot.greendao.internal.SqlUtils;
 import org.greenrobot.greendao.internal.DaoConfig;
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.database.DatabaseStatement;
+import org.greenrobot.greendao.query.Query;
+import org.greenrobot.greendao.query.QueryBuilder;
+
+import com.straw.lession.physical.vo.db.ClassInfo;
 
 import com.straw.lession.physical.vo.db.Student;
 
@@ -24,17 +31,18 @@ public class StudentDao extends AbstractDao<Student, Long> {
      * Can be used for QueryBuilder and for referencing column names.
     */
     public static class Properties {
-        public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property Code = new Property(1, String.class, "code", false, "CODE");
-        public final static Property Name = new Property(2, String.class, "name", false, "NAME");
-        public final static Property Gender = new Property(3, Integer.class, "gender", false, "GENDER");
-        public final static Property Birthday = new Property(4, java.util.Date.class, "birthday", false, "BIRTHDAY");
-        public final static Property ClassId = new Property(5, Long.class, "classId", false, "CLASS_ID");
+        public final static Property Code = new Property(0, String.class, "code", false, "CODE");
+        public final static Property Name = new Property(1, String.class, "name", false, "NAME");
+        public final static Property Gender = new Property(2, Integer.class, "gender", false, "GENDER");
+        public final static Property Birthday = new Property(3, java.util.Date.class, "birthday", false, "BIRTHDAY");
+        public final static Property StudentIdR = new Property(4, Long.class, "studentIdR", true, "STUDENT_ID_R");
+        public final static Property IsDel = new Property(5, Integer.class, "isDel", false, "IS_DEL");
         public final static Property ClassIdR = new Property(6, Long.class, "classIdR", false, "CLASS_ID_R");
-        public final static Property StudentIdR = new Property(7, Long.class, "studentIdR", false, "STUDENT_ID_R");
-        public final static Property LoginId = new Property(8, Long.class, "loginId", false, "LOGIN_ID");
     };
 
+    private DaoSession daoSession;
+
+    private Query<Student> classInfo_StudentsQuery;
 
     public StudentDao(DaoConfig config) {
         super(config);
@@ -42,21 +50,20 @@ public class StudentDao extends AbstractDao<Student, Long> {
     
     public StudentDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
+        this.daoSession = daoSession;
     }
 
     /** Creates the underlying database table. */
     public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"STUDENT\" (" + //
-                "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
-                "\"CODE\" TEXT," + // 1: code
-                "\"NAME\" TEXT," + // 2: name
-                "\"GENDER\" INTEGER," + // 3: gender
-                "\"BIRTHDAY\" INTEGER," + // 4: birthday
-                "\"CLASS_ID\" INTEGER," + // 5: classId
-                "\"CLASS_ID_R\" INTEGER," + // 6: classIdR
-                "\"STUDENT_ID_R\" INTEGER," + // 7: studentIdR
-                "\"LOGIN_ID\" INTEGER);"); // 8: loginId
+                "\"CODE\" TEXT," + // 0: code
+                "\"NAME\" TEXT," + // 1: name
+                "\"GENDER\" INTEGER," + // 2: gender
+                "\"BIRTHDAY\" INTEGER," + // 3: birthday
+                "\"STUDENT_ID_R\" INTEGER PRIMARY KEY ," + // 4: studentIdR
+                "\"IS_DEL\" INTEGER," + // 5: isDel
+                "\"CLASS_ID_R\" INTEGER);"); // 6: classIdR
     }
 
     /** Drops the underlying database table. */
@@ -69,49 +76,39 @@ public class StudentDao extends AbstractDao<Student, Long> {
     protected final void bindValues(DatabaseStatement stmt, Student entity) {
         stmt.clearBindings();
  
-        Long id = entity.getId();
-        if (id != null) {
-            stmt.bindLong(1, id);
-        }
- 
         String code = entity.getCode();
         if (code != null) {
-            stmt.bindString(2, code);
+            stmt.bindString(1, code);
         }
  
         String name = entity.getName();
         if (name != null) {
-            stmt.bindString(3, name);
+            stmt.bindString(2, name);
         }
  
         Integer gender = entity.getGender();
         if (gender != null) {
-            stmt.bindLong(4, gender);
+            stmt.bindLong(3, gender);
         }
  
         java.util.Date birthday = entity.getBirthday();
         if (birthday != null) {
-            stmt.bindLong(5, birthday.getTime());
+            stmt.bindLong(4, birthday.getTime());
         }
  
-        Long classId = entity.getClassId();
-        if (classId != null) {
-            stmt.bindLong(6, classId);
+        Long studentIdR = entity.getStudentIdR();
+        if (studentIdR != null) {
+            stmt.bindLong(5, studentIdR);
+        }
+ 
+        Integer isDel = entity.getIsDel();
+        if (isDel != null) {
+            stmt.bindLong(6, isDel);
         }
  
         Long classIdR = entity.getClassIdR();
         if (classIdR != null) {
             stmt.bindLong(7, classIdR);
-        }
- 
-        Long studentIdR = entity.getStudentIdR();
-        if (studentIdR != null) {
-            stmt.bindLong(8, studentIdR);
-        }
- 
-        Long loginId = entity.getLoginId();
-        if (loginId != null) {
-            stmt.bindLong(9, loginId);
         }
     }
 
@@ -119,96 +116,88 @@ public class StudentDao extends AbstractDao<Student, Long> {
     protected final void bindValues(SQLiteStatement stmt, Student entity) {
         stmt.clearBindings();
  
-        Long id = entity.getId();
-        if (id != null) {
-            stmt.bindLong(1, id);
-        }
- 
         String code = entity.getCode();
         if (code != null) {
-            stmt.bindString(2, code);
+            stmt.bindString(1, code);
         }
  
         String name = entity.getName();
         if (name != null) {
-            stmt.bindString(3, name);
+            stmt.bindString(2, name);
         }
  
         Integer gender = entity.getGender();
         if (gender != null) {
-            stmt.bindLong(4, gender);
+            stmt.bindLong(3, gender);
         }
  
         java.util.Date birthday = entity.getBirthday();
         if (birthday != null) {
-            stmt.bindLong(5, birthday.getTime());
+            stmt.bindLong(4, birthday.getTime());
         }
  
-        Long classId = entity.getClassId();
-        if (classId != null) {
-            stmt.bindLong(6, classId);
+        Long studentIdR = entity.getStudentIdR();
+        if (studentIdR != null) {
+            stmt.bindLong(5, studentIdR);
+        }
+ 
+        Integer isDel = entity.getIsDel();
+        if (isDel != null) {
+            stmt.bindLong(6, isDel);
         }
  
         Long classIdR = entity.getClassIdR();
         if (classIdR != null) {
             stmt.bindLong(7, classIdR);
         }
- 
-        Long studentIdR = entity.getStudentIdR();
-        if (studentIdR != null) {
-            stmt.bindLong(8, studentIdR);
-        }
- 
-        Long loginId = entity.getLoginId();
-        if (loginId != null) {
-            stmt.bindLong(9, loginId);
-        }
+    }
+
+    @Override
+    protected final void attachEntity(Student entity) {
+        super.attachEntity(entity);
+        entity.__setDaoSession(daoSession);
     }
 
     @Override
     public Long readKey(Cursor cursor, int offset) {
-        return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
+        return cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4);
     }    
 
     @Override
     public Student readEntity(Cursor cursor, int offset) {
         Student entity = new Student( //
-            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // code
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // name
-            cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3), // gender
-            cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)), // birthday
-            cursor.isNull(offset + 5) ? null : cursor.getLong(offset + 5), // classId
-            cursor.isNull(offset + 6) ? null : cursor.getLong(offset + 6), // classIdR
-            cursor.isNull(offset + 7) ? null : cursor.getLong(offset + 7), // studentIdR
-            cursor.isNull(offset + 8) ? null : cursor.getLong(offset + 8) // loginId
+            cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // code
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // name
+            cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2), // gender
+            cursor.isNull(offset + 3) ? null : new java.util.Date(cursor.getLong(offset + 3)), // birthday
+            cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4), // studentIdR
+            cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5), // isDel
+            cursor.isNull(offset + 6) ? null : cursor.getLong(offset + 6) // classIdR
         );
         return entity;
     }
      
     @Override
     public void readEntity(Cursor cursor, Student entity, int offset) {
-        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setCode(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setName(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setGender(cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3));
-        entity.setBirthday(cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)));
-        entity.setClassId(cursor.isNull(offset + 5) ? null : cursor.getLong(offset + 5));
+        entity.setCode(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
+        entity.setName(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setGender(cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2));
+        entity.setBirthday(cursor.isNull(offset + 3) ? null : new java.util.Date(cursor.getLong(offset + 3)));
+        entity.setStudentIdR(cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4));
+        entity.setIsDel(cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5));
         entity.setClassIdR(cursor.isNull(offset + 6) ? null : cursor.getLong(offset + 6));
-        entity.setStudentIdR(cursor.isNull(offset + 7) ? null : cursor.getLong(offset + 7));
-        entity.setLoginId(cursor.isNull(offset + 8) ? null : cursor.getLong(offset + 8));
      }
     
     @Override
     protected final Long updateKeyAfterInsert(Student entity, long rowId) {
-        entity.setId(rowId);
+        entity.setStudentIdR(rowId);
         return rowId;
     }
     
     @Override
     public Long getKey(Student entity) {
         if(entity != null) {
-            return entity.getId();
+            return entity.getStudentIdR();
         } else {
             return null;
         }
@@ -219,4 +208,109 @@ public class StudentDao extends AbstractDao<Student, Long> {
         return true;
     }
     
+    /** Internal query to resolve the "students" to-many relationship of ClassInfo. */
+    public List<Student> _queryClassInfo_Students(Long classIdR) {
+        synchronized (this) {
+            if (classInfo_StudentsQuery == null) {
+                QueryBuilder<Student> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.ClassIdR.eq(null));
+                classInfo_StudentsQuery = queryBuilder.build();
+            }
+        }
+        Query<Student> query = classInfo_StudentsQuery.forCurrentThread();
+        query.setParameter(0, classIdR);
+        return query.list();
+    }
+
+    private String selectDeep;
+
+    protected String getSelectDeep() {
+        if (selectDeep == null) {
+            StringBuilder builder = new StringBuilder("SELECT ");
+            SqlUtils.appendColumns(builder, "T", getAllColumns());
+            builder.append(',');
+            SqlUtils.appendColumns(builder, "T0", daoSession.getClassInfoDao().getAllColumns());
+            builder.append(" FROM STUDENT T");
+            builder.append(" LEFT JOIN CLASS_INFO T0 ON T.\"CLASS_ID_R\"=T0.\"CLASS_ID_R\"");
+            builder.append(' ');
+            selectDeep = builder.toString();
+        }
+        return selectDeep;
+    }
+    
+    protected Student loadCurrentDeep(Cursor cursor, boolean lock) {
+        Student entity = loadCurrent(cursor, 0, lock);
+        int offset = getAllColumns().length;
+
+        ClassInfo classInfo = loadCurrentOther(daoSession.getClassInfoDao(), cursor, offset);
+        entity.setClassInfo(classInfo);
+
+        return entity;    
+    }
+
+    public Student loadDeep(Long key) {
+        assertSinglePk();
+        if (key == null) {
+            return null;
+        }
+
+        StringBuilder builder = new StringBuilder(getSelectDeep());
+        builder.append("WHERE ");
+        SqlUtils.appendColumnsEqValue(builder, "T", getPkColumns());
+        String sql = builder.toString();
+        
+        String[] keyArray = new String[] { key.toString() };
+        Cursor cursor = db.rawQuery(sql, keyArray);
+        
+        try {
+            boolean available = cursor.moveToFirst();
+            if (!available) {
+                return null;
+            } else if (!cursor.isLast()) {
+                throw new IllegalStateException("Expected unique result, but count was " + cursor.getCount());
+            }
+            return loadCurrentDeep(cursor, true);
+        } finally {
+            cursor.close();
+        }
+    }
+    
+    /** Reads all available rows from the given cursor and returns a list of new ImageTO objects. */
+    public List<Student> loadAllDeepFromCursor(Cursor cursor) {
+        int count = cursor.getCount();
+        List<Student> list = new ArrayList<Student>(count);
+        
+        if (cursor.moveToFirst()) {
+            if (identityScope != null) {
+                identityScope.lock();
+                identityScope.reserveRoom(count);
+            }
+            try {
+                do {
+                    list.add(loadCurrentDeep(cursor, false));
+                } while (cursor.moveToNext());
+            } finally {
+                if (identityScope != null) {
+                    identityScope.unlock();
+                }
+            }
+        }
+        return list;
+    }
+    
+    protected List<Student> loadDeepAllAndCloseCursor(Cursor cursor) {
+        try {
+            return loadAllDeepFromCursor(cursor);
+        } finally {
+            cursor.close();
+        }
+    }
+    
+
+    /** A raw-style query where you can pass any WHERE clause and arguments. */
+    public List<Student> queryDeep(String where, String... selectionArg) {
+        Cursor cursor = db.rawQuery(getSelectDeep() + where, selectionArg);
+        return loadDeepAllAndCloseCursor(cursor);
+    }
+ 
 }

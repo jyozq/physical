@@ -18,7 +18,7 @@ import java.util.List;
  * Created by straw on 2016/7/26.
  */
 public class StudentCommentListViewAdapter  extends BaseAdapter implements View.OnClickListener{
-    private static final String TAG = "StudentCommentAdapter";
+    private static final String TAG = "StudentComListAdapter";
     private Context mContext;
     private List<StudentItemInfo> mContentList;
     private Callback mCallback;

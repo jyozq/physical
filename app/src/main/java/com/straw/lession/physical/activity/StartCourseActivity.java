@@ -11,6 +11,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,11 +19,15 @@ import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.base.ThreadToolBarBaseActivity;
 import com.straw.lession.physical.adapter.StudentListViewAdapter;
 import com.straw.lession.physical.app.MainApplication;
+import com.straw.lession.physical.constant.CourseStatus;
 import com.straw.lession.physical.constant.Weekday;
 import com.straw.lession.physical.db.DaoSession;
+import com.straw.lession.physical.db.DbService;
 import com.straw.lession.physical.db.StudentDao;
 import com.straw.lession.physical.utils.AppPreference;
 import com.straw.lession.physical.vo.LoginInfoVo;
+import com.straw.lession.physical.vo.db.Course;
+import com.straw.lession.physical.vo.db.CourseDefine;
 import com.straw.lession.physical.vo.db.Student;
 import com.straw.lession.physical.vo.item.CourseItemInfo;
 import com.straw.lession.physical.vo.item.StudentItemInfo;
@@ -32,6 +37,7 @@ import org.greenrobot.greendao.query.Query;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -44,18 +50,35 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
     private ListView listView;
     private List<StudentItemInfo> infoList = new ArrayList<StudentItemInfo>();
     private StudentListViewAdapter studentListViewAdapter;
-    private CourseItemInfo course;
+    private CourseItemInfo courseItemVo;
     private LoginInfoVo loginInfo;
+    private Button btn_do_start_course,btn_end_course;
+    private long courseId;
+    private MyListener listener = new MyListener();
 
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
         setContentView(R.layout.activity_start_course);
         Intent intent = getIntent();
-        course = (CourseItemInfo)intent.getSerializableExtra("course");
-        initToolBar(course.getName());
+        courseItemVo = (CourseItemInfo)intent.getSerializableExtra("course");
+        initToolBar(courseItemVo.getName());
         MainApplication.getInstance().addActivity(this);
         initViews();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            loginInfo = AppPreference.getLoginInfo();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e(TAG,"",e);
+            showErrorMsgInfo(e.toString());
+            return;
+        }
+        refreshStatus();
     }
 
     @Override
@@ -80,38 +103,76 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
         TextView startcourse_className = (TextView)findViewById(R.id.startcourse_className);
         TextView startcourse_time = (TextView)findViewById(R.id.startcourse_time);
         TextView startcourse_location = (TextView)findViewById(R.id.startcourse_location);
-        startcourse_className.setText(course.getClassName());
-        startcourse_time.setText(Weekday.getName(course.getWeekDay()) + "   第"+course.getSeq()+"节");
-        startcourse_location.setText(course.getLocation() + "   " + course.getType());
 
+        startcourse_className.setText(courseItemVo.getClassName());
+        startcourse_time.setText(Weekday.getName(courseItemVo.getWeekDay()) + "   第"+courseItemVo.getSeq()+"节");
+        startcourse_location.setText(courseItemVo.getLocation() + "   " + courseItemVo.getType());
+
+        btn_do_start_course = (Button) findViewById(R.id.btn_do_start_course);
+        btn_end_course = (Button) findViewById(R.id.btn_end_course);
         getStudentsInfo();
+        refreshStatus();
         listView = (ListView) findViewById(R.id.listview);
         studentListViewAdapter = new StudentListViewAdapter(this, infoList, this);
         listView.setAdapter(studentListViewAdapter);
     }
 
-    private void getStudentsInfo() {
-        try {
-            loginInfo = AppPreference.getLoginInfo();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e(TAG,"",e);
-            showErrorMsgInfo(e.toString());
-            return;
+    private void refreshStatus() {
+        List<Course> courses = DbService.getInstance(this).getCourseExceptUnstarted(loginInfo.getUserId());
+        Integer status = null;
+        for(Course course:courses){
+            if(course.getCourseDefineIdR() == courseItemVo.getCourseDefineId()){
+                status = course.getStatus();
+                break;
+            }
         }
-        DaoSession session = MainApplication.getInstance().getDaoSession(this);
-        StudentDao studentDao = session.getStudentDao();
-        Query<Student> query = studentDao.queryBuilder()
-                            .where(StudentDao.Properties.ClassId.eq(course.getClassId()),
-                                    StudentDao.Properties.LoginId.eq(loginInfo.getTeacherId()))
-                            .build();
-        List<Student> students = query.list();
-        Student student = null;
-        for(int i = 0; i < students.size(); i ++){
-            student = students.get(i);
+        if(status == null){
+            btn_do_start_course.setOnClickListener(listener);
+            btn_end_course.setOnClickListener(null);
+        }else if(status == CourseStatus.STARTED.getValue()){
+            btn_end_course.setOnClickListener(listener);
+            btn_do_start_course.setOnClickListener(null);
+            btn_do_start_course.setText(CourseStatus.getName(status));
+        }else if(status == CourseStatus.OVER.getValue()){
+            btn_end_course.setOnClickListener(null);
+            btn_do_start_course.setOnClickListener(null);
+            btn_do_start_course.setText(CourseStatus.getName(status));
+        }
+    }
+
+    private void endCourse() {
+        Course course = DbService.getInstance(this).findCourseById(courseId);
+        course.setStatus(CourseStatus.OVER.getValue());
+        course.setEndTime(new Date());
+        DbService.getInstance(this).updateCourse(course);
+        btn_end_course.setOnClickListener(null);
+        btn_end_course.setVisibility(View.INVISIBLE);
+        btn_do_start_course.setText(CourseStatus.OVER.getText());
+    }
+
+    private void startCourse() {
+        Course course = new Course();
+        CourseDefine courseDefine = DbService.getInstance(this).findCourseDefineById(courseItemVo.getCourseDefineId());
+        course.setDate(new Date());
+        course.setWeekday(courseDefine.getWeekDay());
+        course.setCourseDefineIdR(courseDefine.getCourseDefineIdR());
+        course.setInstituteIdR(courseDefine.getInstituteIdR());
+        course.setTeacherIdR(courseDefine.getTeacherIdR());
+        course.setUseOnce(courseDefine.getUseOnce());
+        course.setStatus(CourseStatus.STARTED.getValue());
+        course.setStartTime(new Date());
+        course.setIsUploaded(false);
+        DbService.getInstance(this).addCourse(course);
+        courseId = course.getId();
+        btn_do_start_course.setOnClickListener(null);
+        btn_do_start_course.setText(CourseStatus.STARTED.getText());
+    }
+
+    private void getStudentsInfo() {
+        List<Student> students = DbService.getInstance(this).getStudentByClass(courseItemVo.getClassId());
+        for(Student student : students){
             infoList.add(toItem(student));
         }
-
     }
 
     private StudentItemInfo toItem(Student student) {
@@ -119,7 +180,6 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
         studentItemInfo.setCode(student.getCode());
         studentItemInfo.setName(student.getName());
         studentItemInfo.setGender(student.getGender());
-        studentItemInfo.setId(student.getId());
         studentItemInfo.setStudentIdR(student.getStudentIdR());
         return studentItemInfo;
     }
@@ -133,8 +193,7 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
     public void click(View v) {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED)
-        {
+                != PackageManager.PERMISSION_GRANTED){
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 new AlertDialog.Builder(StartCourseActivity.this)
@@ -179,5 +238,19 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
             return;
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    public class MyListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()){
+                case R.id.btn_do_start_course:
+                    startCourse();
+                    break;
+                case R.id.btn_end_course:
+                    endCourse();
+                    break;
+            }
+        }
     }
 }

@@ -24,12 +24,13 @@ public class TeacherDao extends AbstractDao<Teacher, Long> {
      * Can be used for QueryBuilder and for referencing column names.
     */
     public static class Properties {
-        public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property Name = new Property(1, String.class, "name", false, "NAME");
-        public final static Property Mobile = new Property(2, String.class, "mobile", false, "MOBILE");
-        public final static Property Last_login_time = new Property(3, java.util.Date.class, "last_login_time", false, "LAST_LOGIN_TIME");
-        public final static Property TeacherIdR = new Property(4, Long.class, "teacherIdR", false, "TEACHER_ID_R");
+        public final static Property Name = new Property(0, String.class, "name", false, "NAME");
+        public final static Property Mobile = new Property(1, String.class, "mobile", false, "MOBILE");
+        public final static Property Last_login_time = new Property(2, java.util.Date.class, "last_login_time", false, "LAST_LOGIN_TIME");
+        public final static Property TeacherIdR = new Property(3, Long.class, "teacherIdR", true, "TEACHER_ID_R");
     };
+
+    private DaoSession daoSession;
 
 
     public TeacherDao(DaoConfig config) {
@@ -38,17 +39,17 @@ public class TeacherDao extends AbstractDao<Teacher, Long> {
     
     public TeacherDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
+        this.daoSession = daoSession;
     }
 
     /** Creates the underlying database table. */
     public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"TEACHER\" (" + //
-                "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
-                "\"NAME\" TEXT," + // 1: name
-                "\"MOBILE\" TEXT," + // 2: mobile
-                "\"LAST_LOGIN_TIME\" INTEGER," + // 3: last_login_time
-                "\"TEACHER_ID_R\" INTEGER);"); // 4: teacherIdR
+                "\"NAME\" TEXT," + // 0: name
+                "\"MOBILE\" TEXT," + // 1: mobile
+                "\"LAST_LOGIN_TIME\" INTEGER," + // 2: last_login_time
+                "\"TEACHER_ID_R\" INTEGER PRIMARY KEY );"); // 3: teacherIdR
     }
 
     /** Drops the underlying database table. */
@@ -61,29 +62,24 @@ public class TeacherDao extends AbstractDao<Teacher, Long> {
     protected final void bindValues(DatabaseStatement stmt, Teacher entity) {
         stmt.clearBindings();
  
-        Long id = entity.getId();
-        if (id != null) {
-            stmt.bindLong(1, id);
-        }
- 
         String name = entity.getName();
         if (name != null) {
-            stmt.bindString(2, name);
+            stmt.bindString(1, name);
         }
  
         String mobile = entity.getMobile();
         if (mobile != null) {
-            stmt.bindString(3, mobile);
+            stmt.bindString(2, mobile);
         }
  
         java.util.Date last_login_time = entity.getLast_login_time();
         if (last_login_time != null) {
-            stmt.bindLong(4, last_login_time.getTime());
+            stmt.bindLong(3, last_login_time.getTime());
         }
  
         Long teacherIdR = entity.getTeacherIdR();
         if (teacherIdR != null) {
-            stmt.bindLong(5, teacherIdR);
+            stmt.bindLong(4, teacherIdR);
         }
     }
 
@@ -91,68 +87,67 @@ public class TeacherDao extends AbstractDao<Teacher, Long> {
     protected final void bindValues(SQLiteStatement stmt, Teacher entity) {
         stmt.clearBindings();
  
-        Long id = entity.getId();
-        if (id != null) {
-            stmt.bindLong(1, id);
-        }
- 
         String name = entity.getName();
         if (name != null) {
-            stmt.bindString(2, name);
+            stmt.bindString(1, name);
         }
  
         String mobile = entity.getMobile();
         if (mobile != null) {
-            stmt.bindString(3, mobile);
+            stmt.bindString(2, mobile);
         }
  
         java.util.Date last_login_time = entity.getLast_login_time();
         if (last_login_time != null) {
-            stmt.bindLong(4, last_login_time.getTime());
+            stmt.bindLong(3, last_login_time.getTime());
         }
  
         Long teacherIdR = entity.getTeacherIdR();
         if (teacherIdR != null) {
-            stmt.bindLong(5, teacherIdR);
+            stmt.bindLong(4, teacherIdR);
         }
     }
 
     @Override
+    protected final void attachEntity(Teacher entity) {
+        super.attachEntity(entity);
+        entity.__setDaoSession(daoSession);
+    }
+
+    @Override
     public Long readKey(Cursor cursor, int offset) {
-        return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
+        return cursor.isNull(offset + 3) ? null : cursor.getLong(offset + 3);
     }    
 
     @Override
     public Teacher readEntity(Cursor cursor, int offset) {
         Teacher entity = new Teacher( //
-            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // name
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // mobile
-            cursor.isNull(offset + 3) ? null : new java.util.Date(cursor.getLong(offset + 3)), // last_login_time
-            cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4) // teacherIdR
+            cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // name
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // mobile
+            cursor.isNull(offset + 2) ? null : new java.util.Date(cursor.getLong(offset + 2)), // last_login_time
+            cursor.isNull(offset + 3) ? null : cursor.getLong(offset + 3) // teacherIdR
         );
         return entity;
     }
      
     @Override
     public void readEntity(Cursor cursor, Teacher entity, int offset) {
-        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setName(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setMobile(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setLast_login_time(cursor.isNull(offset + 3) ? null : new java.util.Date(cursor.getLong(offset + 3)));
-        entity.setTeacherIdR(cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4));
+        entity.setName(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
+        entity.setMobile(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setLast_login_time(cursor.isNull(offset + 2) ? null : new java.util.Date(cursor.getLong(offset + 2)));
+        entity.setTeacherIdR(cursor.isNull(offset + 3) ? null : cursor.getLong(offset + 3));
      }
     
     @Override
     protected final Long updateKeyAfterInsert(Teacher entity, long rowId) {
-        entity.setId(rowId);
+        entity.setTeacherIdR(rowId);
         return rowId;
     }
     
     @Override
     public Long getKey(Teacher entity) {
         if(entity != null) {
-            return entity.getId();
+            return entity.getTeacherIdR();
         } else {
             return null;
         }

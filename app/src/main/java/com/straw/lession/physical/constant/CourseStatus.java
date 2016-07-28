@@ -1,21 +1,18 @@
 package com.straw.lession.physical.constant;
 
 /**
- * Created by straw on 2016/7/22.
+ * Created by straw on 2016/7/28.
  */
-public enum Weekday {
-    SUNDAY(0,"星期日"),
-    MONDAY(1,"星期一"),
-    TUESDAY(2,"星期二"),
-    WENSDAY(3,"星期三"),
-    THIRSDAY(4,"星期四"),
-    FRIDAY(5,"星期五"),
-    SATURDAY(6,"星期六");
+public enum CourseStatus {
+    UNSTARTED(0,"开始上课"),
+    STARTED(1,"正在上课"),
+    OVER(2,"课程完成");
+
 
     private int value;
     private String text;
 
-    private Weekday(int value, String text){
+    private CourseStatus(int value, String text){
         this.value = value;
         this.text = text;
     }
@@ -25,7 +22,7 @@ public enum Weekday {
     }
 
     public static String getName(int val) {
-        for (Weekday c : Weekday.values()) {
+        for (CourseStatus c : CourseStatus.values()) {
             if (c.getValue() == val) {
                 return c.text;
             }
@@ -33,7 +30,7 @@ public enum Weekday {
         return null;
     }
 
-    public long getValue() {
+    public int getValue() {
         return this.value;
     }
 }

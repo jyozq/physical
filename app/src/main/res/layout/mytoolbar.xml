@@ -7,12 +7,12 @@
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
                     android:layout_height="match_parent" android:gravity="center_vertical">
         <ImageButton
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_width="@dimen/dimen_60dp" android:layout_height="@dimen/dimen_60dp"
             android:id="@+id/btn_back" android:layout_centerVertical="true"
             android:layout_alignParentLeft="true" android:layout_alignParentStart="true"
             android:background="@color/transparent"  android:src="@mipmap/toolbar_back"/>
         <ImageButton
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_width="@dimen/dimen_60dp" android:layout_height="@dimen/dimen_60dp"
                 android:id="@+id/btn_add_course" android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true" android:layout_alignParentStart="true" android:visibility="gone"
                 android:background="@color/transparent"  android:src="@android:drawable/ic_input_add"/>
@@ -27,7 +27,7 @@
                 android:id="@+id/spinner_school" android:layout_width="wrap_content"
                 android:layout_height="match_parent" android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true" android:layout_gravity="center_horizontal"
-                android:spinnerMode="dropdown"
+                android:spinnerMode="dropdown" android:visibility="gone"
         />
         <Spinner
                 android:id="@+id/spinner_class" android:layout_width="wrap_content"
@@ -36,8 +36,8 @@
                 android:spinnerMode="dropdown" android:visibility="gone"
         />
         <ImageButton
-                android:id="@+id/btn_sync" android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/btn_sync" android:layout_width="@dimen/dimen_60dp"
+                android:layout_height="@dimen/dimen_60dp"
                 android:background="@color/transparent" android:src="@mipmap/toolbar_upload_cloud"
                 android:layout_marginRight="@dimen/dimen_15dp"
                 android:layout_centerVertical="true" android:layout_alignParentRight="true"/>

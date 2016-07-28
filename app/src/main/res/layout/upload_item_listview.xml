@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal" android:layout_width="match_parent"
+              android:layout_height="wrap_content" android:gravity="center_vertical"
+                android:padding="@dimen/dimen_10dp">
+    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"
+               android:src="@mipmap/course_1" android:layout_margin="10dp"
+    />
+    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:orientation="vertical"
+                    android:gravity="center">
+        <TextView android:layout_width="match_parent" android:layout_height="match_parent"
+                    android:text="三年级三班" android:textSize="@dimen/font_size_16"
+                  android:textStyle="bold" android:id="@+id/class_name"
+        />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent">
+            <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                       android:src="@mipmap/course_icon_time"
+            />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                      android:textSize="@dimen/font_size_16" android:text="2016-07-28"
+                      android:id="@+id/date"
+            />
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent">
+            <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                       android:src="@mipmap/course_icon_time"
+            />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                      android:textSize="@dimen/font_size_16" android:text="13:00:09 - 13:45:11"
+                      android:id="@+id/duration"
+            />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ImageButton android:layout_width="wrap_content" android:layout_height="wrap_content"
+                 android:background="@color/transparent"  android:src="@mipmap/icon_upload"
+                 android:layout_marginRight="@dimen/dimen_20dp" android:id="@+id/btn_upload"
+    />
+</LinearLayout>

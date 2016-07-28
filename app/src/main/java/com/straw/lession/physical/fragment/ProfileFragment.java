@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.LoginActivity;
 import com.straw.lession.physical.activity.ResetPassWordActivity;
+import com.straw.lession.physical.activity.UploadDataActivity;
 import com.straw.lession.physical.app.MainApplication;
 import com.straw.lession.physical.fragment.base.BaseFragment;
 import com.straw.lession.physical.utils.AppPreference;
@@ -80,6 +81,7 @@ public class ProfileFragment extends BaseFragment{
         public void onClick(View v) {
             switch (v.getId()){
                 case R.id.profile_upload:
+                    startActivity(new Intent(ProfileFragment.this.getActivity(),UploadDataActivity.class));
                     break;
                 case R.id.profile_resetPwdText:
                     startActivity(new Intent(ProfileFragment.this.getActivity(), ResetPassWordActivity.class));

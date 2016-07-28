@@ -24,9 +24,7 @@ import com.straw.lession.physical.async.TaskWorker;
 import com.straw.lession.physical.constant.ParamConstant;
 import com.straw.lession.physical.constant.ReqConstant;
 import com.straw.lession.physical.custom.AlertDialogUtil;
-import com.straw.lession.physical.db.DaoSession;
 import com.straw.lession.physical.db.DbService;
-import com.straw.lession.physical.db.InstituteDao;
 import com.straw.lession.physical.fragment.ClassFragment;
 import com.straw.lession.physical.fragment.CourseFragment;
 import com.straw.lession.physical.fragment.ProfileFragment;
@@ -35,17 +33,11 @@ import com.straw.lession.physical.http.AsyncHttpClient;
 import com.straw.lession.physical.http.AsyncHttpResponseHandler;
 import com.straw.lession.physical.http.HttpResponseBean;
 import com.straw.lession.physical.task.AddAllDataToDBTask;
-import com.straw.lession.physical.task.DeleteAllDataTask;
 import com.straw.lession.physical.utils.*;
 import com.straw.lession.physical.vo.*;
 
-import com.straw.lession.physical.vo.db.ClassInfo;
-import com.straw.lession.physical.vo.db.CourseDefine;
-import com.straw.lession.physical.vo.db.Institute;
-import com.straw.lession.physical.vo.db.Student;
+import com.straw.lession.physical.vo.db.*;
 import org.apache.http.message.BasicNameValuePair;
-import org.greenrobot.greendao.query.Query;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -97,6 +89,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
     private List<CourseDefine> courseDefines = new ArrayList<>();
     private List<ClassInfo> classes = new ArrayList<>();
     private List<Student> students = new ArrayList<>();
+    private List<TeacherInstitute> teacherInstitutes = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,8 +99,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         } catch (Exception e) {
             e.printStackTrace();
             Log.e(TAG,"",e);
-        }
-        if(loginInfo == null){
+            Toast.makeText(MainActivity.this, "获取登录信息出错", Toast.LENGTH_SHORT).show();
             return;
         }
         setContentView(R.layout.activity_main);
@@ -119,10 +111,39 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         initView();
     }
 
+    private void initView() {
+        // 底部菜单4个Linearlayout
+        this.ll_today = (LinearLayout) findViewById(R.id.id_today);
+        this.ll_course = (LinearLayout) findViewById(R.id.id_lesson);
+        this.ll_profile = (LinearLayout) findViewById(R.id.id_profile);
+        this.ll_class = (LinearLayout) findViewById(R.id.id_class);
+
+        // 底部菜单4个ImageView
+        this.iv_today = (ImageView) findViewById(R.id.id_today_img);
+        this.iv_course = (ImageView) findViewById(R.id.id_lesson_img);
+        this.iv_profile = (ImageView) findViewById(R.id.id_profile_img);
+        this.iv_class = (ImageView) findViewById(R.id.id_class_img);
+
+        // 底部菜单4个菜单标题
+        this.tv_today = (TextView) findViewById(R.id.id_today_txt);
+        this.tv_course = (TextView) findViewById(R.id.id_lesson_txt);
+        this.tv_profile = (TextView) findViewById(R.id.id_profile_txt);
+        this.tv_class = (TextView) findViewById(R.id.id_class_txt);
+
+        // 顶部工具栏
+        btn_back = (ImageButton) findViewById(R.id.btn_back);
+        textView = (TextView) findViewById(R.id.textView);
+        btn_add_course = (ImageButton) findViewById(R.id.btn_add_course);
+        btn_sync = (ImageButton) findViewById(R.id.btn_sync);
+        btn_back.setVisibility(View.GONE);
+        btn_add_course.setVisibility(View.VISIBLE);
+        spinner = (Spinner) findViewById(R.id.spinner_school);
+    }
+
     @Override
     protected void doAfterGetToken() {
-        //有网络的情况下，可重新获取所有的数据，需要先删除之前的旧数据
-        deleteAllData();
+        //获取数据并更新本地库
+        getInstituteCoursedefineClassStudentInfo();
     }
 
     private void goOnLoad(){
@@ -145,31 +166,6 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         }
     }
 
-    private void deleteAllData() {
-        showProgressDialog(getResources().getString(R.string.loading));
-        ITask deleteAllDataTask = new DeleteAllDataTask(this, new TaskHandler(){
-            @Override
-            public void onSuccess(TaskResult result) {
-                hideProgressDialog();
-                getInstituteCoursedefineClassStudentInfo();
-            }
-
-            @Override
-            public void onFailure(Throwable error, String content) {
-                hideProgressDialog();
-                String errorContent = Utils.parseErrorMessage(mContext, content);
-                showErrorMsgInfo(errorContent);
-                Log.e(TAG, content);
-            }
-
-            @Override
-            protected void onSelf() {
-
-            }
-        },loginInfo);
-        mThreadPool.submit(new TaskWorker(deleteAllDataTask));
-    }
-
     private void getInstituteCoursedefineClassStudentInfo() {
         showProgressDialog(getResources().getString(R.string.loading));
         final ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
@@ -186,8 +182,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
                         JSONObject dataObject = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
                         List<InstituteVo> instituteVos =
                             JSON.parseArray(dataObject.getJSONArray("institutes").toString(), InstituteVo.class);
-                        assembleInstituteData(instituteVos);
-                        addInstituteDataToDB();
+                        refineDBData(instituteVos);
                     }else {//登录失败
                         String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);
                         AlertDialogUtil.showAlertWindow(mContext, -1, errorMessage , null );
@@ -210,14 +205,16 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         mThreadPool.execute(asyncHttpClient);
     }
 
-    private void addInstituteDataToDB() {
+    private void refineDBData(List<InstituteVo> instituteVos) {
         showProgressDialog(getResources().getString(R.string.loading));
         ITask addAllDataToDBTask = new AddAllDataToDBTask(this, new TaskHandler() {
             @Override
             public void onSuccess(TaskResult result) {
                 hideProgressDialog();
+                institutes = DbService.getInstance(MainActivity.this).getInsituteDataByTeacher(loginInfo.getUserId());
                 initInstituteSpinner();
-                getAllClassInfoByInstitute();
+                goOnLoad();
+//                getAllClassInfoByInstitute();
             }
 
             @Override
@@ -232,55 +229,55 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
             protected void onSelf() {
 
             }
-        },institutes,classes,students,courseDefines);
+        },instituteVos);
         TaskWorker taskWorker = new TaskWorker(addAllDataToDBTask);
         mThreadPool.submit(taskWorker);
     }
 
-    private void getAllClassInfoByInstitute() {
-        long instituteIdR = loginInfo.getCurrentInstituteIdR();
-        String URL = ReqConstant.URL_BASE + "/class/list";
-        ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
-        params.add(new BasicNameValuePair("instituteId", String.valueOf(instituteIdR)));
-        showProgressDialog(getResources().getString(R.string.loading));
-        AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.GET, URL,params,
-                                                tokenInfo.getToken(),new AsyncHttpResponseHandler(){
-            @Override
-            public void onSuccess(HttpResponseBean httpResponseBean) {
-                super.onSuccess(httpResponseBean);
-                try{
-                    JSONObject contentObject = new JSONObject(httpResponseBean.content);
-                    String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
-                    if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){
-                        JSONObject dataObj = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
-                        JSONArray classesArray = dataObj.getJSONArray("classes");
-                        List<ClassInfoVo> classVos =
-                                JSON.parseArray(classesArray.toString(), ClassInfoVo.class);
-                        DbService.getInstance(MainActivity.this).refineClassInfo(classVos);
-                        hideProgressDialog();
-                        goOnLoad();
-                    }else {
-                        String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);
-                        AlertDialogUtil.showAlertWindow(mContext, -1, errorMessage , null );
-                    }
-                }catch(Exception e){
-                    hideProgressDialog();
-                    showErrorMsgInfo(e.toString());
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable error, String content) {
-                super.onFailure(error, content);
-                hideProgressDialog();
-                String errorContent = Utils.parseErrorMessage(mContext, content);
-                showErrorMsgInfo(errorContent);
-                Log.e(TAG, content);
-            }
-        });
-        mThreadPool.execute(asyncHttpClient);
-    }
+//    private void getAllClassInfoByInstitute() {
+//        long instituteIdR = loginInfo.getCurrentInstituteIdR();
+//        String URL = ReqConstant.URL_BASE + "/class/list";
+//        ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+//        params.add(new BasicNameValuePair("instituteId", String.valueOf(instituteIdR)));
+//        showProgressDialog(getResources().getString(R.string.loading));
+//        AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.GET, URL,params,
+//                                                tokenInfo.getToken(),new AsyncHttpResponseHandler(){
+//            @Override
+//            public void onSuccess(HttpResponseBean httpResponseBean) {
+//                super.onSuccess(httpResponseBean);
+//                try{
+//                    JSONObject contentObject = new JSONObject(httpResponseBean.content);
+//                    String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
+//                    if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){
+//                        JSONObject dataObj = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
+//                        JSONArray classesArray = dataObj.getJSONArray("classes");
+//                        List<ClassInfoVo> classVos =
+//                                JSON.parseArray(classesArray.toString(), ClassInfoVo.class);
+//                        DbService.getInstance(MainActivity.this).refineClassInfoData(classVos, instituteVO.getInstituteId());
+//                        hideProgressDialog();
+//                        goOnLoad();
+//                    }else {
+//                        String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);
+//                        AlertDialogUtil.showAlertWindow(mContext, -1, errorMessage , null );
+//                    }
+//                }catch(Exception e){
+//                    hideProgressDialog();
+//                    showErrorMsgInfo(e.toString());
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Throwable error, String content) {
+//                super.onFailure(error, content);
+//                hideProgressDialog();
+//                String errorContent = Utils.parseErrorMessage(mContext, content);
+//                showErrorMsgInfo(errorContent);
+//                Log.e(TAG, content);
+//            }
+//        });
+//        mThreadPool.execute(asyncHttpClient);
+//    }
 
     private void assembleInstituteData(List<InstituteVo> instituteVos) throws JSONException {
         InstituteVo instituteVo = null;
@@ -299,20 +296,19 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
     private void assembleInstitute(Institute institute, InstituteVo instituteVo) throws JSONException {
         institute.setInstituteIdR(instituteVo.getInstituteId());
         institute.setName(instituteVo.getInstituteName());
-        institute.setLoginId(loginInfo.getTeacherId());
-
+        assembleTeacherInstitute(institute);
         try{
             List<ClassInfoVo> classInfoVos = instituteVo.getClasses();
             ClassInfoVo classInfoVo = null;
             for(int i = 0; i < classInfoVos.size(); i ++){
                 classInfoVo = classInfoVos.get(i);
                 ClassInfo classInfo = new ClassInfo();
+                classInfo.setInstituteIdR(institute.getInstituteIdR());
                 try{
                     assembleClass(classInfo, classInfoVo);
                 }catch(Exception ex){
                     Log.e(TAG, "", ex);
                 }
-                classInfo.setInstituteIdR(institute.getInstituteIdR());
                 classes.add(classInfo);
             }
         }catch(Exception e){
@@ -338,6 +334,13 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         }
     }
 
+    private void assembleTeacherInstitute(Institute institute) {
+        TeacherInstitute teacherInstitute = new TeacherInstitute();
+        teacherInstitute.setInstituteIdR(institute.getInstituteIdR());
+        teacherInstitute.setTeacherIdR(loginInfo.getUserId());
+        teacherInstitutes.add(teacherInstitute);
+    }
+
     private void assembleCourseDefine(CourseDefine courseDefine, CourseDefineVo courseVo) throws JSONException {
         courseDefine.setClassIdR(courseVo.getClassId());
         courseDefine.setCode(courseVo.getCourseCode());
@@ -349,7 +352,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         courseDefine.setInstituteIdR(courseVo.getInstituteId());
         courseDefine.setUseOnce(courseVo.getUseOnce());
         courseDefine.setWeekDay(courseVo.getWeekday());
-        courseDefine.setLoginId(loginInfo.getTeacherId());
+        courseDefine.setTeacherIdR(loginInfo.getUserId());
     }
 
     private void assembleClass(ClassInfo classInfo, ClassInfoVo classInfoVo) throws JSONException {
@@ -358,7 +361,6 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         classInfo.setName(classInfoVo.getClassName());
         classInfo.setType(classInfoVo.getClassType());
         classInfo.setTotalNum(classInfoVo.getTotalNum());
-        classInfo.setLoginId(loginInfo.getTeacherId());
 
         try {
             List<StudentVo> studentVos = classInfoVo.getStudents();
@@ -385,15 +387,11 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         student.setBirthday(DateUtil.formatStrToDate(studentVo.getBirthday()));
         student.setGender(studentVo.getGender());
         student.setStudentIdR(studentVo.getStudentId());
-        student.setLoginId(loginInfo.getTeacherId());
     }
 
     @Override
     protected void loadDataFromLocal() {
-        DaoSession session = MainApplication.getInstance().getDaoSession(this);
-        InstituteDao instituteDao = session.getInstituteDao();
-        Query query = instituteDao.queryBuilder().where(InstituteDao.Properties.LoginId.eq(loginInfo.getTeacherId())).build();
-        institutes = query.list();
+        institutes = DbService.getInstance(this).getInsituteDataByTeacher(loginInfo.getUserId());
     }
 
     private void initFragment(int index) {
@@ -484,14 +482,13 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         SchoolSpinnerAdapter schoolSpinnerAdapter = new SchoolSpinnerAdapter(this, spinner, institutes);
         schoolSpinnerAdapter.setDropDownViewResource(R.layout.school_item_spinner_dropdown);
         spinner.setAdapter(schoolSpinnerAdapter);
-        spinner.setSelection(getSelInstitutePos(loginInfo.getCurrentInstituteId()), true);
+        spinner.setSelection(getSelInstitutePos(loginInfo.getCurrentInstituteIdR()), true);
         spinner.setDropDownVerticalOffset(15);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int pos, long id) {
                 Toast.makeText(MainActivity.this, "你点击的是:"+institutes.get(pos).getName(), Toast.LENGTH_SHORT).show();
-                loginInfo.setCurrentInstituteId(institutes.get(pos).getId());
                 loginInfo.setCurrentInstituteIdR(institutes.get(pos).getInstituteIdR());
                 try {
                     AppPreference.saveLoginInfoWithoutDB(loginInfo);
@@ -526,7 +523,6 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
 
     private int getSelInstitutePos(Long currentInstituteId) {
         if(currentInstituteId == null){
-            loginInfo.setCurrentInstituteId(institutes.get(0).getId());
             loginInfo.setCurrentInstituteIdR(institutes.get(0).getInstituteIdR());
             try {
                 AppPreference.saveLoginInfoWithoutDB(loginInfo);
@@ -538,40 +534,11 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
             return 0;
         }
         for(int i = 0; i < institutes.size(); i ++){
-            if(institutes.get(i).getId() == currentInstituteId){
+            if(institutes.get(i).getInstituteIdR() == currentInstituteId){
                 return i;
             }
         }
         return -1;
-    }
-
-    private void initView() {
-        // 底部菜单4个Linearlayout
-        this.ll_today = (LinearLayout) findViewById(R.id.id_today);
-        this.ll_course = (LinearLayout) findViewById(R.id.id_lesson);
-        this.ll_profile = (LinearLayout) findViewById(R.id.id_profile);
-        this.ll_class = (LinearLayout) findViewById(R.id.id_class);
-
-        // 底部菜单4个ImageView
-        this.iv_today = (ImageView) findViewById(R.id.id_today_img);
-        this.iv_course = (ImageView) findViewById(R.id.id_lesson_img);
-        this.iv_profile = (ImageView) findViewById(R.id.id_profile_img);
-        this.iv_class = (ImageView) findViewById(R.id.id_class_img);
-
-        // 底部菜单4个菜单标题
-        this.tv_today = (TextView) findViewById(R.id.id_today_txt);
-        this.tv_course = (TextView) findViewById(R.id.id_lesson_txt);
-        this.tv_profile = (TextView) findViewById(R.id.id_profile_txt);
-        this.tv_class = (TextView) findViewById(R.id.id_class_txt);
-
-        // 顶部工具栏
-        btn_back = (ImageButton) findViewById(R.id.btn_back);
-        textView = (TextView) findViewById(R.id.textView);
-        btn_add_course = (ImageButton) findViewById(R.id.btn_add_course);
-        btn_sync = (ImageButton) findViewById(R.id.btn_sync);
-        btn_back.setVisibility(View.GONE);
-        btn_add_course.setVisibility(View.VISIBLE);
-        spinner = (Spinner) findViewById(R.id.spinner_school);
     }
 
     @Override

@@ -293,10 +293,8 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
             showErrorMsgInfo(e.toString());
             return;
         }
-        courseDefine.setInstituteId(loginInfo.getCurrentInstituteId());
         courseDefine.setInstituteIdR(loginInfo.getCurrentInstituteIdR());
-        courseDefine.setTeacherId(loginInfo.getUserId());
-        courseDefine.setLoginId(loginInfo.getTeacherId());
+        courseDefine.setTeacherIdR(loginInfo.getUserId());
         courseDefine.setUseOnce(CourseDictionary.USE_ONCE);
 
         final String URL = ReqConstant.URL_BASE + "/course/define/create";
@@ -332,7 +330,7 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
                                 .build();
                         List<ClassInfo> classInfos = query.list();
                         if(Detect.notEmpty(classInfos)){
-                            courseDefine.setClassId(classInfos.get(0).getId());
+                            courseDefine.setClassIdR(classInfos.get(0).getClassIdR());
                         }
 
                         CourseDefineDao courseDefineDao = daoSession.getCourseDefineDao();

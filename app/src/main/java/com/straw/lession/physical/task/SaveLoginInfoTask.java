@@ -46,7 +46,7 @@ public class SaveLoginInfoTask extends BaseTask{
             teacher.setMobile(loginInfo.getMobile());
             teacher.setName(loginInfo.getPersonName());
             teacher.setTeacherIdR(loginInfo.getUserId());
-            loginInfo.setTeacherId(teacherDao.insertOrReplace(teacher));
+            teacherDao.insertOrReplace(teacher);
             TaskResult result = new TaskResult();
             result.setResultCode(TaskConstant.SUCCESS_CODE);
             result.setResultMsg("登录信息入库成功");

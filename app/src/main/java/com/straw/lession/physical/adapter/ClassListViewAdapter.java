@@ -32,7 +32,7 @@ public class ClassListViewAdapter extends BaseAdapter implements View.OnClickLis
     }
 
     public class ViewHolder {
-        public ImageView rightImageView;
+        public LinearLayout linearLayout;
     }
 
     public interface Callback{
@@ -66,7 +66,7 @@ public class ClassListViewAdapter extends BaseAdapter implements View.OnClickLis
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.class_item_listview, null);
             holder = new ViewHolder();
-            holder.rightImageView = (ImageView) convertView.findViewById(R.id.right_arrow);
+            holder.linearLayout = (LinearLayout) convertView.findViewById(R.id.class_item_view);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -74,8 +74,8 @@ public class ClassListViewAdapter extends BaseAdapter implements View.OnClickLis
 
         TextView className = (TextView) convertView.findViewById(R.id.class_item_name);
         className.setText(info.getClassName());
-        holder.rightImageView.setOnClickListener(this);
-        holder.rightImageView.setTag(position);
+        holder.linearLayout.setOnClickListener(this);
+        holder.linearLayout.setTag(position);
         return convertView;
     }
 

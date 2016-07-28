@@ -15,9 +15,11 @@ import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.StartCourseActivity;
 import com.straw.lession.physical.adapter.CourseListViewAdapter;
 import com.straw.lession.physical.app.MainApplication;
+import com.straw.lession.physical.constant.CourseStatus;
 import com.straw.lession.physical.db.CourseDao;
 import com.straw.lession.physical.db.CourseDefineDao;
 import com.straw.lession.physical.db.DaoSession;
+import com.straw.lession.physical.db.DbService;
 import com.straw.lession.physical.dictionary.CourseDictionary;
 import com.straw.lession.physical.fragment.base.BaseFragment;
 import com.straw.lession.physical.utils.AppPreference;
@@ -36,6 +38,7 @@ import org.greenrobot.greendao.query.WhereCondition;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -48,11 +51,16 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
     private ListView listView;
     private CourseListViewAdapter adapter;
     private List<CourseItemInfo> infoList = new ArrayList<CourseItemInfo>();
-    private List<Course> courses = new ArrayList<Course>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        query();
     }
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -109,75 +117,53 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
             Log.e(TAG,"",e);
             return;
         }
-        DaoSession session = MainApplication.getInstance().getDaoSession(getActivity());
-        CourseDefineDao courseDefineDao = session.getCourseDefineDao();
-        CourseDao courseDao = session.getCourseDao();
 
-        Query courseQuery = courseDao.queryBuilder()
-                .where(CourseDao.Properties.LoginId.eq(loginInfo.getTeacherId())).build();
-        List<Course> courses = courseQuery.list();
-
-        QueryBuilder.LOG_SQL=true;
-        QueryBuilder.LOG_VALUES=true;
-        QueryBuilder qb = courseDefineDao.queryBuilder();
-        WhereCondition wc = qb.and(CourseDefineDao.Properties.LoginId.eq(loginInfo.getTeacherId()),
-                                    CourseDefineDao.Properties.InstituteId
-                                                .eq(loginInfo.getCurrentInstituteId()),
-                                    CourseDefineDao.Properties.WeekDay.eq(DateUtil.getCurrentWeekday()));
-        List<CourseDefine> courseDefines = qb.where(wc).list();
-
-        for(Course course:courses){
-            boolean notDel = false;
-            for(CourseDefine courseDefine : courseDefines){
-                if(course.getCourseDefineId() == courseDefine.getId()){
-                    notDel = true;
-                    break;
-                }
-            }
-
-            if(!notDel){
-                courseDao.delete(course);
-            }
-        }
-
-        for(CourseDefine courseDefine : courseDefines){
-            boolean isAdd = true;
+        List<Course> courses = DbService.getInstance(getActivity()).getTodayCourses(loginInfo.getUserId(),
+                                                                                    loginInfo.getCurrentInstituteIdR());
+        List<CourseDefine> unstartCourses = DbService.getInstance(getActivity())
+                .getUnStartedTodayCourses(loginInfo.getUserId(),loginInfo.getCurrentInstituteIdR());
+        Iterator<CourseDefine> iter = unstartCourses.iterator();
+        CourseDefine courseDefineTmp = null;
+        while(iter.hasNext()){
+            courseDefineTmp = iter.next();
             for(Course course:courses){
-                if(course.getCourseDefineId() == courseDefine.getId()){
-                    isAdd = false;
-                    break;
+                if(courseDefineTmp.getCourseDefineIdR() == course.getCourseDefineIdR()){
+                    iter.remove();
                 }
             }
-            if(isAdd){
-                Course newCourse = new Course();
-                newCourse.setLoginId(loginInfo.getTeacherId());
-                newCourse.setUseOnce(courseDefine.getUseOnce());
-                newCourse.setCourseDefineId(courseDefine.getId());
-                courseDao.insert(newCourse);
-            }
         }
-
-        courses = courseQuery.list();
         infoList.clear();
         for(Course course : courses){
             infoList.add(toItem(course));
         }
+        for(CourseDefine courseDefine : unstartCourses){
+            infoList.add(toItem(courseDefine));
+        }
         adapter.notifyDataSetChanged();
     }
 
-    private CourseItemInfo toItem(Course course) {
+    private CourseItemInfo toItem(CourseDefine courseDefine) {
         CourseItemInfo courseItemInfo = new CourseItemInfo();
-        CourseDefine courseDefine = course.getCourseDefine();
-        courseItemInfo.setId(course.getCourseDefineId());
-        courseItemInfo.setName(courseDefine.getName());
-        courseItemInfo.setLocation(courseDefine.getLocation());
-        courseItemInfo.setDate(DateUtil.dateToStr(new Date()));
-        courseItemInfo.setSeq(courseDefine.getSeq());
-        courseItemInfo.setType(courseDefine.getType());
-        courseItemInfo.setWeekDay(courseDefine.getWeekDay());
-        ClassInfo classInfo = courseDefine.getClassInfo();
-        courseItemInfo.setClassName(classInfo.getName());
-        courseItemInfo.setClassId(classInfo.getId());
+        if(courseDefine != null) {
+            courseItemInfo.setCourseDefineId(courseDefine.getCourseDefineIdR());
+            courseItemInfo.setName(courseDefine.getName());
+            courseItemInfo.setLocation(courseDefine.getLocation());
+            courseItemInfo.setDate(DateUtil.dateToStr(new Date()));
+            courseItemInfo.setSeq(courseDefine.getSeq());
+            courseItemInfo.setType(courseDefine.getType());
+            courseItemInfo.setWeekDay(courseDefine.getWeekDay());
+            ClassInfo classInfo = courseDefine.getClassInfo();
+            courseItemInfo.setClassName(classInfo.getName());
+            courseItemInfo.setClassId(classInfo.getClassIdR());
+        }
+        courseItemInfo.setStatus(CourseStatus.UNSTARTED.getValue());
+        return courseItemInfo;
+    }
+
+    private CourseItemInfo toItem(Course course) {
+        CourseItemInfo courseItemInfo = toItem(course.getCourseDefine());
+        courseItemInfo.setCourseId(course.getId());
+        courseItemInfo.setStatus(course.getStatus());
         return courseItemInfo;
     }
 }

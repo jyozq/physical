@@ -117,8 +117,7 @@ public class SelectClassActivity extends ThreadToolBarBaseActivity
 //            }
 //        });
 //        mThreadPool.execute(asyncHttpClient);
-        List<ClassInfo> classInfos = DbService.getInstance(this).getClassByInstituteAndTeacher(loginInfo.getTeacherId(),
-                                                                                loginInfo.getCurrentInstituteId());
+        List<ClassInfo> classInfos = DbService.getInstance(this).getClassByInstitute(loginInfo.getCurrentInstituteIdR());
         for(ClassInfo classInfo : classInfos) {
             infoList.add(toItemInfo(classInfo));
         }

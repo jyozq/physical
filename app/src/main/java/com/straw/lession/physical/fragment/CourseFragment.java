@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import com.astuetz.PagerSlidingTabStrip;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.fragment.base.BaseFragment;
-import com.straw.lession.physical.fragment.base.DayCourseFragment;
 
 /**
  * Created by straw on 2016/7/7.

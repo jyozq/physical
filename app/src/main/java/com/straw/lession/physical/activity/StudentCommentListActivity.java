@@ -106,7 +106,7 @@ public class StudentCommentListActivity extends ThreadToolBarBaseActivity implem
 
     private void initClassSpinner() {
         classInfos = DbService.getInstance(this)
-                .getClassByInstituteAndTeacher(loginInfoVo.getTeacherId(),loginInfoVo.getCurrentInstituteId());
+                .getClassByInstitute(loginInfoVo.getCurrentInstituteIdR());
         ClassSpinnerAdapter schoolSpinnerAdapter = new ClassSpinnerAdapter(this, spinner_class, classInfos);
         schoolSpinnerAdapter.setDropDownViewResource(R.layout.school_item_spinner_dropdown);
         spinner_class.setAdapter(schoolSpinnerAdapter);
@@ -117,6 +117,7 @@ public class StudentCommentListActivity extends ThreadToolBarBaseActivity implem
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int pos, long id) {
                 Toast.makeText(StudentCommentListActivity.this, "你点击的是:"+classInfos.get(pos).getName(), Toast.LENGTH_SHORT).show();
+                classItemInfo = toClassItemInfo(classInfos.get(pos));
                 query();
             }
 
@@ -126,9 +127,17 @@ public class StudentCommentListActivity extends ThreadToolBarBaseActivity implem
         });
     }
 
+    private ClassItemInfo toClassItemInfo(ClassInfo classInfo) {
+        ClassItemInfo classItemInfo = new ClassItemInfo();
+        classItemInfo.setClassName(classInfo.getName());
+        classItemInfo.setClassIdR(classInfo.getClassIdR());
+        classItemInfo.setClassId(classInfo.getClassIdR());
+        return classItemInfo;
+    }
+
     private int getSelClassPos(long classId) {
         for(int i = 0; i < classInfos.size(); i ++){
-            if(classInfos.get(i).getId() == classId){
+            if(classInfos.get(i).getClassIdR() == classId){
                 return i;
             }
         }
@@ -146,6 +155,7 @@ public class StudentCommentListActivity extends ThreadToolBarBaseActivity implem
         studentItemInfo.setGender(student.getGender());
         studentItemInfo.setStudentIdR(student.getStudentIdR());
         studentItemInfo.setClassName(classItemInfo.getClassName());
+        studentItemInfo.setClassIdR(classItemInfo.getClassIdR());
         return studentItemInfo;
     }
 
@@ -155,6 +165,7 @@ public class StudentCommentListActivity extends ThreadToolBarBaseActivity implem
         ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
         params.add(new BasicNameValuePair("instituteId", String.valueOf(loginInfoVo.getCurrentInstituteIdR())));
         params.add(new BasicNameValuePair("classId", String.valueOf(classItemInfo.getClassIdR())));
+        showProgressDialog(getResources().getString(R.string.loading));
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.GET,
                 URL,params,tokenInfo.getToken(),new AsyncHttpResponseHandler(){
             @Override
@@ -168,8 +179,8 @@ public class StudentCommentListActivity extends ThreadToolBarBaseActivity implem
                         JSONObject dataObject = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
                         ClassInfoVo classInfoVo = JSON.parseObject(dataObject.toString(), ClassInfoVo.class, new Feature[0]);
                         List<StudentVo> studentVos = classInfoVo.getStudents();
-                        DbService.getInstance(mContext).refineStudentInfo(classInfoVo, studentVos);
-                        List<Student> students = DbService.getInstance(mContext).getStudentByClass(classItemInfo.getClassId());
+                        DbService.getInstance(mContext).refineStudentData(studentVos, classInfoVo.getClassId());
+                        List<Student> students = DbService.getInstance(mContext).getStudentByClass(classItemInfo.getClassIdR());
                         infoList.clear();
                         for(Student student : students){
                             infoList.add(toItemInfo(student));

@@ -14,16 +14,9 @@ import com.straw.lession.physical.db.CourseDefineDao;
  */
 @Entity(active = true)
 public class CourseDefine {
-
-    @Id
-    private Long id;
     private String code;
     private String name;
     private String type;
-    private Long instituteId;
-    private Long instituteIdR;
-    private Long classIdR;
-    private Long teacherId;
     private Integer weekDay;
     private java.util.Date date;
     private Integer seq;
@@ -31,9 +24,13 @@ public class CourseDefine {
     private java.util.Date startTime;
     private java.util.Date endTime;
     private Integer useOnce;
+    private Long instituteIdR;
+    private Long teacherIdR;
+
+    @Id
     private Long courseDefineIdR;
-    private Long loginId;
-    private Long classId;
+    private Integer isDel;
+    private Long classIdR;
 
     /** Used to resolve relations */
     @Generated
@@ -43,7 +40,7 @@ public class CourseDefine {
     @Generated
     private transient CourseDefineDao myDao;
 
-    @ToOne(joinProperty = "classId")
+    @ToOne(joinProperty = "classIdR")
     private ClassInfo classInfo;
 
     @Generated
@@ -53,20 +50,15 @@ public class CourseDefine {
     public CourseDefine() {
     }
 
-    public CourseDefine(Long id) {
-        this.id = id;
+    public CourseDefine(Long courseDefineIdR) {
+        this.courseDefineIdR = courseDefineIdR;
     }
 
     @Generated
-    public CourseDefine(Long id, String code, String name, String type, Long instituteId, Long instituteIdR, Long classIdR, Long teacherId, Integer weekDay, java.util.Date date, Integer seq, String location, java.util.Date startTime, java.util.Date endTime, Integer useOnce, Long courseDefineIdR, Long loginId, Long classId) {
-        this.id = id;
+    public CourseDefine(String code, String name, String type, Integer weekDay, java.util.Date date, Integer seq, String location, java.util.Date startTime, java.util.Date endTime, Integer useOnce, Long instituteIdR, Long teacherIdR, Long courseDefineIdR, Integer isDel, Long classIdR) {
         this.code = code;
         this.name = name;
         this.type = type;
-        this.instituteId = instituteId;
-        this.instituteIdR = instituteIdR;
-        this.classIdR = classIdR;
-        this.teacherId = teacherId;
         this.weekDay = weekDay;
         this.date = date;
         this.seq = seq;
@@ -74,9 +66,11 @@ public class CourseDefine {
         this.startTime = startTime;
         this.endTime = endTime;
         this.useOnce = useOnce;
+        this.instituteIdR = instituteIdR;
+        this.teacherIdR = teacherIdR;
         this.courseDefineIdR = courseDefineIdR;
-        this.loginId = loginId;
-        this.classId = classId;
+        this.isDel = isDel;
+        this.classIdR = classIdR;
     }
 
     /** called by internal mechanisms, do not call yourself. */
@@ -84,14 +78,6 @@ public class CourseDefine {
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getCourseDefineDao() : null;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getCode() {
@@ -116,38 +102,6 @@ public class CourseDefine {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public Long getInstituteId() {
-        return instituteId;
-    }
-
-    public void setInstituteId(Long instituteId) {
-        this.instituteId = instituteId;
-    }
-
-    public Long getInstituteIdR() {
-        return instituteIdR;
-    }
-
-    public void setInstituteIdR(Long instituteIdR) {
-        this.instituteIdR = instituteIdR;
-    }
-
-    public Long getClassIdR() {
-        return classIdR;
-    }
-
-    public void setClassIdR(Long classIdR) {
-        this.classIdR = classIdR;
-    }
-
-    public Long getTeacherId() {
-        return teacherId;
-    }
-
-    public void setTeacherId(Long teacherId) {
-        this.teacherId = teacherId;
     }
 
     public Integer getWeekDay() {
@@ -206,6 +160,22 @@ public class CourseDefine {
         this.useOnce = useOnce;
     }
 
+    public Long getInstituteIdR() {
+        return instituteIdR;
+    }
+
+    public void setInstituteIdR(Long instituteIdR) {
+        this.instituteIdR = instituteIdR;
+    }
+
+    public Long getTeacherIdR() {
+        return teacherIdR;
+    }
+
+    public void setTeacherIdR(Long teacherIdR) {
+        this.teacherIdR = teacherIdR;
+    }
+
     public Long getCourseDefineIdR() {
         return courseDefineIdR;
     }
@@ -214,26 +184,26 @@ public class CourseDefine {
         this.courseDefineIdR = courseDefineIdR;
     }
 
-    public Long getLoginId() {
-        return loginId;
+    public Integer getIsDel() {
+        return isDel;
     }
 
-    public void setLoginId(Long loginId) {
-        this.loginId = loginId;
+    public void setIsDel(Integer isDel) {
+        this.isDel = isDel;
     }
 
-    public Long getClassId() {
-        return classId;
+    public Long getClassIdR() {
+        return classIdR;
     }
 
-    public void setClassId(Long classId) {
-        this.classId = classId;
+    public void setClassIdR(Long classIdR) {
+        this.classIdR = classIdR;
     }
 
     /** To-one relationship, resolved on first access. */
     @Generated
     public ClassInfo getClassInfo() {
-        Long __key = this.classId;
+        Long __key = this.classIdR;
         if (classInfo__resolvedKey == null || !classInfo__resolvedKey.equals(__key)) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
@@ -252,8 +222,8 @@ public class CourseDefine {
     public void setClassInfo(ClassInfo classInfo) {
         synchronized (this) {
             this.classInfo = classInfo;
-            classId = classInfo == null ? null : classInfo.getId();
-            classInfo__resolvedKey = classId;
+            classIdR = classInfo == null ? null : classInfo.getClassIdR();
+            classInfo__resolvedKey = classIdR;
         }
     }
 

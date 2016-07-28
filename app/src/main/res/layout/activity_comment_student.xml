@@ -27,17 +27,17 @@
             <TableRow android:layout_width="match_parent"
                       android:layout_height="wrap_content">
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                          android:text="三年四班" android:textStyle="bold" android:textSize="20sp"
+                          android:text="三年四班" android:textSize="20sp"
                           android:gravity="center" android:textColor="@color/white"
                           android:id="@+id/student_comment_classname"
                 />
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                          android:text="三年四班" android:textStyle="bold" android:textSize="20sp"
+                          android:text="三年四班" android:textSize="20sp"
                           android:gravity="center" android:textColor="@color/white"
                             android:id="@+id/student_comment_studentname"
                 />
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                          android:text="三年四班" android:textStyle="bold" android:textSize="20sp"
+                          android:text="三年四班" android:textSize="20sp"
                           android:gravity="center" android:textColor="@color/white"
                             android:id="@+id/student_comment_studentno"
                 />
@@ -55,7 +55,7 @@
             android:layout_width="match_parent" android:layout_height="wrap_content"
             android:background="@color/transparent" android:textSize="@dimen/font_size_16"
             android:textColorHint="@color/gray_cccccc" android:textColor="@color/gray_32"
-            android:hint="@string/student_coment"/>
+            android:hint="@string/student_coment" android:id="@+id/student_comment"/>
 
         <Button android:id="@+id/submit"
             android:layout_width="fill_parent" android:textColor="@color/white"

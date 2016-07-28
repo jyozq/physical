@@ -9,6 +9,7 @@ import com.straw.lession.physical.db.DaoMaster;
 import com.straw.lession.physical.db.DaoSession;
 
 import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -74,6 +75,9 @@ public class MainApplication extends Application{
         }catch (Exception e){
             Log.e(TAG,e.getMessage());
         }
+
+        QueryBuilder.LOG_SQL=true;
+        QueryBuilder.LOG_VALUES=true;
     }
 
     public ThreadPoolExecutor getThreadPool() {

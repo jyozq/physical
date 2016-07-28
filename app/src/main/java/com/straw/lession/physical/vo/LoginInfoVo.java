@@ -87,22 +87,6 @@ public class LoginInfoVo {
         this.institutes = institutes;
     }
 
-    public long getTeacherId() {
-        return teacherId;
-    }
-
-    public void setTeacherId(long teacherId) {
-        this.teacherId = teacherId;
-    }
-
-    public Long getCurrentInstituteId() {
-        return currentInstituteId;
-    }
-
-    public void setCurrentInstituteId(Long currentInstituteId) {
-        this.currentInstituteId = currentInstituteId;
-    }
-
     public Long getCurrentInstituteIdR() {
         return currentInstituteIdR;
     }
@@ -111,7 +95,6 @@ public class LoginInfoVo {
         this.currentInstituteIdR = currentInstituteIdR;
     }
 
-    private long teacherId;
     private String birthday;
     private int gender;
     private String lastLoginIp;
@@ -121,7 +104,6 @@ public class LoginInfoVo {
     private long userId;
     private int userStatus;
     private String nowTime;
-    private Long currentInstituteId;
     private Long currentInstituteIdR;
     private List<Institute> institutes = new ArrayList<Institute>();
 

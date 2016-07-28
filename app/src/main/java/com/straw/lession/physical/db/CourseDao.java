@@ -30,9 +30,16 @@ public class CourseDao extends AbstractDao<Course, Long> {
     */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property LoginId = new Property(1, Long.class, "loginId", false, "LOGIN_ID");
+        public final static Property Date = new Property(1, java.util.Date.class, "date", false, "DATE");
         public final static Property UseOnce = new Property(2, Integer.class, "useOnce", false, "USE_ONCE");
-        public final static Property CourseDefineId = new Property(3, Long.class, "courseDefineId", false, "COURSE_DEFINE_ID");
+        public final static Property Weekday = new Property(3, Integer.class, "weekday", false, "WEEKDAY");
+        public final static Property Status = new Property(4, Integer.class, "status", false, "STATUS");
+        public final static Property InstituteIdR = new Property(5, Long.class, "instituteIdR", false, "INSTITUTE_ID_R");
+        public final static Property TeacherIdR = new Property(6, Long.class, "teacherIdR", false, "TEACHER_ID_R");
+        public final static Property StartTime = new Property(7, java.util.Date.class, "startTime", false, "START_TIME");
+        public final static Property EndTime = new Property(8, java.util.Date.class, "endTime", false, "END_TIME");
+        public final static Property IsUploaded = new Property(9, Boolean.class, "isUploaded", false, "IS_UPLOADED");
+        public final static Property CourseDefineIdR = new Property(10, Long.class, "courseDefineIdR", false, "COURSE_DEFINE_ID_R");
     };
 
     private DaoSession daoSession;
@@ -52,9 +59,16 @@ public class CourseDao extends AbstractDao<Course, Long> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"COURSE\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
-                "\"LOGIN_ID\" INTEGER," + // 1: loginId
+                "\"DATE\" INTEGER," + // 1: date
                 "\"USE_ONCE\" INTEGER," + // 2: useOnce
-                "\"COURSE_DEFINE_ID\" INTEGER);"); // 3: courseDefineId
+                "\"WEEKDAY\" INTEGER," + // 3: weekday
+                "\"STATUS\" INTEGER," + // 4: status
+                "\"INSTITUTE_ID_R\" INTEGER," + // 5: instituteIdR
+                "\"TEACHER_ID_R\" INTEGER," + // 6: teacherIdR
+                "\"START_TIME\" INTEGER," + // 7: startTime
+                "\"END_TIME\" INTEGER," + // 8: endTime
+                "\"IS_UPLOADED\" INTEGER," + // 9: isUploaded
+                "\"COURSE_DEFINE_ID_R\" INTEGER);"); // 10: courseDefineIdR
     }
 
     /** Drops the underlying database table. */
@@ -72,9 +86,9 @@ public class CourseDao extends AbstractDao<Course, Long> {
             stmt.bindLong(1, id);
         }
  
-        Long loginId = entity.getLoginId();
-        if (loginId != null) {
-            stmt.bindLong(2, loginId);
+        java.util.Date date = entity.getDate();
+        if (date != null) {
+            stmt.bindLong(2, date.getTime());
         }
  
         Integer useOnce = entity.getUseOnce();
@@ -82,9 +96,44 @@ public class CourseDao extends AbstractDao<Course, Long> {
             stmt.bindLong(3, useOnce);
         }
  
-        Long courseDefineId = entity.getCourseDefineId();
-        if (courseDefineId != null) {
-            stmt.bindLong(4, courseDefineId);
+        Integer weekday = entity.getWeekday();
+        if (weekday != null) {
+            stmt.bindLong(4, weekday);
+        }
+ 
+        Integer status = entity.getStatus();
+        if (status != null) {
+            stmt.bindLong(5, status);
+        }
+ 
+        Long instituteIdR = entity.getInstituteIdR();
+        if (instituteIdR != null) {
+            stmt.bindLong(6, instituteIdR);
+        }
+ 
+        Long teacherIdR = entity.getTeacherIdR();
+        if (teacherIdR != null) {
+            stmt.bindLong(7, teacherIdR);
+        }
+ 
+        java.util.Date startTime = entity.getStartTime();
+        if (startTime != null) {
+            stmt.bindLong(8, startTime.getTime());
+        }
+ 
+        java.util.Date endTime = entity.getEndTime();
+        if (endTime != null) {
+            stmt.bindLong(9, endTime.getTime());
+        }
+ 
+        Boolean isUploaded = entity.getIsUploaded();
+        if (isUploaded != null) {
+            stmt.bindLong(10, isUploaded ? 1L: 0L);
+        }
+ 
+        Long courseDefineIdR = entity.getCourseDefineIdR();
+        if (courseDefineIdR != null) {
+            stmt.bindLong(11, courseDefineIdR);
         }
     }
 
@@ -97,9 +146,9 @@ public class CourseDao extends AbstractDao<Course, Long> {
             stmt.bindLong(1, id);
         }
  
-        Long loginId = entity.getLoginId();
-        if (loginId != null) {
-            stmt.bindLong(2, loginId);
+        java.util.Date date = entity.getDate();
+        if (date != null) {
+            stmt.bindLong(2, date.getTime());
         }
  
         Integer useOnce = entity.getUseOnce();
@@ -107,9 +156,44 @@ public class CourseDao extends AbstractDao<Course, Long> {
             stmt.bindLong(3, useOnce);
         }
  
-        Long courseDefineId = entity.getCourseDefineId();
-        if (courseDefineId != null) {
-            stmt.bindLong(4, courseDefineId);
+        Integer weekday = entity.getWeekday();
+        if (weekday != null) {
+            stmt.bindLong(4, weekday);
+        }
+ 
+        Integer status = entity.getStatus();
+        if (status != null) {
+            stmt.bindLong(5, status);
+        }
+ 
+        Long instituteIdR = entity.getInstituteIdR();
+        if (instituteIdR != null) {
+            stmt.bindLong(6, instituteIdR);
+        }
+ 
+        Long teacherIdR = entity.getTeacherIdR();
+        if (teacherIdR != null) {
+            stmt.bindLong(7, teacherIdR);
+        }
+ 
+        java.util.Date startTime = entity.getStartTime();
+        if (startTime != null) {
+            stmt.bindLong(8, startTime.getTime());
+        }
+ 
+        java.util.Date endTime = entity.getEndTime();
+        if (endTime != null) {
+            stmt.bindLong(9, endTime.getTime());
+        }
+ 
+        Boolean isUploaded = entity.getIsUploaded();
+        if (isUploaded != null) {
+            stmt.bindLong(10, isUploaded ? 1L: 0L);
+        }
+ 
+        Long courseDefineIdR = entity.getCourseDefineIdR();
+        if (courseDefineIdR != null) {
+            stmt.bindLong(11, courseDefineIdR);
         }
     }
 
@@ -128,9 +212,16 @@ public class CourseDao extends AbstractDao<Course, Long> {
     public Course readEntity(Cursor cursor, int offset) {
         Course entity = new Course( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1), // loginId
+            cursor.isNull(offset + 1) ? null : new java.util.Date(cursor.getLong(offset + 1)), // date
             cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2), // useOnce
-            cursor.isNull(offset + 3) ? null : cursor.getLong(offset + 3) // courseDefineId
+            cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3), // weekday
+            cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4), // status
+            cursor.isNull(offset + 5) ? null : cursor.getLong(offset + 5), // instituteIdR
+            cursor.isNull(offset + 6) ? null : cursor.getLong(offset + 6), // teacherIdR
+            cursor.isNull(offset + 7) ? null : new java.util.Date(cursor.getLong(offset + 7)), // startTime
+            cursor.isNull(offset + 8) ? null : new java.util.Date(cursor.getLong(offset + 8)), // endTime
+            cursor.isNull(offset + 9) ? null : cursor.getShort(offset + 9) != 0, // isUploaded
+            cursor.isNull(offset + 10) ? null : cursor.getLong(offset + 10) // courseDefineIdR
         );
         return entity;
     }
@@ -138,9 +229,16 @@ public class CourseDao extends AbstractDao<Course, Long> {
     @Override
     public void readEntity(Cursor cursor, Course entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setLoginId(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));
+        entity.setDate(cursor.isNull(offset + 1) ? null : new java.util.Date(cursor.getLong(offset + 1)));
         entity.setUseOnce(cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2));
-        entity.setCourseDefineId(cursor.isNull(offset + 3) ? null : cursor.getLong(offset + 3));
+        entity.setWeekday(cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3));
+        entity.setStatus(cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4));
+        entity.setInstituteIdR(cursor.isNull(offset + 5) ? null : cursor.getLong(offset + 5));
+        entity.setTeacherIdR(cursor.isNull(offset + 6) ? null : cursor.getLong(offset + 6));
+        entity.setStartTime(cursor.isNull(offset + 7) ? null : new java.util.Date(cursor.getLong(offset + 7)));
+        entity.setEndTime(cursor.isNull(offset + 8) ? null : new java.util.Date(cursor.getLong(offset + 8)));
+        entity.setIsUploaded(cursor.isNull(offset + 9) ? null : cursor.getShort(offset + 9) != 0);
+        entity.setCourseDefineIdR(cursor.isNull(offset + 10) ? null : cursor.getLong(offset + 10));
      }
     
     @Override
@@ -172,7 +270,7 @@ public class CourseDao extends AbstractDao<Course, Long> {
             builder.append(',');
             SqlUtils.appendColumns(builder, "T0", daoSession.getCourseDefineDao().getAllColumns());
             builder.append(" FROM COURSE T");
-            builder.append(" LEFT JOIN COURSE_DEFINE T0 ON T.\"COURSE_DEFINE_ID\"=T0.\"_id\"");
+            builder.append(" LEFT JOIN COURSE_DEFINE T0 ON T.\"COURSE_DEFINE_ID_R\"=T0.\"COURSE_DEFINE_ID_R\"");
             builder.append(' ');
             selectDeep = builder.toString();
         }

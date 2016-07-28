@@ -10,6 +10,7 @@ import com.straw.lession.physical.vo.TokenInfo;
 import com.straw.lession.physical.vo.db.Teacher;
 import org.greenrobot.greendao.query.DeleteQuery;
 import org.greenrobot.greendao.query.Query;
+import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.io.IOException;
 import java.util.Date;
@@ -20,17 +21,13 @@ public class AppPreference {
     public static final String LOGIN_INFO_KEY = "logininfo";
     public static final String TOKEN_INFO_KEY = "tokeninfo";
 
-    public static void saveLoginInfo(Context context, final LoginInfoVo loginInfo) throws Exception {
+    public static void saveLoginInfoToDB(Context context, final LoginInfoVo loginInfo) throws Exception {
         DaoSession session = MainApplication.getInstance().getDaoSession(context);
         TeacherDao teacherDao = session.getTeacherDao();
-        Query query = teacherDao.queryBuilder()
-                .where(TeacherDao.Properties.Mobile.eq(loginInfo.getMobile()))
-                .build();
-        List<Teacher> teachers = query.list();
-        if(teachers.size() > 0){
-            DeleteQuery deleteQuery = teacherDao.queryBuilder()
-                    .where(TeacherDao.Properties.Mobile.eq(loginInfo.getMobile()))
-                    .buildDelete();
+        QueryBuilder qb = teacherDao.queryBuilder()
+                .where(TeacherDao.Properties.TeacherIdR.eq(loginInfo.getUserId()));
+        if(qb.count() > 0){
+            DeleteQuery deleteQuery = qb.buildDelete();
             deleteQuery.executeDeleteWithoutDetachingEntities();
         }
         Teacher teacher = new Teacher();
@@ -38,7 +35,6 @@ public class AppPreference {
         teacher.setMobile(loginInfo.getMobile());
         teacher.setName(loginInfo.getPersonName());
         teacher.setTeacherIdR(loginInfo.getUserId());
-        loginInfo.setTeacherId(teacherDao.insertOrReplace(teacher));
         Reservoir.put(LOGIN_INFO_KEY, loginInfo);
     }
 

@@ -169,7 +169,7 @@ public class LoginActivity extends ThreadBaseActivity {
                         Gson gson = new Gson();
                         LoginInfoVo loginInfo = gson.fromJson(userObject.toString(), LoginInfoVo.class);
                         loginInfo.setNowTime(nowTime);
-                        AppPreference.saveLoginInfo(LoginActivity.this,loginInfo);
+                        AppPreference.saveLoginInfoToDB(LoginActivity.this,loginInfo);
                         MainApplication.getInstance().popCurrentActivity();
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     }else {//登录失败

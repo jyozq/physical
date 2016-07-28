@@ -17,9 +17,16 @@ public class Course {
 
     @Id
     private Long id;
-    private Long loginId;
+    private java.util.Date date;
     private Integer useOnce;
-    private Long courseDefineId;
+    private Integer weekday;
+    private Integer status;
+    private Long instituteIdR;
+    private Long teacherIdR;
+    private java.util.Date startTime;
+    private java.util.Date endTime;
+    private Boolean isUploaded;
+    private Long courseDefineIdR;
 
     /** Used to resolve relations */
     @Generated
@@ -29,7 +36,7 @@ public class Course {
     @Generated
     private transient CourseDao myDao;
 
-    @ToOne(joinProperty = "courseDefineId")
+    @ToOne(joinProperty = "courseDefineIdR")
     private CourseDefine courseDefine;
 
     @Generated
@@ -44,11 +51,18 @@ public class Course {
     }
 
     @Generated
-    public Course(Long id, Long loginId, Integer useOnce, Long courseDefineId) {
+    public Course(Long id, java.util.Date date, Integer useOnce, Integer weekday, Integer status, Long instituteIdR, Long teacherIdR, java.util.Date startTime, java.util.Date endTime, Boolean isUploaded, Long courseDefineIdR) {
         this.id = id;
-        this.loginId = loginId;
+        this.date = date;
         this.useOnce = useOnce;
-        this.courseDefineId = courseDefineId;
+        this.weekday = weekday;
+        this.status = status;
+        this.instituteIdR = instituteIdR;
+        this.teacherIdR = teacherIdR;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.isUploaded = isUploaded;
+        this.courseDefineIdR = courseDefineIdR;
     }
 
     /** called by internal mechanisms, do not call yourself. */
@@ -66,12 +80,12 @@ public class Course {
         this.id = id;
     }
 
-    public Long getLoginId() {
-        return loginId;
+    public java.util.Date getDate() {
+        return date;
     }
 
-    public void setLoginId(Long loginId) {
-        this.loginId = loginId;
+    public void setDate(java.util.Date date) {
+        this.date = date;
     }
 
     public Integer getUseOnce() {
@@ -82,18 +96,74 @@ public class Course {
         this.useOnce = useOnce;
     }
 
-    public Long getCourseDefineId() {
-        return courseDefineId;
+    public Integer getWeekday() {
+        return weekday;
     }
 
-    public void setCourseDefineId(Long courseDefineId) {
-        this.courseDefineId = courseDefineId;
+    public void setWeekday(Integer weekday) {
+        this.weekday = weekday;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public Long getInstituteIdR() {
+        return instituteIdR;
+    }
+
+    public void setInstituteIdR(Long instituteIdR) {
+        this.instituteIdR = instituteIdR;
+    }
+
+    public Long getTeacherIdR() {
+        return teacherIdR;
+    }
+
+    public void setTeacherIdR(Long teacherIdR) {
+        this.teacherIdR = teacherIdR;
+    }
+
+    public java.util.Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(java.util.Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public java.util.Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(java.util.Date endTime) {
+        this.endTime = endTime;
+    }
+
+    public Boolean getIsUploaded() {
+        return isUploaded;
+    }
+
+    public void setIsUploaded(Boolean isUploaded) {
+        this.isUploaded = isUploaded;
+    }
+
+    public Long getCourseDefineIdR() {
+        return courseDefineIdR;
+    }
+
+    public void setCourseDefineIdR(Long courseDefineIdR) {
+        this.courseDefineIdR = courseDefineIdR;
     }
 
     /** To-one relationship, resolved on first access. */
     @Generated
     public CourseDefine getCourseDefine() {
-        Long __key = this.courseDefineId;
+        Long __key = this.courseDefineIdR;
         if (courseDefine__resolvedKey == null || !courseDefine__resolvedKey.equals(__key)) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
@@ -112,8 +182,8 @@ public class Course {
     public void setCourseDefine(CourseDefine courseDefine) {
         synchronized (this) {
             this.courseDefine = courseDefine;
-            courseDefineId = courseDefine == null ? null : courseDefine.getId();
-            courseDefine__resolvedKey = courseDefineId;
+            courseDefineIdR = courseDefine == null ? null : courseDefine.getCourseDefineIdR();
+            courseDefine__resolvedKey = courseDefineIdR;
         }
     }
 

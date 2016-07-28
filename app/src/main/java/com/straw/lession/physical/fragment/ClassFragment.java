@@ -102,10 +102,9 @@ public class ClassFragment extends BaseFragment implements SwipeRefreshLayout.On
                         JSONObject dataObject = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
                         List<ClassInfoVo> classInfoVos =
                                 JSON.parseArray(dataObject.getJSONArray("classes").toString(), ClassInfoVo.class);
-                        DbService.getInstance(mContext).refineClassInfo(classInfoVos);
+                        DbService.getInstance(mContext).refineClassInfoData(classInfoVos, loginInfoVo.getCurrentInstituteIdR());
                         List<ClassInfo> classInfos = DbService.getInstance(mContext)
-                                                                .getClassByInstituteAndTeacher(loginInfoVo.getTeacherId(),
-                                                                            loginInfoVo.getCurrentInstituteId());
+                                                                .getClassByInstitute(loginInfoVo.getCurrentInstituteIdR());
                         infoList.clear();
                         for(ClassInfo classInfo:classInfos){
                             infoList.add(toItem(classInfo));
@@ -136,10 +135,10 @@ public class ClassFragment extends BaseFragment implements SwipeRefreshLayout.On
 
     private ClassItemInfo toItem(ClassInfo classInfo) {
         ClassItemInfo classItemInfo = new ClassItemInfo();
-        classItemInfo.setClassId(classInfo.getId());
+        classItemInfo.setClassId(classInfo.getClassIdR());
         classItemInfo.setClassIdR(classInfo.getClassIdR());
         classItemInfo.setClassName(classInfo.getName());
-        classItemInfo.setInstituteId(classInfo.getInstituteId());
+        classItemInfo.setInstituteId(classInfo.getInstituteIdR());
         classItemInfo.setInstituteIdR(classInfo.getInstituteIdR());
         return classItemInfo;
     }

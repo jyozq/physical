@@ -7,9 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-
 import com.straw.lession.physical.R;
-import com.straw.lession.physical.constant.Gender;
 import com.straw.lession.physical.vo.item.CommentItemInfo;
 
 import java.util.List;
@@ -52,6 +50,13 @@ public class StudentCommentViewAdapter extends BaseAdapter {
         Log.i(TAG, "getView");
         CommentItemInfo info = getItem(position);
         convertView = inflater.inflate(R.layout.comment_item_listview, null);
+
+        TextView teacherName = (TextView)convertView.findViewById(R.id.teacherName);
+        TextView commentTime = (TextView)convertView.findViewById(R.id.commentTime);
+        TextView comment = (TextView)convertView.findViewById(R.id.comment);
+        teacherName.setText(info.getTeachName());
+        commentTime.setText(info.getCommentTime());
+        comment.setText(info.getTeacherComment());
         return convertView;
     }
 }

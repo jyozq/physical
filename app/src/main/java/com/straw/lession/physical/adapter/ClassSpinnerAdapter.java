@@ -38,13 +38,13 @@ public class ClassSpinnerAdapter extends ArrayAdapter{
     }
 
     @Override
-    public Object getItem(int position) {
+    public ClassInfo getItem(int position) {
         return mList.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return position;
+        return mList.get(position).getClassIdR();
     }
 
     @Override

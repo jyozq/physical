@@ -24,12 +24,13 @@ public class InstituteDao extends AbstractDao<Institute, Long> {
      * Can be used for QueryBuilder and for referencing column names.
     */
     public static class Properties {
-        public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property Code = new Property(1, String.class, "code", false, "CODE");
-        public final static Property Name = new Property(2, String.class, "name", false, "NAME");
-        public final static Property InstituteIdR = new Property(3, Long.class, "instituteIdR", false, "INSTITUTE_ID_R");
-        public final static Property LoginId = new Property(4, Long.class, "loginId", false, "LOGIN_ID");
+        public final static Property Code = new Property(0, String.class, "code", false, "CODE");
+        public final static Property Name = new Property(1, String.class, "name", false, "NAME");
+        public final static Property InstituteIdR = new Property(2, Long.class, "instituteIdR", true, "INSTITUTE_ID_R");
+        public final static Property IsDel = new Property(3, Integer.class, "isDel", false, "IS_DEL");
     };
+
+    private DaoSession daoSession;
 
 
     public InstituteDao(DaoConfig config) {
@@ -38,17 +39,17 @@ public class InstituteDao extends AbstractDao<Institute, Long> {
     
     public InstituteDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
+        this.daoSession = daoSession;
     }
 
     /** Creates the underlying database table. */
     public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"INSTITUTE\" (" + //
-                "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
-                "\"CODE\" TEXT," + // 1: code
-                "\"NAME\" TEXT," + // 2: name
-                "\"INSTITUTE_ID_R\" INTEGER," + // 3: instituteIdR
-                "\"LOGIN_ID\" INTEGER);"); // 4: loginId
+                "\"CODE\" TEXT," + // 0: code
+                "\"NAME\" TEXT," + // 1: name
+                "\"INSTITUTE_ID_R\" INTEGER PRIMARY KEY ," + // 2: instituteIdR
+                "\"IS_DEL\" INTEGER);"); // 3: isDel
     }
 
     /** Drops the underlying database table. */
@@ -61,29 +62,24 @@ public class InstituteDao extends AbstractDao<Institute, Long> {
     protected final void bindValues(DatabaseStatement stmt, Institute entity) {
         stmt.clearBindings();
  
-        Long id = entity.getId();
-        if (id != null) {
-            stmt.bindLong(1, id);
-        }
- 
         String code = entity.getCode();
         if (code != null) {
-            stmt.bindString(2, code);
+            stmt.bindString(1, code);
         }
  
         String name = entity.getName();
         if (name != null) {
-            stmt.bindString(3, name);
+            stmt.bindString(2, name);
         }
  
         Long instituteIdR = entity.getInstituteIdR();
         if (instituteIdR != null) {
-            stmt.bindLong(4, instituteIdR);
+            stmt.bindLong(3, instituteIdR);
         }
  
-        Long loginId = entity.getLoginId();
-        if (loginId != null) {
-            stmt.bindLong(5, loginId);
+        Integer isDel = entity.getIsDel();
+        if (isDel != null) {
+            stmt.bindLong(4, isDel);
         }
     }
 
@@ -91,68 +87,67 @@ public class InstituteDao extends AbstractDao<Institute, Long> {
     protected final void bindValues(SQLiteStatement stmt, Institute entity) {
         stmt.clearBindings();
  
-        Long id = entity.getId();
-        if (id != null) {
-            stmt.bindLong(1, id);
-        }
- 
         String code = entity.getCode();
         if (code != null) {
-            stmt.bindString(2, code);
+            stmt.bindString(1, code);
         }
  
         String name = entity.getName();
         if (name != null) {
-            stmt.bindString(3, name);
+            stmt.bindString(2, name);
         }
  
         Long instituteIdR = entity.getInstituteIdR();
         if (instituteIdR != null) {
-            stmt.bindLong(4, instituteIdR);
+            stmt.bindLong(3, instituteIdR);
         }
  
-        Long loginId = entity.getLoginId();
-        if (loginId != null) {
-            stmt.bindLong(5, loginId);
+        Integer isDel = entity.getIsDel();
+        if (isDel != null) {
+            stmt.bindLong(4, isDel);
         }
     }
 
     @Override
+    protected final void attachEntity(Institute entity) {
+        super.attachEntity(entity);
+        entity.__setDaoSession(daoSession);
+    }
+
+    @Override
     public Long readKey(Cursor cursor, int offset) {
-        return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
+        return cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2);
     }    
 
     @Override
     public Institute readEntity(Cursor cursor, int offset) {
         Institute entity = new Institute( //
-            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // code
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // name
-            cursor.isNull(offset + 3) ? null : cursor.getLong(offset + 3), // instituteIdR
-            cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4) // loginId
+            cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // code
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // name
+            cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2), // instituteIdR
+            cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3) // isDel
         );
         return entity;
     }
      
     @Override
     public void readEntity(Cursor cursor, Institute entity, int offset) {
-        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setCode(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setName(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setInstituteIdR(cursor.isNull(offset + 3) ? null : cursor.getLong(offset + 3));
-        entity.setLoginId(cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4));
+        entity.setCode(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
+        entity.setName(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setInstituteIdR(cursor.isNull(offset + 2) ? null : cursor.getLong(offset + 2));
+        entity.setIsDel(cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3));
      }
     
     @Override
     protected final Long updateKeyAfterInsert(Institute entity, long rowId) {
-        entity.setId(rowId);
+        entity.setInstituteIdR(rowId);
         return rowId;
     }
     
     @Override
     public Long getKey(Institute entity) {
         if(entity != null) {
-            return entity.getId();
+            return entity.getInstituteIdR();
         } else {
             return null;
         }
