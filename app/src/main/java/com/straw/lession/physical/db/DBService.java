@@ -1,18 +1,29 @@
 package com.straw.lession.physical.db;
 
 import android.content.Context;
+
 import com.straw.lession.physical.app.MainApplication;
 import com.straw.lession.physical.utils.AppPreference;
 import com.straw.lession.physical.utils.DateUtil;
 import com.straw.lession.physical.utils.Detect;
-import com.straw.lession.physical.vo.*;
-import com.straw.lession.physical.vo.db.*;
+import com.straw.lession.physical.vo.ClassInfoVo;
+import com.straw.lession.physical.vo.CourseDefineVo;
+import com.straw.lession.physical.vo.InstituteVo;
+import com.straw.lession.physical.vo.LoginInfoVo;
+import com.straw.lession.physical.vo.StudentVo;
+import com.straw.lession.physical.vo.db.ClassInfo;
+import com.straw.lession.physical.vo.db.Course;
+import com.straw.lession.physical.vo.db.CourseDefine;
+import com.straw.lession.physical.vo.db.Institute;
+import com.straw.lession.physical.vo.db.Student;
+import com.straw.lession.physical.vo.db.StudentDevice;
+import com.straw.lession.physical.vo.db.TeacherInstitute;
+
 import org.greenrobot.greendao.query.DeleteQuery;
 import org.greenrobot.greendao.query.Query;
 import org.greenrobot.greendao.query.QueryBuilder;
 import org.greenrobot.greendao.query.WhereCondition;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,11 +31,11 @@ import java.util.List;
 /**
  * Created by straw on 2016/7/26.
  */
-public class DbService {
+public class DBService {
     private static final int IS_DEL = 1;
     private static final int IS_DEL_NOT = 0;
-    private static final String TAG = DbService.class.getSimpleName();
-    private static DbService instance;
+    private static final String TAG = DBService.class.getSimpleName();
+    private static DBService instance;
     private static Context appContext;
     private DaoSession mDaoSession;
     private InstituteDao instituteDao;
@@ -33,16 +44,16 @@ public class DbService {
     private CourseDefineDao courseDefineDao;
     private CourseDao courseDao;
     private TeacherInstituteDao teacherInstituteDao;
+    private StudentDeviceDao studentDeviceDao;
 
-
-    private DbService() {
+    private DBService() {
         QueryBuilder.LOG_SQL = true;
         QueryBuilder.LOG_VALUES = true;
     }
 
-    public static DbService getInstance(Context context) {
+    public static DBService getInstance(Context context) {
         if (instance == null) {
-            instance = new DbService();
+            instance = new DBService();
             if (appContext == null){
                 appContext = context.getApplicationContext();
             }
@@ -53,6 +64,7 @@ public class DbService {
             instance.courseDefineDao = instance.mDaoSession.getCourseDefineDao();
             instance.courseDao = instance.mDaoSession.getCourseDao();
             instance.teacherInstituteDao = instance.mDaoSession.getTeacherInstituteDao();
+            instance.studentDeviceDao = instance.mDaoSession.getStudentDeviceDao();
         }
         return instance;
     }
@@ -353,5 +365,12 @@ public class DbService {
 
     public List<Course> getCourseExceptUnstarted(long userId) {
         return courseDao.queryBuilder().where(CourseDao.Properties.TeacherIdR.eq(userId)).list();
+    }
+
+    public List<StudentDevice> getStudentDeviceInfo(long studentIdR, long userId, long courseDefindIdR) {
+        return studentDeviceDao.queryBuilder().where(StudentDeviceDao.Properties.TeacherIdR.eq(userId),
+                StudentDeviceDao.Properties.CourseDefineIdR.eq(courseDefindIdR),
+                StudentDeviceDao.Properties.StudentIdR.eq(studentIdR),
+                StudentDeviceDao.Properties.IsUploaded.eq(false)).list();
     }
 }

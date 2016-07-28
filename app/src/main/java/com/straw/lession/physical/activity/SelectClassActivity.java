@@ -10,7 +10,7 @@ import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.base.ThreadToolBarBaseActivity;
 import com.straw.lession.physical.adapter.SelClassListViewAdapter;
 import com.straw.lession.physical.app.MainApplication;
-import com.straw.lession.physical.db.DbService;
+import com.straw.lession.physical.db.DBService;
 import com.straw.lession.physical.utils.AppPreference;
 import com.straw.lession.physical.vo.LoginInfoVo;
 import com.straw.lession.physical.vo.TokenInfo;
@@ -117,7 +117,7 @@ public class SelectClassActivity extends ThreadToolBarBaseActivity
 //            }
 //        });
 //        mThreadPool.execute(asyncHttpClient);
-        List<ClassInfo> classInfos = DbService.getInstance(this).getClassByInstitute(loginInfo.getCurrentInstituteIdR());
+        List<ClassInfo> classInfos = DBService.getInstance(this).getClassByInstitute(loginInfo.getCurrentInstituteIdR());
         for(ClassInfo classInfo : classInfos) {
             infoList.add(toItemInfo(classInfo));
         }

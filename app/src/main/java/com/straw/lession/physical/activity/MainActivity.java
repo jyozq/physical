@@ -24,7 +24,7 @@ import com.straw.lession.physical.async.TaskWorker;
 import com.straw.lession.physical.constant.ParamConstant;
 import com.straw.lession.physical.constant.ReqConstant;
 import com.straw.lession.physical.custom.AlertDialogUtil;
-import com.straw.lession.physical.db.DbService;
+import com.straw.lession.physical.db.DBService;
 import com.straw.lession.physical.fragment.ClassFragment;
 import com.straw.lession.physical.fragment.CourseFragment;
 import com.straw.lession.physical.fragment.ProfileFragment;
@@ -211,7 +211,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
             @Override
             public void onSuccess(TaskResult result) {
                 hideProgressDialog();
-                institutes = DbService.getInstance(MainActivity.this).getInsituteDataByTeacher(loginInfo.getUserId());
+                institutes = DBService.getInstance(MainActivity.this).getInsituteDataByTeacher(loginInfo.getUserId());
                 initInstituteSpinner();
                 goOnLoad();
 //                getAllClassInfoByInstitute();
@@ -391,7 +391,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
 
     @Override
     protected void loadDataFromLocal() {
-        institutes = DbService.getInstance(this).getInsituteDataByTeacher(loginInfo.getUserId());
+        institutes = DBService.getInstance(this).getInsituteDataByTeacher(loginInfo.getUserId());
     }
 
     private void initFragment(int index) {

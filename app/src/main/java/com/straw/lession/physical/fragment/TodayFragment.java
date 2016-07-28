@@ -14,13 +14,8 @@ import android.widget.ListView;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.StartCourseActivity;
 import com.straw.lession.physical.adapter.CourseListViewAdapter;
-import com.straw.lession.physical.app.MainApplication;
 import com.straw.lession.physical.constant.CourseStatus;
-import com.straw.lession.physical.db.CourseDao;
-import com.straw.lession.physical.db.CourseDefineDao;
-import com.straw.lession.physical.db.DaoSession;
-import com.straw.lession.physical.db.DbService;
-import com.straw.lession.physical.dictionary.CourseDictionary;
+import com.straw.lession.physical.db.DBService;
 import com.straw.lession.physical.fragment.base.BaseFragment;
 import com.straw.lession.physical.utils.AppPreference;
 import com.straw.lession.physical.utils.DateUtil;
@@ -29,11 +24,6 @@ import com.straw.lession.physical.vo.db.ClassInfo;
 import com.straw.lession.physical.vo.db.Course;
 import com.straw.lession.physical.vo.db.CourseDefine;
 import com.straw.lession.physical.vo.item.CourseItemInfo;
-
-import org.greenrobot.greendao.query.DeleteQuery;
-import org.greenrobot.greendao.query.Query;
-import org.greenrobot.greendao.query.QueryBuilder;
-import org.greenrobot.greendao.query.WhereCondition;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -118,9 +108,9 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
             return;
         }
 
-        List<Course> courses = DbService.getInstance(getActivity()).getTodayCourses(loginInfo.getUserId(),
+        List<Course> courses = DBService.getInstance(getActivity()).getTodayCourses(loginInfo.getUserId(),
                                                                                     loginInfo.getCurrentInstituteIdR());
-        List<CourseDefine> unstartCourses = DbService.getInstance(getActivity())
+        List<CourseDefine> unstartCourses = DBService.getInstance(getActivity())
                 .getUnStartedTodayCourses(loginInfo.getUserId(),loginInfo.getCurrentInstituteIdR());
         Iterator<CourseDefine> iter = unstartCourses.iterator();
         CourseDefine courseDefineTmp = null;

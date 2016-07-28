@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.adapter.UploadListViewAdapter;
-import com.straw.lession.physical.db.DbService;
+import com.straw.lession.physical.db.DBService;
 import com.straw.lession.physical.fragment.base.BaseFragment;
 import com.straw.lession.physical.utils.AppPreference;
 import com.straw.lession.physical.utils.DateUtil;
@@ -71,9 +71,9 @@ public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayo
         }
         List<Course> courses = null;
         if(isUploaded){
-            courses = DbService.getInstance(getContext()).getUploadedData(loginInfo.getUserId());
+            courses = DBService.getInstance(getContext()).getUploadedData(loginInfo.getUserId());
         }else{
-            courses = DbService.getInstance(getContext()).getUnUploadedData(loginInfo.getUserId());
+            courses = DBService.getInstance(getContext()).getUnUploadedData(loginInfo.getUserId());
         }
         infoList.clear();
         for(Course course : courses){

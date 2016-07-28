@@ -1,14 +1,12 @@
 package com.straw.lession.physical.task;
 
 import android.content.Context;
-import com.straw.lession.physical.app.MainApplication;
+
 import com.straw.lession.physical.async.TaskHandler;
 import com.straw.lession.physical.async.TaskResult;
 import com.straw.lession.physical.constant.TaskConstant;
 import com.straw.lession.physical.db.*;
-import com.straw.lession.physical.vo.CourseDefineVo;
 import com.straw.lession.physical.vo.InstituteVo;
-import com.straw.lession.physical.vo.db.*;
 
 import java.util.List;
 
@@ -26,7 +24,7 @@ public class AddAllDataToDBTask extends BaseTask{
     @Override
     public Object doRun() {
         try {
-            DbService.getInstance(context).refineInstituteData(instituteVos);
+            DBService.getInstance(context).refineInstituteData(instituteVos);
 
             TaskResult result = new TaskResult();
             result.setResultCode(TaskConstant.SUCCESS_CODE);

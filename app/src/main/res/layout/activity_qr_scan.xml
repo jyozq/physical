@@ -93,21 +93,28 @@
         />
         <TableLayout android:layout_width="match_parent" android:layout_height="match_parent"
                      android:gravity="center_vertical" android:layout_marginLeft="@dimen/dimen_20dp"
-                     android:stretchColumns="0,1"
-        >
+                     android:stretchColumns="0,1,2,3">
             <TableRow android:layout_width="match_parent"
                       android:layout_height="wrap_content">
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                          android:text="姓名"/>
+                          android:text="姓名:"/>
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                          android:text="学号1"/>
+                            android:id="@+id/student_name"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                          android:text="学号:"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:id="@+id/student_no"/>
             </TableRow>
             <TableRow android:layout_width="match_parent"
                       android:layout_height="wrap_content">
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                          android:text="设备号"/>
+                          android:text="设备号:"/>
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                          android:text="性别"/>
+                    android:text="设备号" android:id="@+id/device_no"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                          android:text="性别:"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="设备号" android:id="@+id/gender"/>
             </TableRow>
         </TableLayout>
     </LinearLayout>

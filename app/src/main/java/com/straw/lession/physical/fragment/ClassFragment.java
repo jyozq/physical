@@ -18,7 +18,7 @@ import com.straw.lession.physical.adapter.ClassListViewAdapter;
 import com.straw.lession.physical.constant.ParamConstant;
 import com.straw.lession.physical.constant.ReqConstant;
 import com.straw.lession.physical.custom.AlertDialogUtil;
-import com.straw.lession.physical.db.DbService;
+import com.straw.lession.physical.db.DBService;
 import com.straw.lession.physical.fragment.base.BaseFragment;
 import com.straw.lession.physical.http.AsyncHttpClient;
 import com.straw.lession.physical.http.AsyncHttpResponseHandler;
@@ -102,8 +102,8 @@ public class ClassFragment extends BaseFragment implements SwipeRefreshLayout.On
                         JSONObject dataObject = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
                         List<ClassInfoVo> classInfoVos =
                                 JSON.parseArray(dataObject.getJSONArray("classes").toString(), ClassInfoVo.class);
-                        DbService.getInstance(mContext).refineClassInfoData(classInfoVos, loginInfoVo.getCurrentInstituteIdR());
-                        List<ClassInfo> classInfos = DbService.getInstance(mContext)
+                        DBService.getInstance(mContext).refineClassInfoData(classInfoVos, loginInfoVo.getCurrentInstituteIdR());
+                        List<ClassInfo> classInfos = DBService.getInstance(mContext)
                                                                 .getClassByInstitute(loginInfoVo.getCurrentInstituteIdR());
                         infoList.clear();
                         for(ClassInfo classInfo:classInfos){

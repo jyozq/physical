@@ -13,6 +13,7 @@ public class StudentItemInfo implements Serializable{
     private long studentIdR;
     private long classIdR;
     private String className;
+    private long courseDefindIdR;
 
     public String getClassName() {
         return className;
@@ -68,5 +69,13 @@ public class StudentItemInfo implements Serializable{
 
     public void setClassIdR(long classIdR) {
         this.classIdR = classIdR;
+    }
+
+    public long getCourseDefindIdR() {
+        return courseDefindIdR;
+    }
+
+    public void setCourseDefindIdR(long courseDefindIdR) {
+        this.courseDefindIdR = courseDefindIdR;
     }
 }

@@ -76,4 +76,6 @@
     <string name="resetpwd_repnew_label">重复密码</string>
     <string name="student_coment">评论</string>
     <string name="btn_submit">提交</string>
+    <string name="btn_all_upload">全部上传</string>
+    <string name="unmatch">暂未匹配</string>
 </resources>

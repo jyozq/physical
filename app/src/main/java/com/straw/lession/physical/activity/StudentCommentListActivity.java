@@ -20,7 +20,7 @@ import com.straw.lession.physical.app.MainApplication;
 import com.straw.lession.physical.constant.ParamConstant;
 import com.straw.lession.physical.constant.ReqConstant;
 import com.straw.lession.physical.custom.AlertDialogUtil;
-import com.straw.lession.physical.db.DbService;
+import com.straw.lession.physical.db.DBService;
 import com.straw.lession.physical.http.AsyncHttpClient;
 import com.straw.lession.physical.http.AsyncHttpResponseHandler;
 import com.straw.lession.physical.http.HttpResponseBean;
@@ -105,7 +105,7 @@ public class StudentCommentListActivity extends ThreadToolBarBaseActivity implem
     }
 
     private void initClassSpinner() {
-        classInfos = DbService.getInstance(this)
+        classInfos = DBService.getInstance(this)
                 .getClassByInstitute(loginInfoVo.getCurrentInstituteIdR());
         ClassSpinnerAdapter schoolSpinnerAdapter = new ClassSpinnerAdapter(this, spinner_class, classInfos);
         schoolSpinnerAdapter.setDropDownViewResource(R.layout.school_item_spinner_dropdown);
@@ -179,8 +179,8 @@ public class StudentCommentListActivity extends ThreadToolBarBaseActivity implem
                         JSONObject dataObject = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
                         ClassInfoVo classInfoVo = JSON.parseObject(dataObject.toString(), ClassInfoVo.class, new Feature[0]);
                         List<StudentVo> studentVos = classInfoVo.getStudents();
-                        DbService.getInstance(mContext).refineStudentData(studentVos, classInfoVo.getClassId());
-                        List<Student> students = DbService.getInstance(mContext).getStudentByClass(classItemInfo.getClassIdR());
+                        DBService.getInstance(mContext).refineStudentData(studentVos, classInfoVo.getClassId());
+                        List<Student> students = DBService.getInstance(mContext).getStudentByClass(classItemInfo.getClassIdR());
                         infoList.clear();
                         for(Student student : students){
                             infoList.add(toItemInfo(student));

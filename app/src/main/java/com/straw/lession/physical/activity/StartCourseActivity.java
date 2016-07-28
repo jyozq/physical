@@ -21,9 +21,7 @@ import com.straw.lession.physical.adapter.StudentListViewAdapter;
 import com.straw.lession.physical.app.MainApplication;
 import com.straw.lession.physical.constant.CourseStatus;
 import com.straw.lession.physical.constant.Weekday;
-import com.straw.lession.physical.db.DaoSession;
-import com.straw.lession.physical.db.DbService;
-import com.straw.lession.physical.db.StudentDao;
+import com.straw.lession.physical.db.DBService;
 import com.straw.lession.physical.utils.AppPreference;
 import com.straw.lession.physical.vo.LoginInfoVo;
 import com.straw.lession.physical.vo.db.Course;
@@ -33,9 +31,8 @@ import com.straw.lession.physical.vo.item.CourseItemInfo;
 import com.straw.lession.physical.vo.item.StudentItemInfo;
 import com.zbar.lib.CaptureActivity;
 
-import org.greenrobot.greendao.query.Query;
-
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -118,7 +115,7 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
     }
 
     private void refreshStatus() {
-        List<Course> courses = DbService.getInstance(this).getCourseExceptUnstarted(loginInfo.getUserId());
+        List<Course> courses = DBService.getInstance(this).getCourseExceptUnstarted(loginInfo.getUserId());
         Integer status = null;
         for(Course course:courses){
             if(course.getCourseDefineIdR() == courseItemVo.getCourseDefineId()){
@@ -141,10 +138,10 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
     }
 
     private void endCourse() {
-        Course course = DbService.getInstance(this).findCourseById(courseId);
+        Course course = DBService.getInstance(this).findCourseById(courseId);
         course.setStatus(CourseStatus.OVER.getValue());
         course.setEndTime(new Date());
-        DbService.getInstance(this).updateCourse(course);
+        DBService.getInstance(this).updateCourse(course);
         btn_end_course.setOnClickListener(null);
         btn_end_course.setVisibility(View.INVISIBLE);
         btn_do_start_course.setText(CourseStatus.OVER.getText());
@@ -152,7 +149,7 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
 
     private void startCourse() {
         Course course = new Course();
-        CourseDefine courseDefine = DbService.getInstance(this).findCourseDefineById(courseItemVo.getCourseDefineId());
+        CourseDefine courseDefine = DBService.getInstance(this).findCourseDefineById(courseItemVo.getCourseDefineId());
         course.setDate(new Date());
         course.setWeekday(courseDefine.getWeekDay());
         course.setCourseDefineIdR(courseDefine.getCourseDefineIdR());
@@ -162,14 +159,14 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
         course.setStatus(CourseStatus.STARTED.getValue());
         course.setStartTime(new Date());
         course.setIsUploaded(false);
-        DbService.getInstance(this).addCourse(course);
+        DBService.getInstance(this).addCourse(course);
         courseId = course.getId();
         btn_do_start_course.setOnClickListener(null);
         btn_do_start_course.setText(CourseStatus.STARTED.getText());
     }
 
     private void getStudentsInfo() {
-        List<Student> students = DbService.getInstance(this).getStudentByClass(courseItemVo.getClassId());
+        List<Student> students = DBService.getInstance(this).getStudentByClass(courseItemVo.getClassId());
         for(Student student : students){
             infoList.add(toItem(student));
         }
@@ -181,6 +178,7 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
         studentItemInfo.setName(student.getName());
         studentItemInfo.setGender(student.getGender());
         studentItemInfo.setStudentIdR(student.getStudentIdR());
+        studentItemInfo.setCourseDefindIdR(courseItemVo.getCourseDefineId());
         return studentItemInfo;
     }
 
@@ -217,7 +215,14 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
 
 
         } else {
-            startActivity(new Intent(this, CaptureActivity.class));
+            StudentItemInfo studentItemInfo = infoList.get((Integer) v.getTag());
+            Intent intent = new Intent(this, CaptureActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("student", studentItemInfo);
+            infoList.remove(studentItemInfo);
+            bundle.putSerializable("students",(Serializable)infoList);
+            intent.putExtras(bundle);
+            startActivity(intent);
         }
     }
 

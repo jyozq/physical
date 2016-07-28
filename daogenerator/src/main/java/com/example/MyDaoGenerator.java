@@ -27,6 +27,7 @@ public class MyDaoGenerator {
         Entity teacher = addTeacherDefine(schema);
         Entity course = addCourse(schema);
         Entity teacherInstitute = addTeacherInstituteDefine(schema);
+        Entity studentDevice = addStudentDevice(schema);
 
         Property property = student.addLongProperty("classIdR").getProperty();
         student.addToOne(classInfo, property);
@@ -47,10 +48,25 @@ public class MyDaoGenerator {
         property = teacherInstitute.addLongProperty("teacherIdR").getProperty();
         teacher.addToMany(teacherInstitute,property).setName("teacherInstitutes");
 
+        property = studentDevice.addLongProperty("courseId").getProperty();
+        studentDevice.addToOne(course,property);
+        property = studentDevice.addLongProperty("studentIdR").getProperty();
+        studentDevice.addToOne(student,property);
         // 最后我们将使用 DAOGenerator 类的 generateAll() 方法自动生成代码，此处你需要根据自己的情况更改输出目录（既之前创建的 java-gen)。
         // 其实，输出目录的路径可以在 build.gradle 中设置，有兴趣的朋友可以自行搜索，这里就不再详解。
-//        new DaoGenerator().generateAll(schema, "H:\\androidprojects\\mine\\physical\\app\\src\\main\\java");
-        new DaoGenerator().generateAll(schema, "D:\\work\\AndroidStudioProjects\\mine\\physical\\app\\src\\main\\java");
+        new DaoGenerator().generateAll(schema, "H:\\androidprojects\\mine\\physical\\app\\src\\main\\java");
+//        new DaoGenerator().generateAll(schema, "D:\\work\\AndroidStudioProjects\\mine\\physical\\app\\src\\main\\java");
+    }
+
+    private static Entity addStudentDevice(Schema schema) {
+        Entity note = schema.addEntity("StudentDevice");
+        note.addIdProperty();
+        note.addStringProperty("deviceNo");
+        note.addDateProperty("bindTime");
+        note.addLongProperty("teacherIdR");
+        note.addBooleanProperty("isUploaded");
+        note.addLongProperty("courseDefineIdR");
+        return note;
     }
 
     private static Entity addTeacherInstituteDefine(Schema schema) {

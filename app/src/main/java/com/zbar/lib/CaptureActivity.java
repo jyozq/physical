@@ -1,6 +1,9 @@
 package com.zbar.lib;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.res.AssetFileDescriptor;
@@ -12,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
@@ -22,15 +26,26 @@ import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.straw.lession.physical.R;
+import com.straw.lession.physical.activity.base.ThreadBaseActivity;
+import com.straw.lession.physical.constant.Gender;
+import com.straw.lession.physical.db.DBService;
+import com.straw.lession.physical.utils.AppPreference;
+import com.straw.lession.physical.utils.DateUtil;
+import com.straw.lession.physical.utils.Detect;
+import com.straw.lession.physical.vo.LoginInfoVo;
+import com.straw.lession.physical.vo.db.StudentDevice;
+import com.straw.lession.physical.vo.item.StudentItemInfo;
 import com.zbar.lib.camera.CameraManager;
 import com.zbar.lib.decode.CaptureActivityHandler;
 import com.zbar.lib.decode.InactivityTimer;
 
-public class CaptureActivity extends Activity implements Callback,View.OnClickListener {
+public class CaptureActivity extends ThreadBaseActivity implements Callback,View.OnClickListener {
 
+	private static final String TAG = "CaptureActivity";
 	private CaptureActivityHandler handler;
 	private boolean hasSurface;
 	private InactivityTimer inactivityTimer;
@@ -47,6 +62,10 @@ public class CaptureActivity extends Activity implements Callback,View.OnClickLi
 	private boolean isNeedCapture = false;
 	private Button nextBtn;
 	private Button lightBtn;
+	private TextView student_name,student_no,device_no,gender;
+	private StudentItemInfo currentStudent;
+	private ArrayList<StudentItemInfo> studentItemInfos;
+	private LoginInfoVo loginInfoVo;
 
 	public boolean isNeedCapture() {
 		return isNeedCapture;
@@ -94,6 +113,10 @@ public class CaptureActivity extends Activity implements Callback,View.OnClickLi
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_qr_scan);
+
+		currentStudent = (StudentItemInfo)getIntent().getSerializableExtra("student");
+		studentItemInfos = (ArrayList<StudentItemInfo>)getIntent().getSerializableExtra("students");
+
 		// 初始化 CameraManager
 		CameraManager.init(getApplication());
 		hasSurface = false;
@@ -103,9 +126,17 @@ public class CaptureActivity extends Activity implements Callback,View.OnClickLi
 		mCropLayout = (RelativeLayout) findViewById(R.id.capture_crop_layout);
 		nextBtn = (Button) findViewById(R.id.btn_next_student);
 		lightBtn = (Button) findViewById(R.id.btn_light);
+		student_name = (TextView)findViewById(R.id.student_name);
+		student_no = (TextView)findViewById(R.id.student_no);
+		device_no = (TextView)findViewById(R.id.device_no);
+		gender = (TextView)findViewById(R.id.gender);
 
 		nextBtn.setOnClickListener(this);
 		lightBtn.setOnClickListener(this);
+		student_name.setText(currentStudent.getName());
+		student_no.setText(currentStudent.getCode());
+		device_no.setText(getResources().getString(R.string.unmatch));
+		gender.setText(Gender.getName(currentStudent.getGender()));
 
 		ImageView mQrLineView = (ImageView) findViewById(R.id.capture_scan_line);
 		TranslateAnimation mAnimation = new TranslateAnimation(TranslateAnimation.ABSOLUTE, 0f, TranslateAnimation.ABSOLUTE, 0f,
@@ -138,6 +169,14 @@ public class CaptureActivity extends Activity implements Callback,View.OnClickLi
 	@Override
 	protected void onResume() {
 		super.onResume();
+		try{
+			loginInfoVo = AppPreference.getLoginInfo();
+		}catch(Exception ex){
+			ex.printStackTrace();
+			Log.e(TAG,"",ex);
+			return;
+		}
+
 		SurfaceView surfaceView = (SurfaceView) findViewById(R.id.capture_preview);
 		SurfaceHolder surfaceHolder = surfaceView.getHolder();
 		if (hasSurface) {
@@ -153,6 +192,21 @@ public class CaptureActivity extends Activity implements Callback,View.OnClickLi
 		}
 		initBeepSound();
 		vibrate = true;
+	}
+
+	@Override
+	protected void doAfterGetToken() {
+
+	}
+
+	@Override
+	protected void loadDataFromService() {
+
+	}
+
+	@Override
+	protected void loadDataFromLocal() {
+
 	}
 
 	@Override
@@ -174,7 +228,33 @@ public class CaptureActivity extends Activity implements Callback,View.OnClickLi
 	public void handleDecode(String result) {
 		inactivityTimer.onActivity();
 		playBeepSoundAndVibrate();
-		Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+		device_no.setText(result);
+		List<StudentDevice> studentDeviceInfos = DBService.getInstance(this)
+				.getStudentDeviceInfo(currentStudent.getStudentIdR(),loginInfoVo.getUserId(),
+						currentStudent.getCourseDefindIdR());
+		boolean isAdd = true;
+		if(Detect.notEmpty(studentDeviceInfos)) {
+			for (StudentDevice studentDevice : studentDeviceInfos) {
+				String bindDate = DateUtil.dateToStr(studentDevice.getBindTime());
+				String nowDate = DateUtil.curDate();
+				if (bindDate.equals(nowDate)) {
+					isAdd = false;
+					studentDevice.setDeviceNo(result);
+					studentDevice.setBindTime(new Date());
+				}
+			}
+		}
+		showErrorMsgInfo("学生"+currentStudent.getName()+"(学号:"+currentStudent.getCode()+")与设备"+result+"已绑定");
+		switchToNext();
+		handler.sendEmptyMessage(R.id.restart_preview);
+	}
+
+	private void switchToNext() {
+		currentStudent = studentItemInfos.remove(0);
+		student_name.setText(currentStudent.getName());
+		student_no.setText(currentStudent.getCode());
+		device_no.setText(getResources().getString(R.string.unmatch));
+		gender.setText(Gender.getName(currentStudent.getGender()));
 	}
 
 	private void initCamera(SurfaceHolder surfaceHolder) {

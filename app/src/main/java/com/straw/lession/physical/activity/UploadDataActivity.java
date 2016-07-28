@@ -17,8 +17,6 @@ import com.straw.lession.physical.fragment.UploadDataFragment;
  */
 public class UploadDataActivity extends ThreadToolBarBaseActivity{
     private static final String TAG = "UploadDataActivity";
-    private View layoutView;
-
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
@@ -29,9 +27,9 @@ public class UploadDataActivity extends ThreadToolBarBaseActivity{
     }
 
     private void initViews() {
-        ViewPager pager = (ViewPager) layoutView.findViewById(R.id.pager);
+        ViewPager pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) layoutView.findViewById(R.id.tabs);
+        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabs.setViewPager(pager);
     }
 

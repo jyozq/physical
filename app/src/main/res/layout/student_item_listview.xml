@@ -13,14 +13,14 @@
             <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"
                         android:src="@mipmap/icon_flag"/>
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="学号1" android:id="@+id/studentno"/>
+                        android:text="学号" android:id="@+id/studentno"/>
         </TableRow>
         <TableRow android:layout_width="wrap_content"
                   android:layout_height="wrap_content">
             <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"
                        android:src="@mipmap/icon_link"/>
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                      android:text="未绑定设备"/>
+                      android:text="未绑定设备" android:id="@+id/student_status"/>
         </TableRow>
     </TableLayout>
 
