@@ -76,6 +76,21 @@ public class ProfileFragment extends BaseFragment{
         profile_exit.setOnClickListener(listener);
     }
 
+    @Override
+    protected void loadDataFromLocal() {
+
+    }
+
+    @Override
+    protected void loadDataFromService() {
+
+    }
+
+    @Override
+    public void doAfterGetToken() {
+
+    }
+
     public class MyClickListener implements View.OnClickListener{
         @Override
         public void onClick(View v) {

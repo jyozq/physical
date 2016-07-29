@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import android.app.Activity;
+import android.app.Dialog;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Point;
 import android.media.AudioManager;
@@ -13,7 +13,6 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -27,11 +26,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.base.ThreadBaseActivity;
 import com.straw.lession.physical.constant.Gender;
+import com.straw.lession.physical.custom.AlertDialogUtil;
 import com.straw.lession.physical.db.DBService;
 import com.straw.lession.physical.utils.AppPreference;
 import com.straw.lession.physical.utils.DateUtil;
@@ -66,6 +65,7 @@ public class CaptureActivity extends ThreadBaseActivity implements Callback,View
 	private StudentItemInfo currentStudent;
 	private ArrayList<StudentItemInfo> studentItemInfos;
 	private LoginInfoVo loginInfoVo;
+	private Dialog dialog;
 
 	public boolean isNeedCapture() {
 		return isNeedCapture;
@@ -230,23 +230,37 @@ public class CaptureActivity extends ThreadBaseActivity implements Callback,View
 		playBeepSoundAndVibrate();
 		device_no.setText(result);
 		List<StudentDevice> studentDeviceInfos = DBService.getInstance(this)
-				.getStudentDeviceInfo(currentStudent.getStudentIdR(),loginInfoVo.getUserId(),
+				.getStudentDeviceInfoNotUploaded(currentStudent.getStudentIdR(),loginInfoVo.getUserId(),
 						currentStudent.getCourseDefindIdR());
 		boolean isAdd = true;
 		if(Detect.notEmpty(studentDeviceInfos)) {
 			for (StudentDevice studentDevice : studentDeviceInfos) {
-				String bindDate = DateUtil.dateToStr(studentDevice.getBindTime());
-				String nowDate = DateUtil.curDate();
-				if (bindDate.equals(nowDate)) {
+				if (DateUtil.isToday(studentDevice.getBindTime())) {
 					isAdd = false;
 					studentDevice.setDeviceNo(result);
 					studentDevice.setBindTime(new Date());
 				}
 			}
 		}
-		showErrorMsgInfo("学生"+currentStudent.getName()+"(学号:"+currentStudent.getCode()+")与设备"+result+"已绑定");
-		switchToNext();
-		handler.sendEmptyMessage(R.id.restart_preview);
+		if(isAdd){
+			StudentDevice studentDevice = new StudentDevice();
+			studentDevice.setCourseDefineIdR(currentStudent.getCourseDefindIdR());
+			studentDevice.setBindTime(new Date());
+			studentDevice.setDeviceNo(result);
+			studentDevice.setIsUploaded(false);
+			studentDevice.setStudentIdR(currentStudent.getStudentIdR());
+			studentDevice.setTeacherIdR(loginInfoVo.getUserId());
+			DBService.getInstance(this).addStudentDevice(studentDevice);
+		}
+		dialog = AlertDialogUtil.showAlertWindow(this, -1,
+				"学生" + currentStudent.getName() + "(学号:" + currentStudent.getCode() + ")与设备" + result + "已绑定", new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						switchToNext();
+						CaptureActivity.this.dialog.dismiss();
+						handler.sendEmptyMessage(R.id.restart_preview);
+					}
+				});
 	}
 
 	private void switchToNext() {
@@ -276,7 +290,7 @@ public class CaptureActivity extends ThreadBaseActivity implements Callback,View
 			setCropWidth(cropWidth);
 			setCropHeight(cropHeight);
 			// 设置是否需要截图
-			setNeedCapture(true);
+			setNeedCapture(false);
 			
 
 		} catch (IOException ioe) {

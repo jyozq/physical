@@ -23,10 +23,13 @@ import com.straw.lession.physical.constant.CourseStatus;
 import com.straw.lession.physical.constant.Weekday;
 import com.straw.lession.physical.db.DBService;
 import com.straw.lession.physical.utils.AppPreference;
+import com.straw.lession.physical.utils.DateUtil;
+import com.straw.lession.physical.utils.Detect;
 import com.straw.lession.physical.vo.LoginInfoVo;
 import com.straw.lession.physical.vo.db.Course;
 import com.straw.lession.physical.vo.db.CourseDefine;
 import com.straw.lession.physical.vo.db.Student;
+import com.straw.lession.physical.vo.db.StudentDevice;
 import com.straw.lession.physical.vo.item.CourseItemInfo;
 import com.straw.lession.physical.vo.item.StudentItemInfo;
 import com.zbar.lib.CaptureActivity;
@@ -40,7 +43,8 @@ import java.util.List;
 /**
  * Created by straw on 2016/7/11.
  */
-public class StartCourseActivity extends ThreadToolBarBaseActivity implements SwipeRefreshLayout.OnRefreshListener,StudentListViewAdapter.Callback{
+public class StartCourseActivity extends ThreadToolBarBaseActivity implements SwipeRefreshLayout.OnRefreshListener,
+        StudentListViewAdapter.Callback{
     private static final String TAG = "StartCourseActivity";
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
     private SwipeRefreshLayout swipeLayout;
@@ -52,6 +56,7 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
     private Button btn_do_start_course,btn_end_course;
     private long courseId;
     private MyListener listener = new MyListener();
+    private StudentItemInfo studentItemInfo;
 
     @Override
     protected void onCreate(Bundle arg0) {
@@ -61,12 +66,6 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
         courseItemVo = (CourseItemInfo)intent.getSerializableExtra("course");
         initToolBar(courseItemVo.getName());
         MainApplication.getInstance().addActivity(this);
-        initViews();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         try {
             loginInfo = AppPreference.getLoginInfo();
         } catch (IOException e) {
@@ -75,7 +74,13 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
             showErrorMsgInfo(e.toString());
             return;
         }
-        refreshStatus();
+        initViews();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        query();
     }
 
     @Override
@@ -107,11 +112,11 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
 
         btn_do_start_course = (Button) findViewById(R.id.btn_do_start_course);
         btn_end_course = (Button) findViewById(R.id.btn_end_course);
-        getStudentsInfo();
-        refreshStatus();
+
         listView = (ListView) findViewById(R.id.listview);
         studentListViewAdapter = new StudentListViewAdapter(this, infoList, this);
         listView.setAdapter(studentListViewAdapter);
+        query();
     }
 
     private void refreshStatus() {
@@ -148,6 +153,9 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
     }
 
     private void startCourse() {
+        if(hasStartedCourse()){
+            return;
+        }
         Course course = new Course();
         CourseDefine courseDefine = DBService.getInstance(this).findCourseDefineById(courseItemVo.getCourseDefineId());
         course.setDate(new Date());
@@ -160,16 +168,40 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
         course.setStartTime(new Date());
         course.setIsUploaded(false);
         DBService.getInstance(this).addCourse(course);
+
+        //更新学生绑定信息
+        List<StudentDevice> studentDevices = DBService.getInstance(this)
+                .getStudentDeviceByCourseDefine(courseItemVo.getCourseDefineId(), loginInfo.getUserId());
+        for(StudentDevice studentDevice : studentDevices){
+            if(DateUtil.isDateSame(studentDevice.getBindTime(),courseDefine.getDate())){
+                studentDevice.setCourseId(course.getId());
+            }
+        }
+        DBService.getInstance(this).updateStudentDevices(studentDevices);
         courseId = course.getId();
         btn_do_start_course.setOnClickListener(null);
         btn_do_start_course.setText(CourseStatus.STARTED.getText());
     }
 
-    private void getStudentsInfo() {
+    private boolean hasStartedCourse() {
+        List<Course> startedCourses = DBService.getInstance(this).getStartedCourseByTeacher(loginInfo.getUserId());
+        if(Detect.notEmpty(startedCourses)){
+            Course course = startedCourses.get(0);
+            CourseDefine courseDefine = course.getCourseDefine();
+            showErrorMsgInfo("您的"+courseDefine.getClassInfo().getName()+"的"+courseDefine.getName()+"还未下课");
+            return true;
+        }
+        return false;
+    }
+
+    private void query() {
+        refreshStatus();
         List<Student> students = DBService.getInstance(this).getStudentByClass(courseItemVo.getClassId());
+        infoList.clear();
         for(Student student : students){
             infoList.add(toItem(student));
         }
+        studentListViewAdapter.notifyDataSetChanged();
     }
 
     private StudentItemInfo toItem(Student student) {
@@ -179,6 +211,11 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
         studentItemInfo.setGender(student.getGender());
         studentItemInfo.setStudentIdR(student.getStudentIdR());
         studentItemInfo.setCourseDefindIdR(courseItemVo.getCourseDefineId());
+        StudentDevice sd = DBService.getInstance(this).getStudentDeviceByStudent(student.getStudentIdR(),loginInfo.getUserId());
+        studentItemInfo.setHasBinded(sd!=null);
+        if(sd!=null){
+            studentItemInfo.setDeviceNo(sd.getDeviceNo());
+        }
         return studentItemInfo;
     }
 
@@ -189,6 +226,7 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
 
     @Override
     public void click(View v) {
+        studentItemInfo = infoList.get((Integer) v.getTag());
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED){
@@ -215,7 +253,6 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
 
 
         } else {
-            StudentItemInfo studentItemInfo = infoList.get((Integer) v.getTag());
             Intent intent = new Intent(this, CaptureActivity.class);
             Bundle bundle = new Bundle();
             bundle.putSerializable("student", studentItemInfo);
@@ -234,7 +271,13 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
         {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
             {
-                startActivity(new Intent(this, CaptureActivity.class));
+                Intent intent = new Intent(this, CaptureActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("student", studentItemInfo);
+                infoList.remove(studentItemInfo);
+                bundle.putSerializable("students",(Serializable)infoList);
+                intent.putExtras(bundle);
+                startActivity(intent);
             } else
             {
                 // Permission Denied

@@ -169,7 +169,6 @@ public abstract class ThreadToolBarBaseActivity extends ToolBarActivity {
                 public void onClick(DialogInterface dialog, int which) {
                     loadDataFromLocal();
                     dialog.cancel();
-                    finish();
                 }
             }).show();
         }

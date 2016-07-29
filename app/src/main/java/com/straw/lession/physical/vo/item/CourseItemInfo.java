@@ -17,6 +17,8 @@ public class CourseItemInfo implements Serializable{
     private String className;
     private long classId;
     private int status;
+    private int bindedStudentNum;
+    private int totalStudentNum;
 
     public int getStatus() {
         return status;
@@ -104,5 +106,21 @@ public class CourseItemInfo implements Serializable{
 
     public void setClassId(long classId) {
         this.classId = classId;
+    }
+
+    public int getBindedStudentNum() {
+        return bindedStudentNum;
+    }
+
+    public void setBindedStudentNum(int bindedStudentNum) {
+        this.bindedStudentNum = bindedStudentNum;
+    }
+
+    public int getTotalStudentNum() {
+        return totalStudentNum;
+    }
+
+    public void setTotalStudentNum(int totalStudentNum) {
+        this.totalStudentNum = totalStudentNum;
     }
 }

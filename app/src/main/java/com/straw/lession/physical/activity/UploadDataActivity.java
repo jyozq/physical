@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.View;
 import com.astuetz.PagerSlidingTabStrip;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.base.ThreadToolBarBaseActivity;
@@ -17,6 +16,8 @@ import com.straw.lession.physical.fragment.UploadDataFragment;
  */
 public class UploadDataActivity extends ThreadToolBarBaseActivity{
     private static final String TAG = "UploadDataActivity";
+    private int currentColor =0xFF5161BC;
+
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
@@ -31,6 +32,7 @@ public class UploadDataActivity extends ThreadToolBarBaseActivity{
         pager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabs.setViewPager(pager);
+        tabs.setIndicatorColor(currentColor);
     }
 
     @Override
@@ -82,7 +84,7 @@ public class UploadDataActivity extends ThreadToolBarBaseActivity{
                     fragment2 = new UploadDataFragment();
                     bundle = new Bundle();
                     bundle.putBoolean("isUploaded", true);
-                    fragment1.setArguments(bundle);
+                    fragment2.setArguments(bundle);
                     return fragment2;
                 default:
                     return null;

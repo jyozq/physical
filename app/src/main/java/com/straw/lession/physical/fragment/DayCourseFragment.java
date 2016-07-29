@@ -18,4 +18,19 @@ public class DayCourseFragment extends BaseFragment {
         layoutView = inflater.inflate(R.layout.day_fragment_course, container, false);
         return layoutView;
     }
+
+    @Override
+    protected void loadDataFromLocal() {
+
+    }
+
+    @Override
+    protected void loadDataFromService() {
+
+    }
+
+    @Override
+    public void doAfterGetToken() {
+
+    }
 }

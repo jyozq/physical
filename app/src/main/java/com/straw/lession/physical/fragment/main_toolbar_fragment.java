@@ -26,6 +26,21 @@ public class main_toolbar_fragment extends BaseFragment{
     }
 
     @Override
+    protected void loadDataFromLocal() {
+
+    }
+
+    @Override
+    protected void loadDataFromService() {
+
+    }
+
+    @Override
+    public void doAfterGetToken() {
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         layoutView = inflater.inflate(R.layout.main_bottom_toobar, container, false);
         return layoutView;

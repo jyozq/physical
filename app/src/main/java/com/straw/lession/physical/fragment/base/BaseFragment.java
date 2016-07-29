@@ -1,11 +1,29 @@
 package com.straw.lession.physical.fragment.base;
 
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.app.MainApplication;
+import com.straw.lession.physical.constant.ParamConstant;
+import com.straw.lession.physical.constant.ReqConstant;
+import com.straw.lession.physical.custom.AlertDialogUtil;
+import com.straw.lession.physical.http.AsyncHttpClient;
+import com.straw.lession.physical.http.AsyncHttpResponseHandler;
+import com.straw.lession.physical.http.HttpResponseBean;
+import com.straw.lession.physical.utils.AppPreference;
+import com.straw.lession.physical.utils.ResponseParseUtils;
+import com.straw.lession.physical.utils.Utils;
+import com.straw.lession.physical.vo.TokenInfo;
+import org.json.JSONObject;
 
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -13,7 +31,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 /**
  * Created by Administrator on 2015/12/10.
  */
-public class BaseFragment extends Fragment implements View.OnClickListener {
+public abstract class BaseFragment extends Fragment implements View.OnClickListener {
+    public static final String TAG = "BaseFragment";
     protected Activity mActivity;
 
     protected MainApplication mApp;
@@ -59,4 +78,108 @@ public class BaseFragment extends Fragment implements View.OnClickListener {
          */
         //MobCreditEase.onFragmentEnd(getActivity(), "BaseFragment");
     }
+
+    // 判断网络是否可用
+    public void getDataByNetSate(){
+        if(isOpenNetwork() == true) {
+            loadDataFromService();
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+            builder.setTitle("没有可用的网络").setMessage("是否对网络进行设置?");
+
+            builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = null;
+
+                    try {
+                        String sdkVersion = android.os.Build.VERSION.SDK;
+                        if(Integer.valueOf(sdkVersion) > 10) {
+                            intent = new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS);
+                        }else {
+                            intent = new Intent();
+                            ComponentName comp = new ComponentName("com.android.settings", "com.android.settings.WirelessSettings");
+                            intent.setComponent(comp);
+                            intent.setAction("android.intent.action.VIEW");
+                        }
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        Log.w(TAG, "open network settings failed, please check...");
+                        e.printStackTrace();
+                    }
+                }
+            }).setNegativeButton("否", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    loadDataFromLocal();
+                    dialog.cancel();
+                }
+            }).show();
+        }
+    }
+
+    protected abstract void loadDataFromLocal();
+
+    protected abstract void loadDataFromService();
+
+    /**
+     * 对网络连接状态进行判断
+     * @return  true, 可用； false， 不可用
+     */
+    public boolean isOpenNetwork() {
+        ConnectivityManager connManager = (ConnectivityManager)mActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(connManager.getActiveNetworkInfo() != null) {
+            return connManager.getActiveNetworkInfo().isAvailable();
+        }
+
+        return false;
+    }
+
+    public void checkTokenInfo() {
+        try {
+            final TokenInfo tokenInfo = AppPreference.getUserToken();
+            if(System.currentTimeMillis() - tokenInfo.getTimeStamp() > 20*60*60*1000){
+                String URL = ReqConstant.URL_BASE + "/auth/token/refresh";
+                AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.GET, URL ,null , null, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(HttpResponseBean httpResponseBean) {
+                        super.onSuccess(httpResponseBean);
+                        try{
+                            JSONObject contentObject = new JSONObject(httpResponseBean.content);
+                            String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
+                            if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){
+                                JSONObject dataObject = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
+                                String newToken = dataObject.getString("newToken");
+                                tokenInfo.setToken(newToken);
+                                tokenInfo.setTimeStamp(System.currentTimeMillis());
+                                AppPreference.saveToken(tokenInfo);
+                                doAfterGetToken();
+                            }else {//登录失败
+                                String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);
+                                AlertDialogUtil.showAlertWindow(mActivity, -1, errorMessage , null );
+                                throw new IllegalStateException(errorMessage);
+                            }
+                        }catch(Exception e){
+                            e.printStackTrace();
+                            throw new IllegalStateException(e.toString());
+                        }
+                    }
+                    @Override
+                    public void onFailure(Throwable error, String content) {
+                        super.onFailure(error, content);
+                        String errorContent = Utils.parseErrorMessage(mActivity, content);
+                        throw new IllegalStateException(errorContent);
+                    }
+                });
+                mThreadPool.execute(asyncHttpClient);
+            }else{
+                doAfterGetToken();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IllegalStateException("获取token出错");
+        }
+    }
+
+    public abstract void doAfterGetToken();
 }

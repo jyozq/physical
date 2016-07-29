@@ -14,6 +14,8 @@ public class StudentItemInfo implements Serializable{
     private long classIdR;
     private String className;
     private long courseDefindIdR;
+    private boolean hasBinded;
+    private String deviceNo;
 
     public String getClassName() {
         return className;
@@ -77,5 +79,21 @@ public class StudentItemInfo implements Serializable{
 
     public void setCourseDefindIdR(long courseDefindIdR) {
         this.courseDefindIdR = courseDefindIdR;
+    }
+
+    public boolean isHasBinded() {
+        return hasBinded;
+    }
+
+    public void setHasBinded(boolean hasBinded) {
+        this.hasBinded = hasBinded;
+    }
+
+    public String getDeviceNo() {
+        return deviceNo;
+    }
+
+    public void setDeviceNo(String deviceNo) {
+        this.deviceNo = deviceNo;
     }
 }

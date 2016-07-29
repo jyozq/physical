@@ -106,7 +106,7 @@ public class StudentCommentActivity extends ThreadToolBarBaseActivity implements
         params.add(new BasicNameValuePair("studentId", String.valueOf(studentItemInfo.getStudentIdR())));
         params.add(new BasicNameValuePair("teacherComment", comment));
         showProgressDialog(getResources().getString(R.string.loading));
-        AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.GET,
+        AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.POST,
                 URL,params,tokenInfo.getToken(),new AsyncHttpResponseHandler(){
             @Override
             public void onSuccess(HttpResponseBean httpResponseBean) {
@@ -160,7 +160,7 @@ public class StudentCommentActivity extends ThreadToolBarBaseActivity implements
         params.add(new BasicNameValuePair("classId", String.valueOf(studentItemInfo.getClassIdR())));
         params.add(new BasicNameValuePair("studentId", String.valueOf(studentItemInfo.getStudentIdR())));
         showProgressDialog(getResources().getString(R.string.loading));
-        AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.POST,
+        AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.GET,
                 URL,params,tokenInfo.getToken(),new AsyncHttpResponseHandler(){
             @Override
             public void onSuccess(HttpResponseBean httpResponseBean) {

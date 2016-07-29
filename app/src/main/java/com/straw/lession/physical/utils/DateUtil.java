@@ -1322,4 +1322,29 @@ public final class DateUtil {
         int weekDay = now.get(Calendar.DAY_OF_WEEK);
         return weekDay - 1;
     }
+
+    public static boolean isToday(Date date){
+        if(date == null) return false;
+        String dateStr = dateToStr(date);
+        String today = curDate();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-mm-dd");
+        try {
+            Date d1 = df.parse(dateStr);
+            Date d2 = df.parse(today);
+            return (d1.compareTo(d2)==0);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean isDateSame(Date d1, Date d2) {
+        String date1 = dateToStr(d1);
+        String date2 = dateToStr(d2);
+        return date1.equals(date2);
+    }
+
+    public static void main(String[] args){
+        System.out.println(isToday(formatStrToDate(addDay(dateToStr(new Date())))));
+    }
 }

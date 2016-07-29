@@ -38,8 +38,10 @@ public class CourseDao extends AbstractDao<Course, Long> {
         public final static Property TeacherIdR = new Property(6, Long.class, "teacherIdR", false, "TEACHER_ID_R");
         public final static Property StartTime = new Property(7, java.util.Date.class, "startTime", false, "START_TIME");
         public final static Property EndTime = new Property(8, java.util.Date.class, "endTime", false, "END_TIME");
-        public final static Property IsUploaded = new Property(9, Boolean.class, "isUploaded", false, "IS_UPLOADED");
-        public final static Property CourseDefineIdR = new Property(10, Long.class, "courseDefineIdR", false, "COURSE_DEFINE_ID_R");
+        public final static Property CourseIdR = new Property(9, java.util.Date.class, "courseIdR", false, "COURSE_ID_R");
+        public final static Property SyncMsg = new Property(10, String.class, "syncMsg", false, "SYNC_MSG");
+        public final static Property IsUploaded = new Property(11, Boolean.class, "isUploaded", false, "IS_UPLOADED");
+        public final static Property CourseDefineIdR = new Property(12, Long.class, "courseDefineIdR", false, "COURSE_DEFINE_ID_R");
     };
 
     private DaoSession daoSession;
@@ -67,8 +69,10 @@ public class CourseDao extends AbstractDao<Course, Long> {
                 "\"TEACHER_ID_R\" INTEGER," + // 6: teacherIdR
                 "\"START_TIME\" INTEGER," + // 7: startTime
                 "\"END_TIME\" INTEGER," + // 8: endTime
-                "\"IS_UPLOADED\" INTEGER," + // 9: isUploaded
-                "\"COURSE_DEFINE_ID_R\" INTEGER);"); // 10: courseDefineIdR
+                "\"COURSE_ID_R\" INTEGER," + // 9: courseIdR
+                "\"SYNC_MSG\" TEXT," + // 10: syncMsg
+                "\"IS_UPLOADED\" INTEGER," + // 11: isUploaded
+                "\"COURSE_DEFINE_ID_R\" INTEGER);"); // 12: courseDefineIdR
     }
 
     /** Drops the underlying database table. */
@@ -126,14 +130,24 @@ public class CourseDao extends AbstractDao<Course, Long> {
             stmt.bindLong(9, endTime.getTime());
         }
  
+        java.util.Date courseIdR = entity.getCourseIdR();
+        if (courseIdR != null) {
+            stmt.bindLong(10, courseIdR.getTime());
+        }
+ 
+        String syncMsg = entity.getSyncMsg();
+        if (syncMsg != null) {
+            stmt.bindString(11, syncMsg);
+        }
+ 
         Boolean isUploaded = entity.getIsUploaded();
         if (isUploaded != null) {
-            stmt.bindLong(10, isUploaded ? 1L: 0L);
+            stmt.bindLong(12, isUploaded ? 1L: 0L);
         }
  
         Long courseDefineIdR = entity.getCourseDefineIdR();
         if (courseDefineIdR != null) {
-            stmt.bindLong(11, courseDefineIdR);
+            stmt.bindLong(13, courseDefineIdR);
         }
     }
 
@@ -186,14 +200,24 @@ public class CourseDao extends AbstractDao<Course, Long> {
             stmt.bindLong(9, endTime.getTime());
         }
  
+        java.util.Date courseIdR = entity.getCourseIdR();
+        if (courseIdR != null) {
+            stmt.bindLong(10, courseIdR.getTime());
+        }
+ 
+        String syncMsg = entity.getSyncMsg();
+        if (syncMsg != null) {
+            stmt.bindString(11, syncMsg);
+        }
+ 
         Boolean isUploaded = entity.getIsUploaded();
         if (isUploaded != null) {
-            stmt.bindLong(10, isUploaded ? 1L: 0L);
+            stmt.bindLong(12, isUploaded ? 1L: 0L);
         }
  
         Long courseDefineIdR = entity.getCourseDefineIdR();
         if (courseDefineIdR != null) {
-            stmt.bindLong(11, courseDefineIdR);
+            stmt.bindLong(13, courseDefineIdR);
         }
     }
 
@@ -220,8 +244,10 @@ public class CourseDao extends AbstractDao<Course, Long> {
             cursor.isNull(offset + 6) ? null : cursor.getLong(offset + 6), // teacherIdR
             cursor.isNull(offset + 7) ? null : new java.util.Date(cursor.getLong(offset + 7)), // startTime
             cursor.isNull(offset + 8) ? null : new java.util.Date(cursor.getLong(offset + 8)), // endTime
-            cursor.isNull(offset + 9) ? null : cursor.getShort(offset + 9) != 0, // isUploaded
-            cursor.isNull(offset + 10) ? null : cursor.getLong(offset + 10) // courseDefineIdR
+            cursor.isNull(offset + 9) ? null : new java.util.Date(cursor.getLong(offset + 9)), // courseIdR
+            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // syncMsg
+            cursor.isNull(offset + 11) ? null : cursor.getShort(offset + 11) != 0, // isUploaded
+            cursor.isNull(offset + 12) ? null : cursor.getLong(offset + 12) // courseDefineIdR
         );
         return entity;
     }
@@ -237,8 +263,10 @@ public class CourseDao extends AbstractDao<Course, Long> {
         entity.setTeacherIdR(cursor.isNull(offset + 6) ? null : cursor.getLong(offset + 6));
         entity.setStartTime(cursor.isNull(offset + 7) ? null : new java.util.Date(cursor.getLong(offset + 7)));
         entity.setEndTime(cursor.isNull(offset + 8) ? null : new java.util.Date(cursor.getLong(offset + 8)));
-        entity.setIsUploaded(cursor.isNull(offset + 9) ? null : cursor.getShort(offset + 9) != 0);
-        entity.setCourseDefineIdR(cursor.isNull(offset + 10) ? null : cursor.getLong(offset + 10));
+        entity.setCourseIdR(cursor.isNull(offset + 9) ? null : new java.util.Date(cursor.getLong(offset + 9)));
+        entity.setSyncMsg(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
+        entity.setIsUploaded(cursor.isNull(offset + 11) ? null : cursor.getShort(offset + 11) != 0);
+        entity.setCourseDefineIdR(cursor.isNull(offset + 12) ? null : cursor.getLong(offset + 12));
      }
     
     @Override

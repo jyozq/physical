@@ -81,6 +81,11 @@
                   android:configChanges="orientation|keyboardHidden"
                   android:name="com.straw.lession.physical.activity.StudentCommentActivity">
         </activity>
+        <activity android:windowSoftInputMode="adjustResize|stateHidden"
+                  android:screenOrientation="portrait"
+                  android:configChanges="orientation|keyboardHidden"
+                  android:name="com.straw.lession.physical.activity.UploadDataActivity">
+        </activity>
     </application>
 
 </manifest>

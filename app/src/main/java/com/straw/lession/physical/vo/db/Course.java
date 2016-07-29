@@ -25,6 +25,8 @@ public class Course {
     private Long teacherIdR;
     private java.util.Date startTime;
     private java.util.Date endTime;
+    private java.util.Date courseIdR;
+    private String syncMsg;
     private Boolean isUploaded;
     private Long courseDefineIdR;
 
@@ -51,7 +53,7 @@ public class Course {
     }
 
     @Generated
-    public Course(Long id, java.util.Date date, Integer useOnce, Integer weekday, Integer status, Long instituteIdR, Long teacherIdR, java.util.Date startTime, java.util.Date endTime, Boolean isUploaded, Long courseDefineIdR) {
+    public Course(Long id, java.util.Date date, Integer useOnce, Integer weekday, Integer status, Long instituteIdR, Long teacherIdR, java.util.Date startTime, java.util.Date endTime, java.util.Date courseIdR, String syncMsg, Boolean isUploaded, Long courseDefineIdR) {
         this.id = id;
         this.date = date;
         this.useOnce = useOnce;
@@ -61,6 +63,8 @@ public class Course {
         this.teacherIdR = teacherIdR;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.courseIdR = courseIdR;
+        this.syncMsg = syncMsg;
         this.isUploaded = isUploaded;
         this.courseDefineIdR = courseDefineIdR;
     }
@@ -142,6 +146,22 @@ public class Course {
 
     public void setEndTime(java.util.Date endTime) {
         this.endTime = endTime;
+    }
+
+    public java.util.Date getCourseIdR() {
+        return courseIdR;
+    }
+
+    public void setCourseIdR(java.util.Date courseIdR) {
+        this.courseIdR = courseIdR;
+    }
+
+    public String getSyncMsg() {
+        return syncMsg;
+    }
+
+    public void setSyncMsg(String syncMsg) {
+        this.syncMsg = syncMsg;
     }
 
     public Boolean getIsUploaded() {

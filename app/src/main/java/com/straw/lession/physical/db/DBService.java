@@ -3,14 +3,11 @@ package com.straw.lession.physical.db;
 import android.content.Context;
 
 import com.straw.lession.physical.app.MainApplication;
+import com.straw.lession.physical.constant.CourseStatus;
 import com.straw.lession.physical.utils.AppPreference;
 import com.straw.lession.physical.utils.DateUtil;
 import com.straw.lession.physical.utils.Detect;
-import com.straw.lession.physical.vo.ClassInfoVo;
-import com.straw.lession.physical.vo.CourseDefineVo;
-import com.straw.lession.physical.vo.InstituteVo;
-import com.straw.lession.physical.vo.LoginInfoVo;
-import com.straw.lession.physical.vo.StudentVo;
+import com.straw.lession.physical.vo.*;
 import com.straw.lession.physical.vo.db.ClassInfo;
 import com.straw.lession.physical.vo.db.Course;
 import com.straw.lession.physical.vo.db.CourseDefine;
@@ -367,10 +364,83 @@ public class DBService {
         return courseDao.queryBuilder().where(CourseDao.Properties.TeacherIdR.eq(userId)).list();
     }
 
-    public List<StudentDevice> getStudentDeviceInfo(long studentIdR, long userId, long courseDefindIdR) {
+    public List<StudentDevice> getStudentDeviceInfoNotUploaded(long studentIdR, long userId, long courseDefindIdR) {
         return studentDeviceDao.queryBuilder().where(StudentDeviceDao.Properties.TeacherIdR.eq(userId),
                 StudentDeviceDao.Properties.CourseDefineIdR.eq(courseDefindIdR),
                 StudentDeviceDao.Properties.StudentIdR.eq(studentIdR),
                 StudentDeviceDao.Properties.IsUploaded.eq(false)).list();
+    }
+
+    public void addStudentDevice(StudentDevice studentDevice) {
+        studentDeviceDao.insert(studentDevice);
+    }
+
+    public List<StudentDevice> getStudentDeviceByCourseDefine(long courseDefineId, long userId) {
+        return studentDeviceDao.queryBuilder().where(StudentDeviceDao.Properties.CourseDefineIdR.eq(courseDefineId),
+                                                    StudentDeviceDao.Properties.TeacherIdR.eq(userId),
+                                                    StudentDeviceDao.Properties.IsUploaded.eq(false)).list();
+    }
+
+    public void updateStudentDevices(List<StudentDevice> studentDevices) {
+        studentDeviceDao.updateInTx(studentDevices);
+    }
+
+    public List<Course> getStartedCourseByTeacher(long userId) {
+        return courseDao.queryBuilder().where(CourseDao.Properties.TeacherIdR.eq(userId),
+                                                CourseDao.Properties.Status.eq(CourseStatus.STARTED.getValue()),
+                                                CourseDao.Properties.IsUploaded.eq(false)).list();
+    }
+
+    public int countBindedStudentNumByCourse(long userId, Long courseId) {
+        return (int)studentDeviceDao.queryBuilder().where(StudentDeviceDao.Properties.CourseId.eq(courseId),
+                                                    StudentDeviceDao.Properties.TeacherIdR.eq(userId)).count();
+    }
+
+    public Course getUnUploadCourseById(long courseId, long userId) {
+        List<Course> courses = courseDao.queryBuilder().where(CourseDao.Properties.Id.eq(courseId),
+                                                CourseDao.Properties.TeacherIdR.eq(userId),
+                                                CourseDao.Properties.IsUploaded.eq(false)).list();
+        if(Detect.notEmpty(courses)){
+            return courses.get(0);
+        }
+        return null;
+    }
+
+    public List<StudentDevice> getUnUploadStudentDeviceByCourse(long courseId, long userId) {
+        return studentDeviceDao.queryBuilder().where(StudentDeviceDao.Properties.CourseId.eq(courseId),
+                                                StudentDeviceDao.Properties.TeacherIdR.eq(userId),
+                                                StudentDeviceDao.Properties.IsUploaded.eq(false)).list();
+    }
+
+    public void updateUploadResult(UploadCourseDataResultVo resultVo, long userId) {
+        List<Course> courses = courseDao.queryBuilder().where(CourseDao.Properties.Id.eq(resultVo.getLocalCourseSeq()),
+                                        CourseDao.Properties.TeacherIdR.eq(userId)).list();
+        boolean isSuccess = resultVo.getSyncResult().equals("S");
+        if(Detect.notEmpty(courses)){
+            Course course = courses.get(0);
+            course.setIsUploaded(isSuccess);
+            if(!isSuccess){
+                course.setSyncMsg(resultVo.getSyncResultMsg());
+            }
+            List<StudentDevice> studentDevices = studentDeviceDao.queryBuilder().where(
+                    StudentDeviceDao.Properties.CourseId.eq(resultVo.getLocalCourseSeq()),
+                    StudentDeviceDao.Properties.TeacherIdR.eq(userId)
+            ).list();
+            for(StudentDevice studentDevice : studentDevices){
+                studentDevice.setIsUploaded(isSuccess);
+            }
+            courseDao.update(course);
+            studentDeviceDao.updateInTx(studentDevices);
+        }
+    }
+
+    public StudentDevice getStudentDeviceByStudent(Long studentIdR, long userId) {
+        List<StudentDevice> studentDevices = studentDeviceDao.queryBuilder()
+                .where(StudentDeviceDao.Properties.StudentIdR.eq(studentIdR),
+                      StudentDeviceDao.Properties.TeacherIdR.eq(userId)).list();
+        if(Detect.notEmpty(studentDevices)){
+            return studentDevices.get(0);
+        }
+        return null;
     }
 }

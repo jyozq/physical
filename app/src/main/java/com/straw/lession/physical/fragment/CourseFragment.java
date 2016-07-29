@@ -19,6 +19,8 @@ import com.straw.lession.physical.fragment.base.BaseFragment;
  */
 public class CourseFragment extends BaseFragment {
     private View layoutView;
+    private int currentColor =0xFF5161BC;
+    private PagerSlidingTabStrip tabs;
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         layoutView = inflater.inflate(R.layout.fragment_course, container, false);
@@ -27,7 +29,7 @@ public class CourseFragment extends BaseFragment {
         pager.setAdapter(new MyPagerAdapter(getActivity().getSupportFragmentManager()));
 
         // Bind the tabs to the ViewPager
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) layoutView.findViewById(R.id.tabs);
+        tabs = (PagerSlidingTabStrip) layoutView.findViewById(R.id.tabs);
         tabs.setViewPager(pager);
         return layoutView;
     }
@@ -38,6 +40,22 @@ public class CourseFragment extends BaseFragment {
     }
 
     private void initViews() {
+        tabs.setIndicatorColor(currentColor);
+    }
+
+    @Override
+    protected void loadDataFromLocal() {
+
+    }
+
+    @Override
+    protected void loadDataFromService() {
+
+    }
+
+    @Override
+    public void doAfterGetToken() {
+
     }
 
     public class MyPagerAdapter extends FragmentPagerAdapter {

@@ -56,6 +56,21 @@ public class ClassFragment extends BaseFragment implements SwipeRefreshLayout.On
         mContext = (MainActivity) getActivity();
     }
 
+    @Override
+    protected void loadDataFromLocal() {
+
+    }
+
+    @Override
+    protected void loadDataFromService() {
+
+    }
+
+    @Override
+    public void doAfterGetToken() {
+
+    }
+
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         layoutView = inflater.inflate(R.layout.fragment_class, container, false);
         return layoutView;
