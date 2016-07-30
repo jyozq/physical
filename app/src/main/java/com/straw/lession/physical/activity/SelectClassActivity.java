@@ -2,6 +2,7 @@ package com.straw.lession.physical.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.ListView;
@@ -133,7 +134,12 @@ public class SelectClassActivity extends ThreadToolBarBaseActivity
 
     @Override
     public void onRefresh() {
-        getClassInfos();
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                swipeLayout.setRefreshing(false);
+                getClassInfos();
+            }
+        }, 500);
     }
 
     @Override

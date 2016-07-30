@@ -2,6 +2,7 @@ package com.straw.lession.physical.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
@@ -160,7 +161,12 @@ public class ClassFragment extends BaseFragment implements SwipeRefreshLayout.On
 
     @Override
     public void onRefresh() {
-
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                swipeLayout.setRefreshing(false);
+                query();
+            }
+        }, 500);
     }
 
     @Override

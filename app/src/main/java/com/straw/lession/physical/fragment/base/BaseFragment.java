@@ -140,7 +140,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
             final TokenInfo tokenInfo = AppPreference.getUserToken();
             if(System.currentTimeMillis() - tokenInfo.getTimeStamp() > 20*60*60*1000){
                 String URL = ReqConstant.URL_BASE + "/auth/token/refresh";
-                AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.GET, URL ,null , null, new AsyncHttpResponseHandler() {
+                AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.GET, URL ,"" , null, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(HttpResponseBean httpResponseBean) {
                         super.onSuccess(httpResponseBean);

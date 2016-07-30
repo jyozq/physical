@@ -51,19 +51,30 @@ public class AsyncHttpClient implements Runnable {
     private RequestParams params;
     private String token;
 
+    private String postString;
 	private ArrayList<BasicNameValuePair> basicNameValuePairs;
 
     private boolean isDes = false;  //是否要加密
     
     public AsyncHttpClient(RequestType type , String requestString,
                            ArrayList<BasicNameValuePair> basicNameValuePairs , String token, AsyncHttpResponseHandler callback ) {
-    		this.requestUrl = requestString;
-    		this.mCallback = callback;
-    		this.type = type;
-    		this.basicNameValuePairs = basicNameValuePairs;
-    		this.logger4j = LoggerFile.getLog4j(TAG);
-            this.token = token;
-        }
+        this.requestUrl = requestString;
+        this.mCallback = callback;
+        this.type = type;
+        this.basicNameValuePairs = basicNameValuePairs;
+        this.logger4j = LoggerFile.getLog4j(TAG);
+        this.token = token;
+    }
+
+    public AsyncHttpClient(RequestType type , String requestString,
+                           String postString , String token, AsyncHttpResponseHandler callback ) {
+        this.requestUrl = requestString;
+        this.mCallback = callback;
+        this.type = type;
+        this.postString = postString;
+        this.logger4j = LoggerFile.getLog4j(TAG);
+        this.token = token;
+    }
 
     public AsyncHttpClient(RequestType type , String requestString,
                            ArrayList<BasicNameValuePair> basicNameValuePairs , boolean isDes , AsyncHttpResponseHandler callback ) {
@@ -274,8 +285,15 @@ public class AsyncHttpClient implements Runnable {
                     sb.deleteCharAt(sb.length() - 1);
                 }
                 dos.write(sb.toString().getBytes());*/
-                
-                String poststring = createPOSTString();
+
+                String poststring = null;
+                if(basicNameValuePairs != null ) {
+                     poststring = createPOSTString();
+                }
+                if(Detect.notEmpty(postString)){
+                    poststring = postString;
+                }
+
                 dos.write(poststring.getBytes());
                 
                 // 刷新输出流

@@ -1,6 +1,7 @@
 package com.straw.lession.physical.fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
@@ -9,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import com.alibaba.fastjson.JSON;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.UploadDataActivity;
@@ -31,6 +34,8 @@ import com.straw.lession.physical.utils.DateUtil;
 import com.straw.lession.physical.utils.ResponseParseUtils;
 import com.straw.lession.physical.utils.Utils;
 import com.straw.lession.physical.vo.LoginInfoVo;
+import com.straw.lession.physical.vo.TokenInfo;
+import com.straw.lession.physical.vo.UploadCourseDataHolder;
 import com.straw.lession.physical.vo.UploadCourseDataResultVo;
 import com.straw.lession.physical.vo.UploadCourseDataVo;
 import com.straw.lession.physical.vo.UploadStudentDataVo;
@@ -51,6 +56,7 @@ import java.util.List;
 public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,UploadListViewAdapter.Callback{
     private static final String TAG = "UploadDataFragment";
     private LoginInfoVo loginInfo;
+    private TokenInfo tokenInfo;
     private View layoutView;
     private boolean isUploaded;
     private SwipeRefreshLayout swipeLayout;
@@ -59,6 +65,7 @@ public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayo
     private List<UploadDataItemInfo> infoList = new ArrayList<UploadDataItemInfo>();
     private UploadDataActivity mContext;
     private Button btn_upload_all;
+    private UploadDataItemInfo clickUploadDataItemInfo;
 
     @Override
     public void onResume() {
@@ -78,7 +85,62 @@ public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayo
 
     @Override
     public void doAfterGetToken() {
+        try{
+            tokenInfo = AppPreference.getUserToken();
+        }catch (Exception ex){
+            ex.printStackTrace();
+            Log.e(TAG,"",ex);
+            Toast.makeText(getContext(),"获取token出错",Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        long courseId = clickUploadDataItemInfo.getCourseId();
+        Course course = DBService.getInstance(getContext()).getUnUploadCourseById(courseId, loginInfo.getUserId());
+        List<StudentDevice> studentDevices = DBService.getInstance(getContext())
+                .getUnUploadStudentDeviceByCourse(courseId,loginInfo.getUserId());
+        UploadCourseDataVo uploadCourseDataVo = assembleUploadCourseData(course, studentDevices);
+        List<UploadCourseDataVo> uploadCourseDataVos = new ArrayList<>();
+        uploadCourseDataVos.add(uploadCourseDataVo);
+        UploadCourseDataHolder uploadCourseDataHolder = new UploadCourseDataHolder();
+        uploadCourseDataHolder.setCourseData(uploadCourseDataVos);
+
+        ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+        String URL = ReqConstant.URL_BASE + "/course/data/sync";
+        mContext.showProgressDialog(getResources().getString(R.string.loading));
+        AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.POST, URL ,JSON.toJSONString(uploadCourseDataHolder) , tokenInfo.getToken(), new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(HttpResponseBean httpResponseBean) {
+                super.onSuccess(httpResponseBean);
+                try{
+                    mContext.hideProgressDialog();
+                    JSONObject contentObject = new JSONObject(httpResponseBean.content);
+                    String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
+                    if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){
+                        JSONObject dataObject = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
+                        JSONArray courseArr = dataObject.getJSONArray("courses");
+                        List<UploadCourseDataResultVo> uploadResults =
+                                JSON.parseArray(courseArr.toString(), UploadCourseDataResultVo.class);
+                        updateUploadResult(uploadResults);
+                    }else {
+                        String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);
+                        AlertDialogUtil.showAlertWindow(mContext, -1, errorMessage , null );
+                    }
+                }catch(Exception e){
+                    mContext.hideProgressDialog();
+                    mContext.showErrorMsgInfo(e.toString());
+                    e.printStackTrace();
+                }
+            }
+            @Override
+            public void onFailure(Throwable error, String content) {
+                super.onFailure(error, content);
+                mContext.hideProgressDialog();
+                String errorContent = Utils.parseErrorMessage(mContext, content);
+                mContext.showErrorMsgInfo(errorContent);
+                Log.e(TAG, content);
+            }
+        });
+        mThreadPool.execute(asyncHttpClient);
     }
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -129,78 +191,45 @@ public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayo
             courses = DBService.getInstance(getContext()).getUnUploadedData(loginInfo.getUserId());
         }
         infoList.clear();
+        UploadDataItemInfo uploadDataItemInfo = null;
         for(Course course : courses){
-            infoList.add(toItemInfo(course));
+            uploadDataItemInfo = toItemInfo(course);
+            if(uploadDataItemInfo != null) {
+                infoList.add(uploadDataItemInfo);
+            }
         }
         adapter.notifyDataSetChanged();
     }
 
     private UploadDataItemInfo toItemInfo(Course course) {
+        if(course.getEndTime() == null) {
+            return null;
+        }
         UploadDataItemInfo uploadDataItemInfo = new UploadDataItemInfo();
         uploadDataItemInfo.setCourseId(course.getId());
         uploadDataItemInfo.setClassName(course.getCourseDefine().getClassInfo().getName());
         uploadDataItemInfo.setDate(DateUtil.dateToStr(course.getDate()));
         String startTimeStr = DateUtil.dateTimeToStr(course.getStartTime());
         String endTimeStr = DateUtil.dateTimeToStr(course.getEndTime());
-        uploadDataItemInfo.setDuration(startTimeStr.substring(startTimeStr.indexOf("") + 1) + "-"
-                                        +endTimeStr.substring(endTimeStr.indexOf("") + 1));
+        uploadDataItemInfo.setDuration(startTimeStr.substring(startTimeStr.indexOf(" ") + 1) + "-"
+                                        +endTimeStr.substring(endTimeStr.indexOf(" ") + 1));
         return uploadDataItemInfo;
     }
 
     @Override
     public void onRefresh() {
-
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                swipeLayout.setRefreshing(false);
+                query();
+            }
+        }, 500);
     }
 
     @Override
     public void click(View v) {
-        UploadDataItemInfo uploadDataItemInfo = infoList.get((Integer) v.getTag());
-        long courseId = uploadDataItemInfo.getCourseId();
-        Course course = DBService.getInstance(getContext()).getUnUploadCourseById(courseId, loginInfo.getUserId());
-        List<StudentDevice> studentDevices = DBService.getInstance(getContext())
-                                                .getUnUploadStudentDeviceByCourse(courseId,loginInfo.getUserId());
-        UploadCourseDataVo uploadCourseDataVo = assembleUploadCourseData(course, studentDevices);
-        List<UploadCourseDataVo> uploadCourseDataVos = new ArrayList<>();
-        uploadCourseDataVos.add(uploadCourseDataVo);
-
-        ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
-        params.add(new BasicNameValuePair("courseData", JSON.toJSONString(uploadCourseDataVos)));
-        String URL = ReqConstant.URL_BASE + "/course/data/sync";
-        mContext.showProgressDialog(getResources().getString(R.string.loading));
-        AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.POST, URL ,params , null, new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(HttpResponseBean httpResponseBean) {
-                super.onSuccess(httpResponseBean);
-                try{
-                    mContext.hideProgressDialog();
-                    JSONObject contentObject = new JSONObject(httpResponseBean.content);
-                    String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
-                    if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){
-                        JSONObject dataObject = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
-                        JSONArray courseArr = dataObject.getJSONArray("courses");
-                        List<UploadCourseDataResultVo> uploadResults =
-                                JSON.parseArray(courseArr.toString(), UploadCourseDataResultVo.class);
-                        updateUploadResult(uploadResults);
-                    }else {
-                        String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);
-                        AlertDialogUtil.showAlertWindow(mContext, -1, errorMessage , null );
-                    }
-                }catch(Exception e){
-                    mContext.hideProgressDialog();
-                    mContext.showErrorMsgInfo(e.toString());
-                    e.printStackTrace();
-                }
-            }
-            @Override
-            public void onFailure(Throwable error, String content) {
-                super.onFailure(error, content);
-                mContext.hideProgressDialog();
-                String errorContent = Utils.parseErrorMessage(mContext, content);
-                mContext.showErrorMsgInfo(errorContent);
-                Log.e(TAG, content);
-            }
-        });
-        mThreadPool.execute(asyncHttpClient);
+        clickUploadDataItemInfo = infoList.get((Integer) v.getTag());
+        checkTokenInfo();
     }
 
     private void updateUploadResult(List<UploadCourseDataResultVo> uploadResults) {
@@ -231,8 +260,10 @@ public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayo
         uploadCourseDataVo.setCourseDate(DateUtil.dateToStr(course.getDate()));
         uploadCourseDataVo.setCourseDefineId(String.valueOf(course.getCourseDefineIdR()));
         uploadCourseDataVo.setLocalCourseSeq(String.valueOf(course.getId()));
-        uploadCourseDataVo.setStartTime(DateUtil.dateTimeToStr(course.getStartTime()));
-        uploadCourseDataVo.setEndTime(DateUtil.dateTimeToStr(course.getEndTime()));
+        String startTimeStr = DateUtil.dateTimeToStr(course.getStartTime());
+        String endTimeStr = DateUtil.dateTimeToStr(course.getEndTime());
+        uploadCourseDataVo.setStartTime(startTimeStr.substring(startTimeStr.indexOf(" ")+1));
+        uploadCourseDataVo.setEndTime(endTimeStr.substring(endTimeStr.indexOf(" ")+1));
         List<UploadStudentDataVo> students = new ArrayList<>();
         for(StudentDevice studentDevice : studentDevices){
             students.add(assembleUploadStudentData(studentDevice));

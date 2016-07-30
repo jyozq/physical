@@ -2,6 +2,8 @@ package com.straw.lession.physical.task;
 
 import android.content.Context;
 import com.straw.lession.physical.async.TaskHandler;
+import com.straw.lession.physical.async.TaskResult;
+import com.straw.lession.physical.constant.TaskConstant;
 import com.straw.lession.physical.db.DBService;
 import com.straw.lession.physical.vo.UploadCourseDataResultVo;
 
@@ -22,8 +24,16 @@ public class UpdateUploadResultTask extends BaseTask{
 
     @Override
     public Object doRun() {
-        for(UploadCourseDataResultVo resultVo : resultVoList) {
-            DBService.getInstance(context).updateUploadResult(resultVo,teacherIdR);
+        try {
+            for (UploadCourseDataResultVo resultVo : resultVoList) {
+                DBService.getInstance(context).updateUploadResult(resultVo, teacherIdR);
+            }
+            TaskResult result = new TaskResult();
+            result.setResultCode(TaskConstant.SUCCESS_CODE);
+            result.setResultMsg("更新本地缓存记录成功");
+            taskHandler.sendSuccessMessage(result);
+        }catch(Exception ex){
+            taskHandler.sendFailureMessage(ex, "更新本地缓存记录失败");
         }
         return null;
     }

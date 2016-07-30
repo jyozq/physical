@@ -92,13 +92,8 @@ public class CourseListViewAdapter extends BaseAdapter implements View.OnClickLi
         location.setText(info.getLocation());
         TextView type = (TextView) convertView.findViewById(R.id.type);
         type.setText(info.getType() + " " + info.getBindedStudentNum() + "|" + info.getTotalStudentNum());
-        if(info.getStatus() == CourseStatus.STARTED.getValue()
-                || info.getStatus() == CourseStatus.OVER.getValue()){
-            holder.button.setOnClickListener(null);
-        }else{
-            holder.button.setOnClickListener(this);
-            holder.button.setTag(position);
-        }
+        holder.button.setOnClickListener(this);
+        holder.button.setTag(position);
         holder.button.setText(CourseStatus.getName(info.getStatus()));
         return convertView;
     }

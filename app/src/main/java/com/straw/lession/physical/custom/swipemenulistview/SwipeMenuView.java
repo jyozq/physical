@@ -10,12 +10,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-/**
- * 
- * @author baoyz
- * @date 2014-8-23
- * 
- */
 public class SwipeMenuView extends LinearLayout implements OnClickListener {
 
 	private SwipeMenuListView mListView;

@@ -2,6 +2,7 @@ package com.straw.lession.physical.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
@@ -68,7 +69,6 @@ public class StudentCommentListActivity extends ThreadToolBarBaseActivity implem
         MainApplication.getInstance().addActivity(this);
         try {
             loginInfoVo = AppPreference.getLoginInfo();
-            tokenInfo = AppPreference.getUserToken();
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(this,"获取登录信息出错",Toast.LENGTH_SHORT).show();
@@ -161,6 +161,14 @@ public class StudentCommentListActivity extends ThreadToolBarBaseActivity implem
 
     @Override
     public void doAfterGetToken() {
+        try{
+            tokenInfo = AppPreference.getUserToken();
+        }catch (Exception ex){
+            ex.printStackTrace();
+            Log.e(TAG,"",ex);
+            Toast.makeText(this,"获取token出错",Toast.LENGTH_SHORT).show();
+            return;
+        }
         String URL = ReqConstant.URL_BASE + "/class/student/list";
         ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
         params.add(new BasicNameValuePair("instituteId", String.valueOf(loginInfoVo.getCurrentInstituteIdR())));
@@ -210,7 +218,12 @@ public class StudentCommentListActivity extends ThreadToolBarBaseActivity implem
 
     @Override
     public void onRefresh() {
-
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                swipeLayout.setRefreshing(false);
+                query();
+            }
+        }, 500);
     }
 
     @Override

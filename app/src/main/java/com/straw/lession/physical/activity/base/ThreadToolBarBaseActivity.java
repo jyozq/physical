@@ -184,7 +184,7 @@ public abstract class ThreadToolBarBaseActivity extends ToolBarActivity {
             if(System.currentTimeMillis() - tokenInfo.getTimeStamp() > 20*60*60*1000){
                 String URL = ReqConstant.URL_BASE + "/auth/token/refresh";
                 showProgressDialog(getResources().getString(R.string.loading));
-                AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.GET, URL ,null , null, new AsyncHttpResponseHandler() {
+                AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.GET, URL ,"" , null, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(HttpResponseBean httpResponseBean) {
                         super.onSuccess(httpResponseBean);

@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -21,6 +22,7 @@ import com.straw.lession.physical.adapter.StudentListViewAdapter;
 import com.straw.lession.physical.app.MainApplication;
 import com.straw.lession.physical.constant.CourseStatus;
 import com.straw.lession.physical.constant.Weekday;
+import com.straw.lession.physical.custom.AlertDialogUtil;
 import com.straw.lession.physical.db.DBService;
 import com.straw.lession.physical.utils.AppPreference;
 import com.straw.lession.physical.utils.DateUtil;
@@ -130,12 +132,14 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
         }
         if(status == null){
             btn_do_start_course.setOnClickListener(listener);
-            btn_end_course.setOnClickListener(null);
+            btn_end_course.setEnabled(false);
         }else if(status == CourseStatus.STARTED.getValue()){
+            btn_end_course.setEnabled(true);
             btn_end_course.setOnClickListener(listener);
             btn_do_start_course.setOnClickListener(null);
             btn_do_start_course.setText(CourseStatus.getName(status));
         }else if(status == CourseStatus.OVER.getValue()){
+            btn_end_course.setVisibility(View.INVISIBLE);
             btn_end_course.setOnClickListener(null);
             btn_do_start_course.setOnClickListener(null);
             btn_do_start_course.setText(CourseStatus.getName(status));
@@ -143,7 +147,7 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
     }
 
     private void endCourse() {
-        Course course = DBService.getInstance(this).findCourseById(courseId);
+        Course course = DBService.getInstance(this).findCourseById(courseItemVo.getCourseId());
         course.setStatus(CourseStatus.OVER.getValue());
         course.setEndTime(new Date());
         DBService.getInstance(this).updateCourse(course);
@@ -168,12 +172,13 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
         course.setStartTime(new Date());
         course.setIsUploaded(false);
         DBService.getInstance(this).addCourse(course);
+        courseItemVo.setCourseId(course.getId());
 
         //更新学生绑定信息
         List<StudentDevice> studentDevices = DBService.getInstance(this)
                 .getStudentDeviceByCourseDefine(courseItemVo.getCourseDefineId(), loginInfo.getUserId());
         for(StudentDevice studentDevice : studentDevices){
-            if(DateUtil.isDateSame(studentDevice.getBindTime(),courseDefine.getDate())){
+            if(DateUtil.isToday(studentDevice.getBindTime())){
                 studentDevice.setCourseId(course.getId());
             }
         }
@@ -181,6 +186,8 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
         courseId = course.getId();
         btn_do_start_course.setOnClickListener(null);
         btn_do_start_course.setText(CourseStatus.STARTED.getText());
+        btn_end_course.setEnabled(true);
+        btn_end_course.setOnClickListener(listener);
     }
 
     private boolean hasStartedCourse() {
@@ -221,45 +228,54 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
 
     @Override
     public void onRefresh() {
-
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                swipeLayout.setRefreshing(false);
+                query();
+            }
+        }, 500);
     }
 
     @Override
     public void click(View v) {
-        studentItemInfo = infoList.get((Integer) v.getTag());
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED){
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                new AlertDialog.Builder(StartCourseActivity.this)
-                        .setMessage("你需要启动相机权限")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                ActivityCompat.requestPermissions(StartCourseActivity.this,
-                                        new String[]{Manifest.permission.CAMERA,Manifest.permission.FLASHLIGHT},
-                                        MY_PERMISSIONS_REQUEST_CAMERA);
-                            }
-                        })
-                        .setNegativeButton("Cancel",null)
-                        .create()
-                        .show();
-            }else{
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.CAMERA,Manifest.permission.FLASHLIGHT},
-                        MY_PERMISSIONS_REQUEST_CAMERA);
+        if(courseItemVo.getStatus() == CourseStatus.OVER.getValue()){
+            AlertDialogUtil.showAlertWindow(this,-1,"课程已结束",null);
+        }else {
+            studentItemInfo = infoList.get((Integer) v.getTag());
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    new AlertDialog.Builder(StartCourseActivity.this)
+                            .setMessage("你需要启动相机权限")
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    ActivityCompat.requestPermissions(StartCourseActivity.this,
+                                            new String[]{Manifest.permission.CAMERA, Manifest.permission.FLASHLIGHT},
+                                            MY_PERMISSIONS_REQUEST_CAMERA);
+                                }
+                            })
+                            .setNegativeButton("Cancel", null)
+                            .create()
+                            .show();
+                } else {
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.CAMERA, Manifest.permission.FLASHLIGHT},
+                            MY_PERMISSIONS_REQUEST_CAMERA);
+                }
+
+
+            } else {
+                Intent intent = new Intent(this, CaptureActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("student", studentItemInfo);
+                infoList.remove(studentItemInfo);
+                bundle.putSerializable("students", (Serializable) infoList);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
-
-
-        } else {
-            Intent intent = new Intent(this, CaptureActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("student", studentItemInfo);
-            infoList.remove(studentItemInfo);
-            bundle.putSerializable("students",(Serializable)infoList);
-            intent.putExtras(bundle);
-            startActivity(intent);
         }
     }
 

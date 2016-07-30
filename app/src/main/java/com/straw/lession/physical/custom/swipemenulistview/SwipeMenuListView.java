@@ -10,12 +10,6 @@ import android.view.animation.Interpolator;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-/**
- * 
- * @author baoyz
- * @date 2014-8-18
- * 
- */
 public class SwipeMenuListView extends ListView {
 
 	private static final int TOUCH_STATE_NONE = 0;
@@ -110,72 +104,72 @@ public class SwipeMenuListView extends ListView {
 		action = ev.getAction();
 		switch (action) {
 		case MotionEvent.ACTION_DOWN:
-			int oldPos = mTouchPosition;
-			mDownX = ev.getX();
-			mDownY = ev.getY();
-			mTouchState = TOUCH_STATE_NONE;
-
-			mTouchPosition = pointToPosition((int) ev.getX(), (int) ev.getY());
-
-			if (mTouchPosition == oldPos && mTouchView != null
-					&& mTouchView.isOpen()) {
-				mTouchState = TOUCH_STATE_X;
-				mTouchView.onSwipe(ev);
-				return true;
-			}
-
-			View view = getChildAt(mTouchPosition - getFirstVisiblePosition());
-
-			if (mTouchView != null && mTouchView.isOpen()) {
-				mTouchView.smoothCloseMenu();
-				mTouchView = null;
-				return super.onTouchEvent(ev);
-			}
-			if (view instanceof SwipeMenuLayout) {
-				mTouchView = (SwipeMenuLayout) view;
-			}
-			if (mTouchView != null) {
-				mTouchView.onSwipe(ev);
-			}
+//			int oldPos = mTouchPosition;
+//			mDownX = ev.getX();
+//			mDownY = ev.getY();
+//			mTouchState = TOUCH_STATE_NONE;
+//
+//			mTouchPosition = pointToPosition((int) ev.getX(), (int) ev.getY());
+//
+//			if (mTouchPosition == oldPos && mTouchView != null
+//					&& mTouchView.isOpen()) {
+//				mTouchState = TOUCH_STATE_X;
+//				mTouchView.onSwipe(ev);
+//				return true;
+//			}
+//
+//			View view = getChildAt(mTouchPosition - getFirstVisiblePosition());
+//
+//			if (mTouchView != null && mTouchView.isOpen()) {
+//				mTouchView.smoothCloseMenu();
+//				mTouchView = null;
+//				return super.onTouchEvent(ev);
+//			}
+//			if (view instanceof SwipeMenuLayout) {
+//				mTouchView = (SwipeMenuLayout) view;
+//			}
+//			if (mTouchView != null) {
+//				mTouchView.onSwipe(ev);
+//			}
 			break;
 		case MotionEvent.ACTION_MOVE:
-			float dy = Math.abs((ev.getY() - mDownY));
-			float dx = Math.abs((ev.getX() - mDownX));
-			if (mTouchState == TOUCH_STATE_X) {
-				if (mTouchView != null) {
-					mTouchView.onSwipe(ev);
-				}
-				getSelector().setState(new int[] { 0 });
-				ev.setAction(MotionEvent.ACTION_CANCEL);
-				super.onTouchEvent(ev);
-				return true;
-			} else if (mTouchState == TOUCH_STATE_NONE) {
-				if (Math.abs(dy) > MAX_Y) {
-					mTouchState = TOUCH_STATE_Y;
-				} else if (dx > MAX_X) {
-					mTouchState = TOUCH_STATE_X;
-					if (mOnSwipeListener != null) {
-						mOnSwipeListener.onSwipeStart(mTouchPosition);
-					}
-				}
-			}
+//			float dy = Math.abs((ev.getY() - mDownY));
+//			float dx = Math.abs((ev.getX() - mDownX));
+//			if (mTouchState == TOUCH_STATE_X) {
+//				if (mTouchView != null) {
+//					mTouchView.onSwipe(ev);
+//				}
+//				getSelector().setState(new int[] { 0 });
+//				ev.setAction(MotionEvent.ACTION_CANCEL);
+//				super.onTouchEvent(ev);
+//				return true;
+//			} else if (mTouchState == TOUCH_STATE_NONE) {
+//				if (Math.abs(dy) > MAX_Y) {
+//					mTouchState = TOUCH_STATE_Y;
+//				} else if (dx > MAX_X) {
+//					mTouchState = TOUCH_STATE_X;
+//					if (mOnSwipeListener != null) {
+//						mOnSwipeListener.onSwipeStart(mTouchPosition);
+//					}
+//				}
+//			}
 			break;
 		case MotionEvent.ACTION_UP:
-			if (mTouchState == TOUCH_STATE_X) {
-				if (mTouchView != null) {
-					mTouchView.onSwipe(ev);
-					if (!mTouchView.isOpen()) {
-						mTouchPosition = -1;
-						mTouchView = null;
-					}
-				}
-				if (mOnSwipeListener != null) {
-					mOnSwipeListener.onSwipeEnd(mTouchPosition);
-				}
-				ev.setAction(MotionEvent.ACTION_CANCEL);
-				super.onTouchEvent(ev);
-				return true;
-			}
+//			if (mTouchState == TOUCH_STATE_X) {
+//				if (mTouchView != null) {
+//					mTouchView.onSwipe(ev);
+//					if (!mTouchView.isOpen()) {
+//						mTouchPosition = -1;
+//						mTouchView = null;
+//					}
+//				}
+//				if (mOnSwipeListener != null) {
+//					mOnSwipeListener.onSwipeEnd(mTouchPosition);
+//				}
+//				ev.setAction(MotionEvent.ACTION_CANCEL);
+//				super.onTouchEvent(ev);
+//				return true;
+//			}
 			break;
 		}
 		return super.onTouchEvent(ev);

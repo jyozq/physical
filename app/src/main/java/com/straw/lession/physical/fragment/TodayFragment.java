@@ -258,7 +258,7 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
                     .getStudentDeviceByCourseDefine(courseDefine.getCourseDefineIdR(),loginInfo.getUserId());
             int cnt = 0;
             for(StudentDevice studentDevice : studentDevices){
-                if(DateUtil.isDateSame(studentDevice.getBindTime(),courseDefine.getDate())){
+                if(DateUtil.isToday(studentDevice.getBindTime())){
                     cnt++;
                 }
             }
