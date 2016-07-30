@@ -443,4 +443,10 @@ public class DBService {
         }
         return null;
     }
+
+    public List<CourseDefine> initDayCourseData(long teacherId, int weekday) {
+        return courseDefineDao.queryBuilder().where(CourseDefineDao.Properties.TeacherIdR.eq(teacherId),
+                CourseDefineDao.Properties.WeekDay.eq(weekday),
+                CourseDefineDao.Properties.IsDel.eq(0)).orderAsc(CourseDefineDao.Properties.WeekDay).list();
+    }
 }

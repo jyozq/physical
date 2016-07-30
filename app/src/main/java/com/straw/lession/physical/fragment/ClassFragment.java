@@ -59,39 +59,16 @@ public class ClassFragment extends BaseFragment implements SwipeRefreshLayout.On
 
     @Override
     protected void loadDataFromLocal() {
-
+        Toast.makeText(getContext(),"访问本地缓存操作",Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void loadDataFromService() {
-
+        checkTokenInfo();
     }
 
     @Override
     public void doAfterGetToken() {
-
-    }
-
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        layoutView = inflater.inflate(R.layout.fragment_class, container, false);
-        return layoutView;
-    }
-
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        initViews();
-    }
-
-    private void initViews() {
-        swipeLayout = (SwipeRefreshLayout) layoutView.findViewById(R.id.swipe_refresh);
-        swipeLayout.setOnRefreshListener(this);
-        listView = (ListView) layoutView.findViewById(R.id.class_listview);
-        adapter = new ClassListViewAdapter(layoutView.getContext(), infoList, this);
-        listView.setAdapter(adapter);
-        query();
-    }
-
-    public void query() {
         final LoginInfoVo loginInfoVo;
         final TokenInfo tokenInfo;
         try {
@@ -120,7 +97,7 @@ public class ClassFragment extends BaseFragment implements SwipeRefreshLayout.On
                                 JSON.parseArray(dataObject.getJSONArray("classes").toString(), ClassInfoVo.class);
                         DBService.getInstance(mContext).refineClassInfoData(classInfoVos, loginInfoVo.getCurrentInstituteIdR());
                         List<ClassInfo> classInfos = DBService.getInstance(mContext)
-                                                                .getClassByInstitute(loginInfoVo.getCurrentInstituteIdR());
+                                .getClassByInstitute(loginInfoVo.getCurrentInstituteIdR());
                         infoList.clear();
                         for(ClassInfo classInfo:classInfos){
                             infoList.add(toItem(classInfo));
@@ -147,6 +124,29 @@ public class ClassFragment extends BaseFragment implements SwipeRefreshLayout.On
             }
         });
         mThreadPool.execute(asyncHttpClient);
+    }
+
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        layoutView = inflater.inflate(R.layout.fragment_class, container, false);
+        return layoutView;
+    }
+
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        initViews();
+    }
+
+    private void initViews() {
+        swipeLayout = (SwipeRefreshLayout) layoutView.findViewById(R.id.swipe_refresh);
+        swipeLayout.setOnRefreshListener(this);
+        listView = (ListView) layoutView.findViewById(R.id.class_listview);
+        adapter = new ClassListViewAdapter(layoutView.getContext(), infoList, this);
+        listView.setAdapter(adapter);
+        query();
+    }
+
+    public void query() {
+        getDataByNetSate();
     }
 
     private ClassItemInfo toItem(ClassInfo classInfo) {

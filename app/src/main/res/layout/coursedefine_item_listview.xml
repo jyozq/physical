@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical"
+                    android:padding="@dimen/dimen_10dp" android:id="@+id/coursedefine_item_view"
+        >
+        <TextView
+            android:layout_width="@dimen/dimen_30dp" android:layout_height="@dimen/dimen_30dp"
+            android:background="@drawable/round_label" android:textColor="@color/white"
+            android:textSize="@dimen/font_size_16" android:gravity="center" android:text="1"
+            android:id="@+id/class_no_label"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content" android:layout_marginLeft="@dimen/dimen_10dp"
+            android:layout_height="wrap_content" android:layout_weight="1" android:visibility="gone"
+            android:id="@+id/coursedefine_info_view" android:orientation="horizontal">
+            <ImageView
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:src="@mipmap/course_1" android:layout_margin="10dp"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_weight="1" android:gravity="center_horizontal"
+                android:orientation="vertical" android:layout_margin="@dimen/dimen_10dp">
+                <TextView android:layout_width="match_parent" android:layout_height="match_parent"
+                    android:gravity="left" android:id="@+id/class_name"
+                    android:textStyle="bold" android:textSize="@dimen/font_size_16"
+                    android:text="二年级二班"/>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                    android:orientation="horizontal" android:gravity="center_vertical|left">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:src="@mipmap/icon_class_info"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:text="综合课3  第1节"
+                        android:id="@+id/class_info" android:layout_marginLeft="@dimen/dimen_10dp"/>
+                </LinearLayout>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                    android:orientation="horizontal" android:gravity="center_vertical|left">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:src="@mipmap/icon_pin"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:text="大操场"
+                        android:id="@+id/class_location" android:layout_marginLeft="@dimen/dimen_10dp"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content" android:layout_marginLeft="@dimen/dimen_10dp"
+            android:layout_height="wrap_content" android:layout_weight="1"
+            android:id="@+id/coursedefine_add_view"
+            android:orientation="horizontal" android:gravity="center">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:src="@mipmap/icon_add_course"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
