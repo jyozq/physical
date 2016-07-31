@@ -14,7 +14,7 @@
 
         <LinearLayout
             android:layout_width="wrap_content" android:layout_marginLeft="@dimen/dimen_10dp"
-            android:layout_height="wrap_content" android:layout_weight="1" android:visibility="gone"
+            android:layout_height="wrap_content" android:layout_weight="1"
             android:id="@+id/coursedefine_info_view" android:orientation="horizontal">
             <ImageView
                 android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -49,12 +49,25 @@
                         android:id="@+id/class_location" android:layout_marginLeft="@dimen/dimen_10dp"/>
                 </LinearLayout>
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content" android:gravity="center"
+                android:layout_height="match_parent" android:orientation="vertical">
+                <ImageButton
+                    android:layout_width="wrap_content" android:background="@color/white"
+                    android:layout_height="wrap_content" android:src="@mipmap/icon_edit"
+                    android:layout_margin="@dimen/dimen_5dp" android:id="@+id/btn_edit_coursedefine"/>
+                <ImageButton
+                    android:layout_width="wrap_content" android:background="@color/white"
+                    android:layout_height="wrap_content" android:src="@mipmap/icon_delete"
+                    android:layout_margin="@dimen/dimen_5dp" android:id="@+id/btn_del_coursedefine"/>
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content" android:layout_marginLeft="@dimen/dimen_10dp"
             android:layout_height="wrap_content" android:layout_weight="1"
-            android:id="@+id/coursedefine_add_view"
+            android:id="@+id/coursedefine_add_view" android:visibility="gone"
             android:orientation="horizontal" android:gravity="center">
             <ImageView
                 android:layout_width="wrap_content"

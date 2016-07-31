@@ -22,6 +22,9 @@ public final class DateUtil {
 
     // add by lixing 2015-10-13
     public static String dateToStr(Date dateDate) {
+        if(dateDate == null){
+            dateDate = new Date();
+        }
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         String dateString = formatter.format(dateDate);
         return dateString;

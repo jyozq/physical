@@ -1,21 +1,27 @@
 package com.straw.lession.physical.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.straw.lession.physical.R;
+import com.straw.lession.physical.activity.AddCourseActivity;
 import com.straw.lession.physical.activity.MainActivity;
 import com.straw.lession.physical.adapter.CourseDefineListViewAdapter;
 import com.straw.lession.physical.async.ITask;
 import com.straw.lession.physical.async.TaskHandler;
 import com.straw.lession.physical.async.TaskResult;
 import com.straw.lession.physical.async.TaskWorker;
+import com.straw.lession.physical.constant.CommonConstants;
 import com.straw.lession.physical.fragment.base.BaseFragment;
 import com.straw.lession.physical.task.InitDayCourseTask;
 import com.straw.lession.physical.utils.AppPreference;
@@ -48,7 +54,6 @@ public class DayCourseFragment extends BaseFragment implements SwipeRefreshLayou
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         layoutView = inflater.inflate(R.layout.day_fragment_course, container, false);
-        weekday = getArguments().getInt("weekday");
         mContext = (MainActivity)getActivity();
         return layoutView;
     }
@@ -61,10 +66,11 @@ public class DayCourseFragment extends BaseFragment implements SwipeRefreshLayou
     @Override
     public void onResume() {
         super.onResume();
+        weekday = getArguments().getInt("weekday");
         query();
     }
 
-    private void query() {
+    public void query() {
         LoginInfoVo loginInfo = null;
         try {
             loginInfo = AppPreference.getLoginInfo();
@@ -96,14 +102,12 @@ public class DayCourseFragment extends BaseFragment implements SwipeRefreshLayou
 
             @Override
             public void onFailure(Throwable error, String content) {
-
             }
 
             @Override
             protected void onSelf() {
-
             }
-        }, loginInfo.getUserId(),weekday);
+        }, loginInfo.getUserId(),loginInfo.getCurrentInstituteIdR(),weekday);
         TaskWorker taskWorker = new TaskWorker(updResultTask);
         mThreadPool.submit(taskWorker);
 
@@ -133,7 +137,7 @@ public class DayCourseFragment extends BaseFragment implements SwipeRefreshLayou
         listView = (ListView) layoutView.findViewById(R.id.class_listview);
         adapter = new CourseDefineListViewAdapter(layoutView.getContext(), infoList, this);
         listView.setAdapter(adapter);
-        query();
+//        query();
     }
 
     @Override
@@ -151,11 +155,40 @@ public class DayCourseFragment extends BaseFragment implements SwipeRefreshLayou
 
     @Override
     public void onRefresh() {
-
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                swipeLayout.setRefreshing(false);
+                query();
+            }
+        }, 500);
     }
 
     @Override
-    public void click(View v) {
+    public void addCourseDefine(View v) {
+        int seq = ((Integer)v.getTag()) + 1;
+        CourseDefineItemInfo courseDefineItemInfo = new CourseDefineItemInfo();
+        courseDefineItemInfo.setWeekDay(weekday);
+        courseDefineItemInfo.setSeq(seq);
+        Intent intent = new Intent(getContext(), AddCourseActivity.class);
+        intent.putExtra("useOnce", false);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("courseDefine", courseDefineItemInfo);
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
 
+    @Override
+    public void click(View v, int opr) {
+        CourseDefineItemInfo courseDefineItemInfo = infoList.get((Integer) v.getTag());
+        if (opr == CommonConstants.OPR_EDIT) {   //编辑
+            Intent intent = new Intent(getContext(), AddCourseActivity.class);
+            intent.putExtra("useOnce", false);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("courseDefine", courseDefineItemInfo);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        } else if (opr == CommonConstants.OPR_DEL) { //删除
+
+        }
     }
 }

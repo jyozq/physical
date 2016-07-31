@@ -21,6 +21,7 @@ import com.straw.lession.physical.async.ITask;
 import com.straw.lession.physical.async.TaskHandler;
 import com.straw.lession.physical.async.TaskResult;
 import com.straw.lession.physical.async.TaskWorker;
+import com.straw.lession.physical.constant.CommonConstants;
 import com.straw.lession.physical.constant.ParamConstant;
 import com.straw.lession.physical.constant.ReqConstant;
 import com.straw.lession.physical.custom.AlertDialogUtil;
@@ -37,6 +38,8 @@ import com.straw.lession.physical.utils.*;
 import com.straw.lession.physical.vo.*;
 
 import com.straw.lession.physical.vo.db.*;
+import com.straw.lession.physical.vo.item.CourseDefineItemInfo;
+
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -76,6 +79,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
     private ImageButton btn_add_course;
     private TextView textView ;
     private ImageButton btn_sync;
+    private ImageButton btn_history;
 
     private TodayFragment todayFragment;
     private CourseFragment courseFragment;
@@ -135,8 +139,10 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         textView = (TextView) findViewById(R.id.textView);
         btn_add_course = (ImageButton) findViewById(R.id.btn_add_course);
         btn_sync = (ImageButton) findViewById(R.id.btn_sync);
+        btn_history = (ImageButton) findViewById(R.id.btn_history);
         btn_back.setVisibility(View.GONE);
         btn_add_course.setVisibility(View.VISIBLE);
+        btn_history.setVisibility(View.GONE);
         spinner = (Spinner) findViewById(R.id.spinner_school);
     }
 
@@ -408,6 +414,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
                 textView.setVisibility(View.GONE);
                 btn_add_course.setVisibility(View.VISIBLE);
                 btn_sync.setVisibility(View.VISIBLE);
+                btn_history.setVisibility(View.GONE);
                 if (todayFragment == null) {
                     todayFragment = new TodayFragment();
                     transaction.add(R.id.fl_content, todayFragment);
@@ -420,7 +427,8 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
                 spinner.setVisibility(View.VISIBLE);
                 textView.setVisibility(View.GONE);
                 btn_add_course.setVisibility(View.VISIBLE);
-                btn_sync.setVisibility(View.VISIBLE);
+                btn_sync.setVisibility(View.GONE);
+                btn_history.setVisibility(View.VISIBLE);
                 if (courseFragment == null) {
                     courseFragment = new CourseFragment();
                     transaction.add(R.id.fl_content, courseFragment);
@@ -434,6 +442,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
                 textView.setVisibility(View.VISIBLE);
                 btn_add_course.setVisibility(View.GONE);
                 btn_sync.setVisibility(View.GONE);
+                btn_history.setVisibility(View.GONE);
                 if (profileFragment == null) {
                     profileFragment = new ProfileFragment();
                     transaction.add(R.id.fl_content, profileFragment);
@@ -446,6 +455,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
                 textView.setVisibility(View.GONE);
                 btn_add_course.setVisibility(View.GONE);
                 btn_sync.setVisibility(View.GONE);
+                btn_history.setVisibility(View.GONE);
                 if (classFragment == null) {
                     classFragment = new ClassFragment();
                     transaction.add(R.id.fl_content, classFragment);
@@ -494,8 +504,10 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
                     AppPreference.saveLoginInfoWithoutDB(loginInfo);
                     if(todayFragment.isVisible()) {
                         todayFragment.query();
-                    }else if(classFragment.isVisible()) {
+                    }else if(classFragment != null && classFragment.isVisible()) {
                         classFragment.query();
+                    }else if(courseFragment != null && courseFragment.isVisible()){
+                        courseFragment.refresh();
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -519,6 +531,8 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         ll_class.setOnClickListener(this);
         btn_add_course.setOnClickListener(this);
         btn_sync.setOnClickListener(this);
+        btn_history.setOnClickListener(this);
+        btn_history.setOnClickListener(this);
     }
 
     private int getSelInstitutePos(Long currentInstituteId) {
@@ -568,9 +582,22 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
                 initFragment(CURRENT_PAGE_CLASS);
                 break;
             case R.id.btn_add_course:
-                startActivity(new Intent(this,AddCourseActivity.class));
+                Intent intent = new Intent(this,AddCourseActivity.class);
+                if(todayFragment.isVisible()) {
+                    intent.putExtra("useOnce", true);
+                }else if(courseFragment.isVisible()){
+                    intent.putExtra("useOnce", false);
+                }
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("courseDefine", new CourseDefineItemInfo());
+                intent.putExtras(bundle);
+                startActivity(intent);
                 break;
             case R.id.btn_sync:
+                startActivity(new Intent(this,UploadDataActivity.class));
+                break;
+            case R.id.btn_history:
+                startActivity(new Intent(this,TemporaryCourseListActivity.class));
                 break;
             default:
                 break;

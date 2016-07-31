@@ -18,20 +18,22 @@ import java.util.Map;
  * Created by straw on 2016/7/30.
  */
 public class InitDayCourseTask extends BaseTask{
-
+    private static final String TAG = "InitDayCourseTask";
     private long teacherId;
+    private long instituteId;
     private int weekday;
 
-    public InitDayCourseTask(Context context, TaskHandler taskHandler, long teacherId, int weekday){
+    public InitDayCourseTask(Context context, TaskHandler taskHandler, long teacherId, long instituteId, int weekday){
         super(context, taskHandler);
         this.teacherId = teacherId;
         this.weekday = weekday;
+        this.instituteId = instituteId;
     }
 
     @Override
     public Object doRun() {
         try {
-            List<CourseDefine> courseDefineList = DBService.getInstance(context).initDayCourseData(teacherId,weekday);
+            List<CourseDefine> courseDefineList = DBService.getInstance(context).initDayCourseData(teacherId,instituteId,weekday);
             assembleData(courseDefineList);
             TaskResult result = new TaskResult();
             result.setResultCode(TaskConstant.SUCCESS_CODE);

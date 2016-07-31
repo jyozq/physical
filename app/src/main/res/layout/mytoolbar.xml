@@ -41,6 +41,12 @@
                 android:background="@color/transparent" android:src="@mipmap/toolbar_upload_cloud"
                 android:layout_marginRight="@dimen/dimen_15dp"
                 android:layout_centerVertical="true" android:layout_alignParentRight="true"/>
+        <ImageButton
+            android:id="@+id/btn_history" android:layout_width="@dimen/dimen_60dp"
+            android:layout_height="@dimen/dimen_60dp"
+            android:background="@color/transparent" android:src="@mipmap/icon_history_course"
+            android:layout_marginRight="@dimen/dimen_15dp"
+            android:layout_centerVertical="true" android:layout_alignParentRight="true"/>
     </RelativeLayout>
 
 </android.support.v7.widget.Toolbar>

@@ -1,9 +1,11 @@
 package com.straw.lession.physical.vo.item;
 
+import java.io.Serializable;
+
 /**
  * Created by straw on 2016/7/30.
  */
-public class CourseDefineItemInfo {
+public class CourseDefineItemInfo implements Serializable{
     public long getCourseDefineId() {
         return courseDefineId;
     }
@@ -76,15 +78,15 @@ public class CourseDefineItemInfo {
         this.classId = classId;
     }
 
-    private long courseDefineId;
+    private long courseDefineId = -1l;
     private String name;
     private String date;
-    private int weekDay;
-    private int seq;
+    private int weekDay = -1;
+    private int seq = -1;
     private String type;
     private String location;
     private String className;
-    private long classId;
+    private long classId = -1l;
 
 
 }

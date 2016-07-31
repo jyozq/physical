@@ -172,11 +172,11 @@ public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayo
             });
         }
         adapter = new UploadListViewAdapter(layoutView.getContext(), infoList, this);
-        query();
+//        query();
         listView.setAdapter(adapter);
     }
 
-    private void query() {
+    public void query() {
         try {
             loginInfo = AppPreference.getLoginInfo();
         } catch (IOException e) {

@@ -56,6 +56,7 @@
     <string name="toolbar_class">班级</string>
     <string name="toolbar_profile">我</string>
     <string name="toolbar_new_class">新建课程</string>
+    <string name="toolbar_edit_class">编辑课程</string>
 
     <string name="btn_start_course">开始上课</string>
     <string name="btn_end_course">下课</string>
@@ -78,4 +79,5 @@
     <string name="btn_submit">提交</string>
     <string name="btn_all_upload">全部上传</string>
     <string name="unmatch">暂未匹配</string>
+    <string name="temporary_coursedefine_label">临时课程</string>
 </resources>

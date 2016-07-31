@@ -45,6 +45,8 @@ public class CourseFragment extends BaseFragment {
     private int currentColor =0xFF5161BC;
     private PagerSlidingTabStrip tabs;
     private MainActivity mContext;
+    private MyPagerAdapter myPagerAdapter;
+    private List<DayCourseFragment> fragmentList = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,11 +58,32 @@ public class CourseFragment extends BaseFragment {
         layoutView = inflater.inflate(R.layout.fragment_course, container, false);
         // Initialize the ViewPager and set an adapter
         ViewPager pager = (ViewPager) layoutView.findViewById(R.id.pager);
-        pager.setAdapter(new MyPagerAdapter(getActivity().getSupportFragmentManager()));
+        for(int i = 0; i < 7; i ++){
+            fragmentList.add(new DayCourseFragment());
+        }
+        myPagerAdapter = new MyPagerAdapter(mContext.getSupportFragmentManager(), fragmentList);
+        pager.setAdapter(myPagerAdapter);
 
         // Bind the tabs to the ViewPager
         tabs = (PagerSlidingTabStrip) layoutView.findViewById(R.id.tabs);
         tabs.setViewPager(pager);
+        tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                DayCourseFragment dayCourseFragment = fragmentList.get(position);
+                dayCourseFragment.query();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         return layoutView;
     }
 
@@ -142,20 +165,22 @@ public class CourseFragment extends BaseFragment {
 //        mThreadPool.execute(asyncHttpClient);
     }
 
+    public void refresh() {
+        for(DayCourseFragment dayCourseFragment:fragmentList){
+            if(dayCourseFragment.isVisible()){
+                dayCourseFragment.query();
+            }
+        }
+    }
+
     public class MyPagerAdapter extends FragmentPagerAdapter {
 
         private final String[] TITLES = { "周一", "周二", "周三", "周四", "周五", "周六", "周日"};
+        private List<DayCourseFragment> fragmentList;
 
-        private DayCourseFragment fragment1;
-        private DayCourseFragment fragment2;
-        private DayCourseFragment fragment3;
-        private DayCourseFragment fragment4;
-        private DayCourseFragment fragment5;
-        private DayCourseFragment fragment6;
-        private DayCourseFragment fragment7;
-
-        public MyPagerAdapter(FragmentManager fm) {
+        public MyPagerAdapter(FragmentManager fm, List<DayCourseFragment> fragmentList) {
             super(fm);
+            this.fragmentList = fragmentList;
         }
 
         @Override
@@ -170,55 +195,33 @@ public class CourseFragment extends BaseFragment {
 
         @Override
         public Fragment getItem(int position) {
-
-//            current_position = position;
-
+            DayCourseFragment dayCourseFragment = fragmentList.get(position);
+            Bundle bundle = new Bundle();
             switch (position) {
                 case 0:
-                    fragment1 = new DayCourseFragment();
-                    Bundle bundle = new Bundle();
                     bundle.putInt("weekday",1);
-                    fragment1.setArguments(bundle);
-                    return fragment1;
+                    break;
                 case 1:
-                    fragment2 = new DayCourseFragment();
-                    bundle = new Bundle();
                     bundle.putInt("weekday",2);
-                    fragment2.setArguments(bundle);
-                    return fragment2;
+                    break;
                 case 2:
-                    fragment3 = new DayCourseFragment();
-                    bundle = new Bundle();
                     bundle.putInt("weekday",3);
-                    fragment3.setArguments(bundle);
-                    return fragment3;
+                    break;
                 case 3:
-                    fragment4 = new DayCourseFragment();
-                    bundle = new Bundle();
                     bundle.putInt("weekday",4);
-                    fragment4.setArguments(bundle);
-                    return fragment4;
+                    break;
                 case 4:
-                    fragment5 = new DayCourseFragment();
-                    bundle = new Bundle();
                     bundle.putInt("weekday",5);
-                    fragment5.setArguments(bundle);
-                    return fragment5;
+                    break;
                 case 5:
-                    fragment6 = new DayCourseFragment();
-                    bundle = new Bundle();
                     bundle.putInt("weekday",6);
-                    fragment6.setArguments(bundle);
-                    return fragment6;
+                    break;
                 case 6:
-                    fragment7 = new DayCourseFragment();
-                    bundle = new Bundle();
                     bundle.putInt("weekday",0);
-                    fragment7.setArguments(bundle);
-                    return fragment7;
-                default:
-                    return null;
+                    break;
             }
+            dayCourseFragment.setArguments(bundle);
+            return dayCourseFragment;
         }
     }
 }

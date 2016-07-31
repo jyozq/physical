@@ -44,13 +44,19 @@ public class SelectClassActivity extends ThreadToolBarBaseActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        query();
+    }
+
+    @Override
     protected void loadDataFromLocal() {
 
     }
 
     @Override
     protected void loadDataFromService() {
-
+        checkTokenInfo();
     }
 
     private void initViews() {
@@ -59,7 +65,10 @@ public class SelectClassActivity extends ThreadToolBarBaseActivity
         listView = (ListView) findViewById(R.id.selclass_listview);
         adapter = new SelClassListViewAdapter(this, infoList, this);
         listView.setAdapter(adapter);
-        checkTokenInfo();
+    }
+
+    private void query() {
+        getDataByNetSate();
     }
 
     @Override
