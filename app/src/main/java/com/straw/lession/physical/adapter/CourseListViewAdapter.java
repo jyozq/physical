@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.constant.CourseStatus;
@@ -36,8 +37,8 @@ public class CourseListViewAdapter extends BaseAdapter implements View.OnClickLi
     }
 
     public class ViewHolder {
-        public TextView textView;
         public Button button;
+        public ImageButton imageButton;
     }
 
     public CourseListViewAdapter(Context context, List<CourseItemInfo> list, Callback callback) {
@@ -76,6 +77,7 @@ public class CourseListViewAdapter extends BaseAdapter implements View.OnClickLi
             convertView = inflater.inflate(R.layout.course_item_listview, null);
             holder = new ViewHolder();
             holder.button = (Button) convertView.findViewById(R.id.btn_start_course);
+            holder.imageButton = (ImageButton) convertView.findViewById(R.id.btn_del_coursedefine);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -93,8 +95,10 @@ public class CourseListViewAdapter extends BaseAdapter implements View.OnClickLi
         TextView type = (TextView) convertView.findViewById(R.id.type);
         type.setText(info.getType() + " " + info.getBindedStudentNum() + "|" + info.getTotalStudentNum());
         holder.button.setOnClickListener(this);
+        holder.imageButton.setOnClickListener(this);
         holder.button.setTag(position);
         holder.button.setText(CourseStatus.getName(info.getStatus()));
+        holder.imageButton.setTag(position);
         return convertView;
     }
 }

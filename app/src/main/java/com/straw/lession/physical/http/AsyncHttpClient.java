@@ -120,6 +120,7 @@ public class AsyncHttpClient implements Runnable {
 	}
 
     private String createGetString (){
+        String result = "";
         try {
             if (basicNameValuePairs == null) {
                 basicNameValuePairs = new ArrayList<BasicNameValuePair>();
@@ -130,7 +131,9 @@ public class AsyncHttpClient implements Runnable {
                 BasicNameValuePair pair = basicNameValuePairs.get(i);
                 post.append("&").append(pair.getName()).append("=").append(pair.getValue());
             }
-            String result = post.toString().replace("test=1&", "");
+            if(Detect.notEmpty(basicNameValuePairs)){
+                result = post.toString().replace("test=1&", "");
+            }
             return result;
         } catch (Exception e) {
             e.printStackTrace();

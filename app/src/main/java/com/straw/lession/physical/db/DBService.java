@@ -9,13 +9,7 @@ import com.straw.lession.physical.utils.AppPreference;
 import com.straw.lession.physical.utils.DateUtil;
 import com.straw.lession.physical.utils.Detect;
 import com.straw.lession.physical.vo.*;
-import com.straw.lession.physical.vo.db.ClassInfo;
-import com.straw.lession.physical.vo.db.Course;
-import com.straw.lession.physical.vo.db.CourseDefine;
-import com.straw.lession.physical.vo.db.Institute;
-import com.straw.lession.physical.vo.db.Student;
-import com.straw.lession.physical.vo.db.StudentDevice;
-import com.straw.lession.physical.vo.db.TeacherInstitute;
+import com.straw.lession.physical.vo.db.*;
 
 import org.greenrobot.greendao.query.DeleteQuery;
 import org.greenrobot.greendao.query.Query;
@@ -43,6 +37,7 @@ public class DBService {
     private CourseDao courseDao;
     private TeacherInstituteDao teacherInstituteDao;
     private StudentDeviceDao studentDeviceDao;
+    private TeacherDao teacherDao;
 
     private DBService() {
         QueryBuilder.LOG_SQL = true;
@@ -63,6 +58,7 @@ public class DBService {
             instance.courseDao = instance.mDaoSession.getCourseDao();
             instance.teacherInstituteDao = instance.mDaoSession.getTeacherInstituteDao();
             instance.studentDeviceDao = instance.mDaoSession.getStudentDeviceDao();
+            instance.teacherDao = instance.mDaoSession.getTeacherDao();
         }
         return instance;
     }
@@ -233,7 +229,10 @@ public class DBService {
     }
 
     private void refineCourseDefineData(List<CourseDefineVo> courseDefineVos, long instituteId) throws Exception {
-        List<CourseDefine> courseDefines = courseDefineDao.queryBuilder().where(CourseDefineDao.Properties.InstituteIdR.eq(instituteId)).list();
+        LoginInfoVo loginInfoVO = AppPreference.getLoginInfo();
+        List<CourseDefine> courseDefines = courseDefineDao.queryBuilder()
+                .where(CourseDefineDao.Properties.InstituteIdR.eq(instituteId),
+                        CourseDefineDao.Properties.TeacherIdR.eq(loginInfoVO.getUserId())).list();
         for(CourseDefineVo courseDefineVo : courseDefineVos){
             boolean isExistInSQLite = false;
             for(CourseDefine courseDefine : courseDefines){
@@ -267,7 +266,6 @@ public class DBService {
                 newCourseDefine.setWeekDay(courseDefineVo.getWeekday());
                 newCourseDefine.setCourseDefineIdR(courseDefineVo.getCourseDefineId());
                 newCourseDefine.setIsDel(IS_DEL_NOT);
-                LoginInfoVo loginInfoVO = AppPreference.getLoginInfo();
                 newCourseDefine.setTeacherIdR(loginInfoVO.getUserId());
                 courseDefineDao.insert(newCourseDefine);
             }
@@ -321,11 +319,23 @@ public class DBService {
         QueryBuilder qb = courseDao.queryBuilder();
         WhereCondition wc = qb.and(CourseDao.Properties.TeacherIdR.eq(teacherId),
                                     CourseDao.Properties.InstituteIdR.eq(currentInstituteIdR),
-                                    qb.or(qb.and(CourseDao.Properties.Weekday.eq(DateUtil.getCurrentWeekday()),
-                                                CourseDao.Properties.UseOnce.eq(0)),
-                                            qb.and(CourseDao.Properties.Date.eq(new Date()),
-                                                    CourseDao.Properties.UseOnce.eq(1))));
-        return qb.where(wc).list();
+                                    CourseDao.Properties.Weekday.eq(DateUtil.getCurrentWeekday()),
+                                    CourseDao.Properties.UseOnce.eq(0));
+        List<Course> courses = qb.where(wc).list();
+
+        qb = courseDao.queryBuilder();
+        wc = qb.and(CourseDao.Properties.TeacherIdR.eq(teacherId),
+                CourseDao.Properties.InstituteIdR.eq(currentInstituteIdR),
+                CourseDao.Properties.UseOnce.eq(1));
+
+        List<Course> tempCourses = qb.where(wc).list();
+
+        for(Course course : tempCourses){
+            if(DateUtil.dateToStr(course.getDate()).equals(DateUtil.dateToStr(new Date()))){
+                courses.add(course);
+            }
+        }
+        return courses;
     }
 
     public List<CourseDefine> getUnStartedTodayCourses(long teacherId, long currentInstituteIdR) {
@@ -336,12 +346,17 @@ public class DBService {
                                                 CourseDefineDao.Properties.UseOnce.eq(0));
         List<CourseDefine> courseDefines = qb.where(wc).list();
 
+        qb = courseDefineDao.queryBuilder();
         wc = qb.and(CourseDefineDao.Properties.TeacherIdR.eq(teacherId),
                     CourseDefineDao.Properties.InstituteIdR.eq(currentInstituteIdR),
-                    CourseDefineDao.Properties.Date.eq(new Date()),
                     CourseDefineDao.Properties.UseOnce.eq(1));
 
-        courseDefines.addAll(qb.where(wc).list());
+        List<CourseDefine> tempCourseDefines = qb.where(wc).list();
+        for(CourseDefine courseDefine : tempCourseDefines){
+            if(DateUtil.dateToStr(courseDefine.getDate()).equals(DateUtil.dateToStr(new Date()))){
+                courseDefines.add(courseDefine);
+            }
+        }
         return courseDefines;
     }
 
@@ -475,5 +490,37 @@ public class DBService {
 
     public void updateCourseDefine(CourseDefine courseDefine) {
         courseDefineDao.update(courseDefine);
+    }
+
+    public void saveLoginInfoToDB(LoginInfoVo loginInfo) {
+        QueryBuilder qb = teacherDao.queryBuilder()
+                .where(TeacherDao.Properties.TeacherIdR.eq(loginInfo.getUserId()));
+        if(qb.count() > 0){
+            DeleteQuery deleteQuery = qb.buildDelete();
+            deleteQuery.executeDeleteWithoutDetachingEntities();
+        }
+        Teacher teacher = new Teacher();
+        teacher.setLast_login_time(new Date());
+        teacher.setMobile(loginInfo.getMobile());
+        teacher.setName(loginInfo.getPersonName());
+        teacher.setTeacherIdR(loginInfo.getUserId());
+        teacherDao.insert(teacher);
+    }
+
+    public void updateTeacherInfo(Teacher teacher){
+        teacherDao.update(teacher);
+    }
+
+    public Teacher getTeacherById(long userId) {
+        return teacherDao.load(userId);
+    }
+
+    public void delteCourseDefine(long courseDefineId, long userId) {
+        List<CourseDefine> courseDefines = courseDefineDao.queryBuilder()
+                                                .where(CourseDefineDao.Properties.CourseDefineIdR.eq(courseDefineId),
+                                                        CourseDefineDao.Properties.TeacherIdR.eq(userId)).list();
+        if(Detect.notEmpty(courseDefines)){
+            courseDefineDao.delete(courseDefines.get(0));
+        }
     }
 }

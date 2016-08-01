@@ -74,6 +74,8 @@ public class ClassListViewAdapter extends BaseAdapter implements View.OnClickLis
 
         TextView className = (TextView) convertView.findViewById(R.id.class_item_name);
         className.setText(info.getClassName());
+        TextView totalNum = (TextView) convertView.findViewById(R.id.class_total_num);
+        totalNum.setText("总人数：" + info.getTotalNum() + "人");
         holder.linearLayout.setOnClickListener(this);
         holder.linearLayout.setTag(position);
         return convertView;

@@ -9,4 +9,5 @@ public class ParamConstant {
     public final static String RESULT_MSG = "resultMsg";
     public static final String USER_TOKEN = "userToken";
     public static final String USER_INFO = "userInfo";
+    public static final String TOKEN_EXPIRE_TIME = "tokenExpireTime";
 }

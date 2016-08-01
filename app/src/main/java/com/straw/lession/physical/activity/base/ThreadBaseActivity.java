@@ -191,50 +191,60 @@ public abstract class ThreadBaseActivity extends AppCompatActivity {
         }
     }
 
-    public void checkTokenInfo(final TokenInfo tokenInfo) {
-        if(System.currentTimeMillis() - tokenInfo.getTimeStamp() > 60*1000){
-            String URL = ReqConstant.URL_BASE + "/auth/token/refresh";
-            showProgressDialog(getResources().getString(R.string.loading));
-            AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.GET, URL ,"" , null, new AsyncHttpResponseHandler() {
-                @Override
-                public void onSuccess(HttpResponseBean httpResponseBean) {
-                    super.onSuccess(httpResponseBean);
-                    try{
-                        hideProgressDialog();
-                        JSONObject contentObject = new JSONObject(httpResponseBean.content);
-                        String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
-                        if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){ //登录成功
-                            JSONObject dataObject = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
-                            String newToken = dataObject.getString("newToken");
-                            tokenInfo.setToken(newToken);
-                            tokenInfo.setTimeStamp(System.currentTimeMillis());
-                            AppPreference.saveToken(tokenInfo);
-                            doAfterGetToken();
-                        }else {//登录失败
-                            String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);
-                            AlertDialogUtil.showAlertWindow(mContext, -1, errorMessage , null );
-                            throw new IllegalStateException(errorMessage);
+    public void checkTokenInfo() {
+        try {
+            final TokenInfo tokenInfo = AppPreference.getUserToken();
+            if (System.currentTimeMillis() - tokenInfo.getTimeStamp() > 60 * 1000) {
+                String URL = ReqConstant.URL_BASE + "/auth/token/refresh";
+                showProgressDialog(getResources().getString(R.string.loading));
+                AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.GET, URL, "", tokenInfo.getToken(), new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(HttpResponseBean httpResponseBean) {
+                        super.onSuccess(httpResponseBean);
+                        try {
+                            hideProgressDialog();
+                            JSONObject contentObject = new JSONObject(httpResponseBean.content);
+                            String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
+                            if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS)) { //登录成功
+                                JSONObject dataObject = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
+                                String newToken = dataObject.getString(ParamConstant.USER_TOKEN);
+                                String expireTime = dataObject.getString(ParamConstant.TOKEN_EXPIRE_TIME);
+                                tokenInfo.setToken(newToken);
+                                tokenInfo.setTimeStamp(System.currentTimeMillis());
+                                tokenInfo.setTokenExpireTime(expireTime);
+                                AppPreference.saveToken(tokenInfo);
+                                doAfterGetToken();
+                            } else {//登录失败
+                                String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);
+                                AlertDialogUtil.showAlertWindow(mContext, -1, errorMessage, null);
+                                throw new IllegalStateException(errorMessage);
+                            }
+                        } catch (Exception e) {
+                            hideProgressDialog();
+                            showErrorMsgInfo(e.toString());
+                            e.printStackTrace();
+                            throw new IllegalStateException(e.toString());
                         }
-                    }catch(Exception e){
-                        hideProgressDialog();
-                        showErrorMsgInfo(e.toString());
-                        e.printStackTrace();
-                        throw new IllegalStateException(e.toString());
                     }
-                }
-                @Override
-                public void onFailure(Throwable error, String content) {
-                    super.onFailure(error, content);
-                    hideProgressDialog();
-                    String errorContent = Utils.parseErrorMessage(mContext, content);
-                    showErrorMsgInfo(errorContent);
-                    Log.e(TAG, content);
-                    throw new IllegalStateException(errorContent);
-                }
-            });
-            mThreadPool.execute(asyncHttpClient);
-        }else{
-            doAfterGetToken();
+
+                    @Override
+                    public void onFailure(Throwable error, String content) {
+                        super.onFailure(error, content);
+                        hideProgressDialog();
+                        String errorContent = Utils.parseErrorMessage(mContext, content);
+                        showErrorMsgInfo(errorContent);
+                        Log.e(TAG, content);
+                        throw new IllegalStateException(errorContent);
+                    }
+                });
+                mThreadPool.execute(asyncHttpClient);
+            } else {
+                doAfterGetToken();
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+            Log.e(TAG,"",ex);
+            showErrorMsgInfo("获取token出错");
         }
     }
 

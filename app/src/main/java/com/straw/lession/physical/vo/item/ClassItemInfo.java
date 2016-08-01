@@ -11,6 +11,7 @@ public class ClassItemInfo implements Serializable{
     private long instituteId;
     private long instituteIdR;
     private String className;
+    private int totalNum;
 
     public String getClassName() {
         return className;
@@ -50,5 +51,13 @@ public class ClassItemInfo implements Serializable{
 
     public void setInstituteIdR(long instituteIdR) {
         this.instituteIdR = instituteIdR;
+    }
+
+    public int getTotalNum() {
+        return totalNum;
+    }
+
+    public void setTotalNum(int totalNum) {
+        this.totalNum = totalNum;
     }
 }

@@ -163,7 +163,8 @@ public class LoginActivity extends ThreadBaseActivity {
 
                         JSONObject dataObject = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
                         String userToken = dataObject.getString(ParamConstant.USER_TOKEN);
-                        AppPreference.saveToken(new TokenInfo(userToken));
+                        String tokenExpireTime = dataObject.getString(ParamConstant.TOKEN_EXPIRE_TIME);
+                        AppPreference.saveToken(new TokenInfo(userToken,tokenExpireTime));
                         JSONObject userObject = dataObject.getJSONObject(ParamConstant.USER_INFO);
                         String nowTime = TimeUtils.getCurrentDateStr2();
                         Gson gson = new Gson();

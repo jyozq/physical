@@ -53,7 +53,7 @@ import java.util.List;
 /**
  * Created by straw on 2016/7/28.
  */
-public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,UploadListViewAdapter.Callback{
+public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,UploadListViewAdapter.Callback,View.OnClickListener{
     private static final String TAG = "UploadDataFragment";
     private LoginInfoVo loginInfo;
     private TokenInfo tokenInfo;
@@ -65,7 +65,7 @@ public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayo
     private List<UploadDataItemInfo> infoList = new ArrayList<UploadDataItemInfo>();
     private UploadDataActivity mContext;
     private Button btn_upload_all;
-    private UploadDataItemInfo clickUploadDataItemInfo;
+    private List<UploadDataItemInfo> readyToUploadDatas = new ArrayList<UploadDataItemInfo>();
 
     @Override
     public void onResume() {
@@ -94,13 +94,15 @@ public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayo
             return;
         }
 
-        long courseId = clickUploadDataItemInfo.getCourseId();
-        Course course = DBService.getInstance(getContext()).getUnUploadCourseById(courseId, loginInfo.getUserId());
-        List<StudentDevice> studentDevices = DBService.getInstance(getContext())
-                .getUnUploadStudentDeviceByCourse(courseId,loginInfo.getUserId());
-        UploadCourseDataVo uploadCourseDataVo = assembleUploadCourseData(course, studentDevices);
         List<UploadCourseDataVo> uploadCourseDataVos = new ArrayList<>();
-        uploadCourseDataVos.add(uploadCourseDataVo);
+        for(UploadDataItemInfo uploadDataItemInfo : readyToUploadDatas){
+            long courseId = uploadDataItemInfo.getCourseId();
+            Course course = DBService.getInstance(getContext()).getUnUploadCourseById(courseId, loginInfo.getUserId());
+            List<StudentDevice> studentDevices = DBService.getInstance(getContext())
+                    .getUnUploadStudentDeviceByCourse(courseId,loginInfo.getUserId());
+            UploadCourseDataVo uploadCourseDataVo = assembleUploadCourseData(course, studentDevices);
+            uploadCourseDataVos.add(uploadCourseDataVo);
+        }
         UploadCourseDataHolder uploadCourseDataHolder = new UploadCourseDataHolder();
         uploadCourseDataHolder.setCourseData(uploadCourseDataVos);
 
@@ -228,7 +230,15 @@ public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayo
 
     @Override
     public void click(View v) {
-        clickUploadDataItemInfo = infoList.get((Integer) v.getTag());
+        switch (v.getId()){
+            case R.id.btn_upload:
+                UploadDataItemInfo clickUploadDataItemInfo = infoList.get((Integer) v.getTag());
+                readyToUploadDatas.add(clickUploadDataItemInfo);
+                break;
+            case R.id.btn_upload_all:
+                readyToUploadDatas.addAll(infoList);
+                break;
+        }
         checkTokenInfo();
     }
 

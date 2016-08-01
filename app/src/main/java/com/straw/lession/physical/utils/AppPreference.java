@@ -3,6 +3,7 @@ package com.straw.lession.physical.utils;
 import android.content.Context;
 import com.anupcowkur.reservoir.Reservoir;
 import com.straw.lession.physical.app.MainApplication;
+import com.straw.lession.physical.db.DBService;
 import com.straw.lession.physical.db.DaoSession;
 import com.straw.lession.physical.db.TeacherDao;
 import com.straw.lession.physical.vo.LoginInfoVo;
@@ -22,19 +23,7 @@ public class AppPreference {
     public static final String TOKEN_INFO_KEY = "tokeninfo";
 
     public static void saveLoginInfoToDB(Context context, final LoginInfoVo loginInfo) throws Exception {
-        DaoSession session = MainApplication.getInstance().getDaoSession(context);
-        TeacherDao teacherDao = session.getTeacherDao();
-        QueryBuilder qb = teacherDao.queryBuilder()
-                .where(TeacherDao.Properties.TeacherIdR.eq(loginInfo.getUserId()));
-        if(qb.count() > 0){
-            DeleteQuery deleteQuery = qb.buildDelete();
-            deleteQuery.executeDeleteWithoutDetachingEntities();
-        }
-        Teacher teacher = new Teacher();
-        teacher.setLast_login_time(new Date());
-        teacher.setMobile(loginInfo.getMobile());
-        teacher.setName(loginInfo.getPersonName());
-        teacher.setTeacherIdR(loginInfo.getUserId());
+        DBService.getInstance(context).saveLoginInfoToDB(loginInfo);
         Reservoir.put(LOGIN_INFO_KEY, loginInfo);
     }
 

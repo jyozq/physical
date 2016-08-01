@@ -156,6 +156,7 @@ public class ClassFragment extends BaseFragment implements SwipeRefreshLayout.On
         classItemInfo.setClassName(classInfo.getName());
         classItemInfo.setInstituteId(classInfo.getInstituteIdR());
         classItemInfo.setInstituteIdR(classInfo.getInstituteIdR());
+        classItemInfo.setTotalNum(classInfo.getTotalNum());
         return classItemInfo;
     }
 

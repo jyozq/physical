@@ -148,8 +148,17 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
 
     @Override
     protected void doAfterGetToken() {
+        try {
+            tokenInfo = AppPreference.getUserToken();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e(TAG,"",e);
+            Toast.makeText(this,"获取TOKEN出错",Toast.LENGTH_SHORT).show();
+            return;
+        }
         //获取数据并更新本地库
         getInstituteCoursedefineClassStudentInfo();
+
     }
 
     private void goOnLoad(){
@@ -161,15 +170,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
 
     @Override
     protected void loadDataFromService() {
-        try {
-            tokenInfo = AppPreference.getUserToken();
-            checkTokenInfo(tokenInfo);
-        } catch (IOException e) {
-            Log.e(TAG,"获取token出错",e);
-            e.printStackTrace();
-            showErrorMsgInfo("获取token出错");
-            return;
-        }
+        checkTokenInfo();
     }
 
     private void getInstituteCoursedefineClassStudentInfo() {
@@ -419,7 +420,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
                     todayFragment = new TodayFragment();
                     transaction.add(R.id.fl_content, todayFragment);
                 } else {
-                    todayFragment.query();
+//                    todayFragment.query();
                     transaction.show(todayFragment);
                 }
                 break;
@@ -460,7 +461,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
                     classFragment = new ClassFragment();
                     transaction.add(R.id.fl_content, classFragment);
                 } else {
-                    classFragment.query();
+//                    classFragment.query();
                     transaction.show(classFragment);
                 }
                 break;

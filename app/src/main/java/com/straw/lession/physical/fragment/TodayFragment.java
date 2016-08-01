@@ -1,5 +1,6 @@
 package com.straw.lession.physical.fragment;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -18,6 +19,7 @@ import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.StartCourseActivity;
 import com.straw.lession.physical.adapter.CourseListViewAdapter;
 import com.straw.lession.physical.constant.CourseStatus;
+import com.straw.lession.physical.custom.AlertDialogUtil;
 import com.straw.lession.physical.custom.swipemenulistview.SwipeMenu;
 import com.straw.lession.physical.custom.swipemenulistview.SwipeMenuCreator;
 import com.straw.lession.physical.custom.swipemenulistview.SwipeMenuItem;
@@ -46,9 +48,10 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
     private static final String TAG = "TodayFragment";
     private View layoutView;
     private SwipeRefreshLayout swipeLayout;
-    private SwipeMenuListView listView;
+    private ListView listView;
     private CourseListViewAdapter adapter;
     private List<CourseItemInfo> infoList = new ArrayList<CourseItemInfo>();
+    private Dialog dialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,8 +94,8 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
         swipeLayout.setOnRefreshListener(this);
         listView = (SwipeMenuListView) layoutView.findViewById(R.id.listview);
         adapter = new CourseListViewAdapter(layoutView.getContext(), infoList, this);
-        initSwiperMenu();
-        query();
+//        initSwiperMenu();
+//        query();
         listView.setAdapter(adapter);
     }
 
@@ -167,26 +170,26 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
             }
         };
         // set creator
-        listView.setMenuCreator(creator);
-
-        // step 2. listener item click event
-        listView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
-            @Override
-            public void onMenuItemClick(int position, SwipeMenu menu, int index) {
-                CourseItemInfo courseItemInfo = infoList.get(position);
-                switch (index) {
-                    case 0:
-                        // open
-                        break;
-                    case 1:
-                        // delete
-//					delete(item);
-//                        mAppList.remove(position);
-//                        mAdapter.notifyDataSetChanged();
-                        break;
-                }
-            }
-        });
+//        listView.setMenuCreator(creator);
+//
+//        // step 2. listener item click event
+//        listView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+//            @Override
+//            public void onMenuItemClick(int position, SwipeMenu menu, int index) {
+//                CourseItemInfo courseItemInfo = infoList.get(position);
+//                switch (index) {
+//                    case 0:
+//                        // open
+//                        break;
+//                    case 1:
+//                        // delete
+////					delete(item);
+////                        mAppList.remove(position);
+////                        mAdapter.notifyDataSetChanged();
+//                        break;
+//                }
+//            }
+//        });
     }
 
     private int dp2px(int dp) {
@@ -207,17 +210,35 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
 
     @Override
     public void click(View v) {
-//        Toast.makeText(
-//                getContext(),
-//                "listview的内部的按钮被点击了！，位置是-->" + (Integer) v.getTag() + ",内容是-->"
-//                        + infoList.get((Integer) v.getTag()),
-//                Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent();
-        intent.setClass(getContext() , StartCourseActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("course", infoList.get((Integer) v.getTag()));
-        intent.putExtras(bundle);
-        getContext().startActivity(intent);
+        final CourseItemInfo selCourseItemInfo = infoList.get((Integer) v.getTag());
+        switch (v.getId()){
+            case R.id.btn_start_course:
+                Intent intent = new Intent();
+                intent.setClass(getContext() , StartCourseActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("course", selCourseItemInfo);
+                intent.putExtras(bundle);
+                getContext().startActivity(intent);
+                break;
+            case R.id.btn_del_coursedefine:
+                dialog = AlertDialogUtil.showAlertWindow2Button(getContext(), "确定要删除吗？", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {   //cancel
+                        dialog.dismiss();
+                    }
+                }, new View.OnClickListener() {     //ok
+                    @Override
+                    public void onClick(View v) {
+                        deleteTodayCourse(selCourseItemInfo);
+                        dialog.dismiss();
+                    }
+                });
+                break;
+        }
+    }
+
+    private void deleteTodayCourse(CourseItemInfo selCourseItemInfo) {
+
     }
 
     public void query() {

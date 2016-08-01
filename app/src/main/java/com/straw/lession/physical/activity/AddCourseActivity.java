@@ -24,11 +24,7 @@ import com.straw.lession.physical.constant.ParamConstant;
 import com.straw.lession.physical.constant.ReqConstant;
 import com.straw.lession.physical.custom.ActionSheetTwoColumnGridDialog;
 import com.straw.lession.physical.custom.AlertDialogUtil;
-import com.straw.lession.physical.db.ClassInfoDao;
-import com.straw.lession.physical.db.CourseDefineDao;
 import com.straw.lession.physical.db.DBService;
-import com.straw.lession.physical.db.DaoSession;
-import com.straw.lession.physical.dictionary.CourseDictionary;
 import com.straw.lession.physical.http.AsyncHttpClient;
 import com.straw.lession.physical.http.AsyncHttpResponseHandler;
 import com.straw.lession.physical.http.HttpResponseBean;
@@ -162,15 +158,19 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
                 dateTxt.setText(courseDefineItemInfo.getDate());
             }else{
                 if(courseDefineItemInfo.getWeekDay() > 0){
-                    weekdayTxt.setText(weekdayArr[getWeekdayPos(courseDefineItemInfo.getWeekDay())]);
+                    int pos = getWeekdayPos(courseDefineItemInfo.getWeekDay());
+                    weekdayTxt.setText(weekdayArr[pos]);
                     weekdayTxt.setTag(courseDefineItemInfo.getWeekDay());
                     weekdayTxt.setOnClickListener(null);
+                    weekdaySelectionIndex = pos;
                 }
             }
             if(courseDefineItemInfo.getSeq() > 0) {
-                seqTxt.setText(String.valueOf(courseDefineItemInfo.getSeq()));
+                int pos = getSeqPos(courseDefineItemInfo.getSeq());
+                seqTxt.setText(seqArr[pos]);
                 seqTxt.setTag(courseDefineItemInfo.getSeq());
                 seqTxt.setOnClickListener(null);
+                seqSelectionIndex = pos;
             }
             classTxt.setText(courseDefineItemInfo.getClassName());
             selectClassId = courseDefineItemInfo.getClassId();
@@ -178,6 +178,15 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
             typeTxt.setText(courseDefineItemInfo.getType());
             locationTxt.setText(courseDefineItemInfo.getLocation());
         }
+    }
+
+    private int getSeqPos(int seq) {
+        for(int i= 0; i< seq_val_arr.length; i ++){
+            if(seq == seq_val_arr[i]){
+                return i;
+            }
+        }
+        return 0;
     }
 
     private int getWeekdayPos(int weekDay) {
@@ -323,7 +332,7 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
                 Toast.makeText(mContext, "请选择时间", Toast.LENGTH_LONG).show();
                 return;
             } else {
-                weekday = Integer.parseInt((String) weekdayTxt.getTag());
+                weekday = (Integer)weekdayTxt.getTag();
                 courseDefine.setWeekDay(weekday);
             }
         }

@@ -6,10 +6,12 @@ package com.straw.lession.physical.vo;
 public class TokenInfo {
     private String token;
     private long timeStamp;
+    private String tokenExpireTime;
 
-    public TokenInfo(String userToken){
+    public TokenInfo(String userToken, String tokenExpireTime){
         this.token = userToken;
         timeStamp = System.currentTimeMillis();
+        this.tokenExpireTime = tokenExpireTime;
     }
 
     public long getTimeStamp() {
@@ -26,5 +28,13 @@ public class TokenInfo {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getTokenExpireTime() {
+        return tokenExpireTime;
+    }
+
+    public void setTokenExpireTime(String tokenExpireTime) {
+        this.tokenExpireTime = tokenExpireTime;
     }
 }

@@ -27,15 +27,18 @@
         <Button android:id="@+id/login"
             android:layout_width="fill_parent" android:textColor="@color/white" android:textSize="@dimen/font_size_20"
             android:layout_height="@dimen/dimen_50dp" android:background="@drawable/button_blue_selector" android:text="@string/login_text"
-            android:layout_marginTop="@dimen/dimen_20dp" android:layout_marginLeft="@dimen/dimen_20dp" android:layout_marginRight="@dimen/dimen_20dp" />
+            android:layout_marginTop="@dimen/dimen_30dp" android:layout_marginLeft="@dimen/dimen_20dp" android:layout_marginRight="@dimen/dimen_20dp" />
 
         <Button android:id="@+id/reg"
             android:layout_width="fill_parent" android:textColor="@drawable/font_text_selector" android:textSize="@dimen/font_size_20"
             android:layout_height="@dimen/dimen_50dp" android:background="@drawable/button_reg_selector" android:text="@string/reg_text"
-            android:layout_marginTop="@dimen/dimen_20dp" android:layout_marginLeft="@dimen/dimen_20dp" android:layout_marginRight="@dimen/dimen_20dp" />
+            android:layout_marginTop="@dimen/dimen_20dp" android:layout_marginLeft="@dimen/dimen_20dp" android:layout_marginRight="@dimen/dimen_20dp"
+                android:visibility="gone"
+        />
 
     <TextView android:id="@+id/forget" android:layout_gravity="center" android:gravity="center"  android:layout_marginTop="@dimen/dimen_20dp"
         android:layout_width="wrap_content" android:textColor="@color/gray_959595" android:textSize="@dimen/font_size_16"
-        android:layout_height="@dimen/dimen_50dp" android:background="@color/transparent" android:text="@string/forget_text"  />
+        android:layout_height="@dimen/dimen_50dp" android:background="@color/transparent" android:text="@string/forget_text"
+              android:visibility="gone"/>
 
 </LinearLayout>
