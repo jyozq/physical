@@ -399,6 +399,8 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
     @Override
     protected void loadDataFromLocal() {
         institutes = DBService.getInstance(this).getInsituteDataByTeacher(loginInfo.getUserId());
+        initInstituteSpinner();
+        goOnLoad();
     }
 
     private void initFragment(int index) {

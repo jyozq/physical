@@ -4,10 +4,10 @@ package com.straw.lession.physical.constant;
  * Created by straw on 2016/7/31.
  */
 public class CommonConstants {
-    public static final String COURSEDEFINE_ID = "courseDefineId";
-
     public static final int OPR_EDIT = 0;
     public static final int OPR_DEL = 1;
+
+    public static final long EXPIRE_DURATION = 60*1000;
 
     public enum UseOnce {
         USE_ONCE_NOT(0,"非临时课程"),

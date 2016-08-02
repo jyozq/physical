@@ -14,7 +14,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.straw.lession.physical.R;
+import com.straw.lession.physical.activity.LoginActivity;
 import com.straw.lession.physical.app.MainApplication;
+import com.straw.lession.physical.constant.CommonConstants;
 import com.straw.lession.physical.constant.ParamConstant;
 import com.straw.lession.physical.constant.ReqConstant;
 import com.straw.lession.physical.crouton.Crouton;
@@ -24,15 +26,12 @@ import com.straw.lession.physical.http.AsyncHttpClient;
 import com.straw.lession.physical.http.AsyncHttpResponseHandler;
 import com.straw.lession.physical.http.HttpResponseBean;
 import com.straw.lession.physical.utils.AppPreference;
+import com.straw.lession.physical.utils.DateUtil;
 import com.straw.lession.physical.utils.ResponseParseUtils;
 import com.straw.lession.physical.utils.Utils;
 import com.straw.lession.physical.vo.TokenInfo;
 
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -194,52 +193,63 @@ public abstract class ThreadBaseActivity extends AppCompatActivity {
     public void checkTokenInfo() {
         try {
             final TokenInfo tokenInfo = AppPreference.getUserToken();
-            if (System.currentTimeMillis() - tokenInfo.getTimeStamp() > 60 * 1000) {
-                String URL = ReqConstant.URL_BASE + "/auth/token/refresh";
-                showProgressDialog(getResources().getString(R.string.loading));
-                AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.GET, URL, "", tokenInfo.getToken(), new AsyncHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(HttpResponseBean httpResponseBean) {
-                        super.onSuccess(httpResponseBean);
-                        try {
-                            hideProgressDialog();
-                            JSONObject contentObject = new JSONObject(httpResponseBean.content);
-                            String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
-                            if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS)) { //登录成功
-                                JSONObject dataObject = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
-                                String newToken = dataObject.getString(ParamConstant.USER_TOKEN);
-                                String expireTime = dataObject.getString(ParamConstant.TOKEN_EXPIRE_TIME);
-                                tokenInfo.setToken(newToken);
-                                tokenInfo.setTimeStamp(System.currentTimeMillis());
-                                tokenInfo.setTokenExpireTime(expireTime);
-                                AppPreference.saveToken(tokenInfo);
-                                doAfterGetToken();
-                            } else {//登录失败
-                                String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);
-                                AlertDialogUtil.showAlertWindow(mContext, -1, errorMessage, null);
-                                throw new IllegalStateException(errorMessage);
+            long tokenExpireTime = DateUtil.formatStrToDateTime(tokenInfo.getTokenExpireTime()).getTime();
+            long nowTime = System.currentTimeMillis();
+            if(nowTime >= tokenExpireTime){
+                AppPreference.logout();
+                MainApplication.getInstance().exit();
+                startActivity(new Intent(this, LoginActivity.class));
+            }else{
+                long duration = tokenExpireTime - nowTime;
+                if(duration <= CommonConstants.EXPIRE_DURATION){
+                    String URL = ReqConstant.URL_BASE + "/auth/token/refresh";
+                    showProgressDialog(getResources().getString(R.string.loading));
+                    AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.GET, URL, "", tokenInfo.getToken(), new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(HttpResponseBean httpResponseBean) {
+                            super.onSuccess(httpResponseBean);
+                            try {
+                                hideProgressDialog();
+                                JSONObject contentObject = new JSONObject(httpResponseBean.content);
+                                String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
+                                if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS)) { //登录成功
+                                    JSONObject dataObject = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
+                                    String newToken = dataObject.getString(ParamConstant.USER_TOKEN);
+                                    String expireTime = dataObject.getString(ParamConstant.TOKEN_EXPIRE_TIME);
+                                    tokenInfo.setToken(newToken);
+                                    tokenInfo.setTimeStamp(System.currentTimeMillis());
+                                    tokenInfo.setTokenExpireTime(expireTime);
+                                    Log.i(TAG,"token:"+newToken);
+                                    Log.i(TAG,"expireTime:"+expireTime);
+                                    AppPreference.saveToken(tokenInfo);
+                                    doAfterGetToken();
+                                } else {//登录失败
+                                    String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);
+                                    AlertDialogUtil.showAlertWindow(mContext, -1, errorMessage, null);
+                                    throw new IllegalStateException(errorMessage);
+                                }
+                            } catch (Exception e) {
+                                hideProgressDialog();
+                                showErrorMsgInfo(e.toString());
+                                e.printStackTrace();
+                                throw new IllegalStateException(e.toString());
                             }
-                        } catch (Exception e) {
-                            hideProgressDialog();
-                            showErrorMsgInfo(e.toString());
-                            e.printStackTrace();
-                            throw new IllegalStateException(e.toString());
                         }
-                    }
 
-                    @Override
-                    public void onFailure(Throwable error, String content) {
-                        super.onFailure(error, content);
-                        hideProgressDialog();
-                        String errorContent = Utils.parseErrorMessage(mContext, content);
-                        showErrorMsgInfo(errorContent);
-                        Log.e(TAG, content);
-                        throw new IllegalStateException(errorContent);
-                    }
-                });
-                mThreadPool.execute(asyncHttpClient);
-            } else {
-                doAfterGetToken();
+                        @Override
+                        public void onFailure(Throwable error, String content) {
+                            super.onFailure(error, content);
+                            hideProgressDialog();
+                            String errorContent = Utils.parseErrorMessage(mContext, content);
+                            showErrorMsgInfo(errorContent);
+                            Log.e(TAG, content);
+                            throw new IllegalStateException(errorContent);
+                        }
+                    });
+                    mThreadPool.execute(asyncHttpClient);
+                } else {
+                    doAfterGetToken();
+                }
             }
         }catch (Exception ex){
             ex.printStackTrace();

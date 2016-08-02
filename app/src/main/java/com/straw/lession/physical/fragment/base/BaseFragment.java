@@ -12,7 +12,9 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import com.straw.lession.physical.R;
+import com.straw.lession.physical.activity.LoginActivity;
 import com.straw.lession.physical.app.MainApplication;
+import com.straw.lession.physical.constant.CommonConstants;
 import com.straw.lession.physical.constant.ParamConstant;
 import com.straw.lession.physical.constant.ReqConstant;
 import com.straw.lession.physical.custom.AlertDialogUtil;
@@ -20,6 +22,7 @@ import com.straw.lession.physical.http.AsyncHttpClient;
 import com.straw.lession.physical.http.AsyncHttpResponseHandler;
 import com.straw.lession.physical.http.HttpResponseBean;
 import com.straw.lession.physical.utils.AppPreference;
+import com.straw.lession.physical.utils.DateUtil;
 import com.straw.lession.physical.utils.ResponseParseUtils;
 import com.straw.lession.physical.utils.Utils;
 import com.straw.lession.physical.vo.TokenInfo;
@@ -138,42 +141,55 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     public void checkTokenInfo() {
         try {
             final TokenInfo tokenInfo = AppPreference.getUserToken();
-            if(System.currentTimeMillis() - tokenInfo.getTimeStamp() > 20*60*60*1000){
-                String URL = ReqConstant.URL_BASE + "/auth/token/refresh";
-                AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.GET, URL ,"" , null, new AsyncHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(HttpResponseBean httpResponseBean) {
-                        super.onSuccess(httpResponseBean);
-                        try{
-                            JSONObject contentObject = new JSONObject(httpResponseBean.content);
-                            String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
-                            if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){
-                                JSONObject dataObject = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
-                                String newToken = dataObject.getString("newToken");
-                                tokenInfo.setToken(newToken);
-                                tokenInfo.setTimeStamp(System.currentTimeMillis());
-                                AppPreference.saveToken(tokenInfo);
-                                doAfterGetToken();
-                            }else {//登录失败
-                                String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);
-                                AlertDialogUtil.showAlertWindow(mActivity, -1, errorMessage , null );
-                                throw new IllegalStateException(errorMessage);
-                            }
-                        }catch(Exception e){
-                            e.printStackTrace();
-                            throw new IllegalStateException(e.toString());
-                        }
-                    }
-                    @Override
-                    public void onFailure(Throwable error, String content) {
-                        super.onFailure(error, content);
-                        String errorContent = Utils.parseErrorMessage(mActivity, content);
-                        throw new IllegalStateException(errorContent);
-                    }
-                });
-                mThreadPool.execute(asyncHttpClient);
+            long tokenExpireTime = DateUtil.formatStrToDateTime(tokenInfo.getTokenExpireTime()).getTime();
+            long nowTime = System.currentTimeMillis();
+            if(nowTime >= tokenExpireTime){
+                AppPreference.logout();
+                MainApplication.getInstance().exit();
+                startActivity(new Intent(getContext(), LoginActivity.class));
             }else{
-                doAfterGetToken();
+                long duration = tokenExpireTime - nowTime;
+                if(duration <= CommonConstants.EXPIRE_DURATION){
+                    String URL = ReqConstant.URL_BASE + "/auth/token/refresh";
+                    AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.GET, URL ,"" , tokenInfo.getToken(), new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(HttpResponseBean httpResponseBean) {
+                            super.onSuccess(httpResponseBean);
+                            try{
+                                JSONObject contentObject = new JSONObject(httpResponseBean.content);
+                                String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
+                                if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){
+                                    JSONObject dataObject = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
+                                    String newToken = dataObject.getString(ParamConstant.USER_TOKEN);
+                                    String expireTime = dataObject.getString(ParamConstant.TOKEN_EXPIRE_TIME);
+                                    tokenInfo.setToken(newToken);
+                                    tokenInfo.setTimeStamp(System.currentTimeMillis());
+                                    tokenInfo.setTokenExpireTime(expireTime);
+                                    Log.i(TAG,"token:"+newToken);
+                                    Log.i(TAG,"expireTime:"+expireTime);
+                                    AppPreference.saveToken(tokenInfo);
+                                    doAfterGetToken();
+                                }else {//登录失败
+                                    String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);
+                                    AlertDialogUtil.showAlertWindow(mActivity, -1, errorMessage , null );
+                                    throw new IllegalStateException(errorMessage);
+                                }
+                            }catch(Exception e){
+                                e.printStackTrace();
+                                throw new IllegalStateException(e.toString());
+                            }
+                        }
+                        @Override
+                        public void onFailure(Throwable error, String content) {
+                            super.onFailure(error, content);
+                            String errorContent = Utils.parseErrorMessage(mActivity, content);
+                            throw new IllegalStateException(errorContent);
+                        }
+                    });
+                    mThreadPool.execute(asyncHttpClient);
+                }else{
+                    doAfterGetToken();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

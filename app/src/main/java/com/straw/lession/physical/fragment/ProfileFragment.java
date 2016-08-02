@@ -111,7 +111,7 @@ public class ProfileFragment extends BaseFragment{
                         return;
                     }
                     startActivity(new Intent(getActivity(), LoginActivity.class));
-                    MainApplication.getInstance().exit2();
+                    MainApplication.getInstance().exit();
                     break;
             }
         }
