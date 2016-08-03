@@ -1,5 +1,6 @@
 package com.straw.lession.physical.fragment;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -66,6 +67,7 @@ public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayo
     private UploadDataActivity mContext;
     private Button btn_upload_all;
     private List<UploadDataItemInfo> readyToUploadDatas = new ArrayList<UploadDataItemInfo>();
+    private Dialog dialog;
 
     @Override
     public void onResume() {
@@ -169,7 +171,7 @@ public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayo
             btn_upload_all.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    startUpload();
                 }
             });
         }
@@ -215,6 +217,7 @@ public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayo
         String endTimeStr = DateUtil.dateTimeToStr(course.getEndTime());
         uploadDataItemInfo.setDuration(startTimeStr.substring(startTimeStr.indexOf(" ") + 1) + "-"
                                         +endTimeStr.substring(endTimeStr.indexOf(" ") + 1));
+        uploadDataItemInfo.setUploaded(course.getIsUploaded());
         return uploadDataItemInfo;
     }
 
@@ -232,14 +235,31 @@ public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayo
     public void click(View v) {
         switch (v.getId()){
             case R.id.btn_upload:
+                readyToUploadDatas.clear();
                 UploadDataItemInfo clickUploadDataItemInfo = infoList.get((Integer) v.getTag());
                 readyToUploadDatas.add(clickUploadDataItemInfo);
                 break;
             case R.id.btn_upload_all:
+                readyToUploadDatas.clear();
                 readyToUploadDatas.addAll(infoList);
                 break;
         }
-        checkTokenInfo();
+        startUpload();
+
+    }
+
+    private void startUpload() {
+        dialog = AlertDialogUtil.showAlertWindow2Button(getContext(), "是否上传数据？", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        }, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkTokenInfo();
+            }
+        });
     }
 
     private void updateUploadResult(List<UploadCourseDataResultVo> uploadResults) {
