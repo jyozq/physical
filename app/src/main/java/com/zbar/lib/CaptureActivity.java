@@ -257,19 +257,24 @@ public class CaptureActivity extends ThreadBaseActivity implements Callback,View
 				"学生" + currentStudent.getName() + "(学号:" + currentStudent.getCode() + ")与设备" + result + "已绑定", new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
+						studentItemInfos.remove(0);
 						switchToNext();
-						CaptureActivity.this.dialog.dismiss();
+						dialog.dismiss();
 						handler.sendEmptyMessage(R.id.restart_preview);
 					}
 				});
 	}
 
 	private void switchToNext() {
-		currentStudent = studentItemInfos.remove(0);
-		student_name.setText(currentStudent.getName());
-		student_no.setText(currentStudent.getCode());
-		device_no.setText(getResources().getString(R.string.unmatch));
-		gender.setText(Gender.getName(currentStudent.getGender()));
+		if(Detect.notEmpty(studentItemInfos)) {
+			currentStudent = studentItemInfos.get(0);
+			student_name.setText(currentStudent.getName());
+			student_no.setText(currentStudent.getCode());
+			device_no.setText(getResources().getString(R.string.unmatch));
+			gender.setText(Gender.getName(currentStudent.getGender()));
+		}else{
+			AlertDialogUtil.showAlertWindow(this,-1,"无其他未匹配学生。",null);
+		}
 	}
 
 	private void initCamera(SurfaceHolder surfaceHolder) {
@@ -292,7 +297,6 @@ public class CaptureActivity extends ThreadBaseActivity implements Callback,View
 			setCropHeight(cropHeight);
 			// 设置是否需要截图
 			setNeedCapture(false);
-			
 
 		} catch (IOException ioe) {
 			return;

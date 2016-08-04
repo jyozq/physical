@@ -9,6 +9,9 @@ public class CommonConstants {
 
     public static final long EXPIRE_DURATION = 60*1000;
 
+    public static final String UPLOAD_DATA_SUCCESS = "S";
+    public static final String UPLOAD_DATA_FAILURE = "F";
+
     public enum UseOnce {
         USE_ONCE_NOT(0,"非临时课程"),
         USE_ONCE(1,"临时课程");

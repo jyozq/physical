@@ -16,7 +16,7 @@
             android:orientation="vertical" android:layout_margin="@dimen/dimen_10dp">
             <TextView android:layout_width="match_parent" android:layout_height="match_parent"
                 android:gravity="left" android:id="@+id/class_name"
-                android:textStyle="bold" android:textSize="@dimen/font_size_16"
+                 android:textSize="@dimen/font_size_16" android:textColor="@color/gray_33"
                 android:text="二年级二班"/>
             <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
                 android:orientation="horizontal" android:gravity="center_vertical|left">
@@ -24,7 +24,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:src="@mipmap/icon_class_info"/>
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="wrap_content" android:textColor="@color/light_gray"
                     android:layout_height="wrap_content" android:text="综合课3  第1节"
                     android:id="@+id/class_info" android:layout_marginLeft="@dimen/dimen_10dp"/>
             </LinearLayout>
@@ -34,7 +34,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:src="@mipmap/icon_pin"/>
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="wrap_content" android:textColor="@color/light_gray"
                     android:layout_height="wrap_content" android:text="大操场"
                     android:id="@+id/class_location" android:layout_marginLeft="@dimen/dimen_10dp"/>
             </LinearLayout>
@@ -45,11 +45,11 @@
             android:layout_height="match_parent" android:orientation="vertical">
             <ImageButton
                 android:layout_width="wrap_content" android:background="@color/white"
-                android:layout_height="wrap_content" android:src="@mipmap/icon_edit"
+                android:layout_height="wrap_content" android:src="@android:drawable/ic_menu_edit"
                 android:layout_margin="@dimen/dimen_5dp" android:id="@+id/btn_edit_coursedefine"/>
             <ImageButton
                 android:layout_width="wrap_content" android:background="@color/white"
-                android:layout_height="wrap_content" android:src="@mipmap/icon_delete"
+                android:layout_height="wrap_content" android:src="@android:drawable/ic_delete"
                 android:layout_margin="@dimen/dimen_5dp" android:id="@+id/btn_del_coursedefine"/>
         </LinearLayout>
     </LinearLayout>

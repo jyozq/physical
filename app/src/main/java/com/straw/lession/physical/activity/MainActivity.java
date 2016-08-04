@@ -21,10 +21,10 @@ import com.straw.lession.physical.async.ITask;
 import com.straw.lession.physical.async.TaskHandler;
 import com.straw.lession.physical.async.TaskResult;
 import com.straw.lession.physical.async.TaskWorker;
-import com.straw.lession.physical.constant.CommonConstants;
 import com.straw.lession.physical.constant.ParamConstant;
 import com.straw.lession.physical.constant.ReqConstant;
 import com.straw.lession.physical.custom.AlertDialogUtil;
+import com.straw.lession.physical.custom.BadgeView;
 import com.straw.lession.physical.db.DBService;
 import com.straw.lession.physical.fragment.ClassFragment;
 import com.straw.lession.physical.fragment.CourseFragment;
@@ -41,12 +41,10 @@ import com.straw.lession.physical.vo.db.*;
 import com.straw.lession.physical.vo.item.CourseDefineItemInfo;
 
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by straw on 2016/7/5.
@@ -80,6 +78,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
     private TextView textView ;
     private ImageButton btn_sync;
     private ImageButton btn_history;
+    private ImageButton btn_add_tempcourse;
 
     private TodayFragment todayFragment;
     private CourseFragment courseFragment;
@@ -90,10 +89,8 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
     private LoginInfoVo loginInfo;
     private TokenInfo tokenInfo;
     private List<Institute> institutes = new ArrayList<>();
-    private List<CourseDefine> courseDefines = new ArrayList<>();
-    private List<ClassInfo> classes = new ArrayList<>();
-    private List<Student> students = new ArrayList<>();
-    private List<TeacherInstitute> teacherInstitutes = new ArrayList<>();
+    private LinearLayout profile_linear_layout;
+    private BadgeView bv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +110,19 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         getDataByNetSate();
         // 初始化控件
         initView();
+        startTimerTask();
+    }
+
+    private void startTimerTask() {
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                List<Course> unUploadDatas = DBService.getInstance(MainActivity.this).getUnUploadedData(loginInfo.getUserId());
+                Message message = Message.obtain(mHandler,1,new Integer(unUploadDatas.size()));
+                message.sendToTarget();
+            }
+        }, 1, 5000);
     }
 
     private void initView() {
@@ -138,12 +148,17 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         btn_back = (ImageButton) findViewById(R.id.btn_back);
         textView = (TextView) findViewById(R.id.textView);
         btn_add_course = (ImageButton) findViewById(R.id.btn_add_course);
+        btn_add_tempcourse = (ImageButton) findViewById(R.id.btn_add_tempcourse);
         btn_sync = (ImageButton) findViewById(R.id.btn_sync);
         btn_history = (ImageButton) findViewById(R.id.btn_history);
         btn_back.setVisibility(View.GONE);
         btn_add_course.setVisibility(View.VISIBLE);
+        btn_add_tempcourse.setVisibility(View.GONE);
         btn_history.setVisibility(View.GONE);
         spinner = (Spinner) findViewById(R.id.spinner_school);
+        profile_linear_layout = (LinearLayout) findViewById(R.id.profile_linear_layout);
+        bv = new BadgeView(this,profile_linear_layout);
+        bv.setBadgePosition(BadgeView.POSITION_TOP_RIGHT);
     }
 
     @Override
@@ -241,161 +256,6 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         mThreadPool.submit(taskWorker);
     }
 
-//    private void getAllClassInfoByInstitute() {
-//        long instituteIdR = loginInfo.getCurrentInstituteIdR();
-//        String URL = ReqConstant.URL_BASE + "/class/list";
-//        ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
-//        params.add(new BasicNameValuePair("instituteId", String.valueOf(instituteIdR)));
-//        showProgressDialog(getResources().getString(R.string.loading));
-//        AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.GET, URL,params,
-//                                                tokenInfo.getToken(),new AsyncHttpResponseHandler(){
-//            @Override
-//            public void onSuccess(HttpResponseBean httpResponseBean) {
-//                super.onSuccess(httpResponseBean);
-//                try{
-//                    JSONObject contentObject = new JSONObject(httpResponseBean.content);
-//                    String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
-//                    if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){
-//                        JSONObject dataObj = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
-//                        JSONArray classesArray = dataObj.getJSONArray("classes");
-//                        List<ClassInfoVo> classVos =
-//                                JSON.parseArray(classesArray.toString(), ClassInfoVo.class);
-//                        DbService.getInstance(MainActivity.this).refineClassInfoData(classVos, instituteVO.getInstituteId());
-//                        hideProgressDialog();
-//                        goOnLoad();
-//                    }else {
-//                        String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);
-//                        AlertDialogUtil.showAlertWindow(mContext, -1, errorMessage , null );
-//                    }
-//                }catch(Exception e){
-//                    hideProgressDialog();
-//                    showErrorMsgInfo(e.toString());
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Throwable error, String content) {
-//                super.onFailure(error, content);
-//                hideProgressDialog();
-//                String errorContent = Utils.parseErrorMessage(mContext, content);
-//                showErrorMsgInfo(errorContent);
-//                Log.e(TAG, content);
-//            }
-//        });
-//        mThreadPool.execute(asyncHttpClient);
-//    }
-
-    private void assembleInstituteData(List<InstituteVo> instituteVos) throws JSONException {
-        InstituteVo instituteVo = null;
-        for(int i = 0; i < instituteVos.size(); i ++){
-            instituteVo = instituteVos.get(i);
-            Institute institute = new Institute();
-            try {
-                assembleInstitute(institute, instituteVo);
-                institutes.add(institute);
-            }catch(Exception ex){
-                Log.e(TAG, "", ex);
-            }
-        }
-    }
-
-    private void assembleInstitute(Institute institute, InstituteVo instituteVo) throws JSONException {
-        institute.setInstituteIdR(instituteVo.getInstituteId());
-        institute.setName(instituteVo.getInstituteName());
-        assembleTeacherInstitute(institute);
-        try{
-            List<ClassInfoVo> classInfoVos = instituteVo.getClasses();
-            ClassInfoVo classInfoVo = null;
-            for(int i = 0; i < classInfoVos.size(); i ++){
-                classInfoVo = classInfoVos.get(i);
-                ClassInfo classInfo = new ClassInfo();
-                classInfo.setInstituteIdR(institute.getInstituteIdR());
-                try{
-                    assembleClass(classInfo, classInfoVo);
-                }catch(Exception ex){
-                    Log.e(TAG, "", ex);
-                }
-                classes.add(classInfo);
-            }
-        }catch(Exception e){
-            Log.e(TAG, "", e);
-        }
-
-        try {
-            List<CourseDefineVo> courseDefineVos
-                        = instituteVo.getCourseDefines();
-            CourseDefineVo courseDefineVo = null;
-            for (int i = 0; i < courseDefineVos.size(); i++) {
-                courseDefineVo = courseDefineVos.get(i);
-                CourseDefine courseDefine = new CourseDefine();
-                try {
-                    assembleCourseDefine(courseDefine, courseDefineVo);
-                }catch(Exception ex){
-                    Log.e(TAG, "", ex);
-                }
-                courseDefines.add(courseDefine);
-            }
-        }catch(Exception e){
-            Log.e(TAG,"",e);
-        }
-    }
-
-    private void assembleTeacherInstitute(Institute institute) {
-        TeacherInstitute teacherInstitute = new TeacherInstitute();
-        teacherInstitute.setInstituteIdR(institute.getInstituteIdR());
-        teacherInstitute.setTeacherIdR(loginInfo.getUserId());
-        teacherInstitutes.add(teacherInstitute);
-    }
-
-    private void assembleCourseDefine(CourseDefine courseDefine, CourseDefineVo courseVo) throws JSONException {
-        courseDefine.setClassIdR(courseVo.getClassId());
-        courseDefine.setCode(courseVo.getCourseCode());
-        courseDefine.setCourseDefineIdR(courseVo.getCourseDefineId());
-        courseDefine.setLocation(courseVo.getCourseLocation());
-        courseDefine.setName(courseVo.getCourseName());
-        courseDefine.setSeq(courseVo.getCourseSeq());
-        courseDefine.setType(courseVo.getCourseType());
-        courseDefine.setInstituteIdR(courseVo.getInstituteId());
-        courseDefine.setUseOnce(courseVo.getUseOnce());
-        courseDefine.setWeekDay(courseVo.getWeekday());
-        courseDefine.setTeacherIdR(loginInfo.getUserId());
-    }
-
-    private void assembleClass(ClassInfo classInfo, ClassInfoVo classInfoVo) throws JSONException {
-        classInfo.setCode(classInfoVo.getClassCode());
-        classInfo.setClassIdR(classInfoVo.getClassId());
-        classInfo.setName(classInfoVo.getClassName());
-        classInfo.setType(classInfoVo.getClassType());
-        classInfo.setTotalNum(classInfoVo.getTotalNum());
-
-        try {
-            List<StudentVo> studentVos = classInfoVo.getStudents();
-            StudentVo studentVo;
-            for (int i = 0; i < studentVos.size(); i++) {
-                studentVo = studentVos.get(i);
-                Student student = new Student();
-                try{
-                    assembleStudent(student, studentVo);
-                }catch(Exception ex){
-                    Log.e(TAG, "", ex);
-                }
-                student.setClassIdR(classInfo.getClassIdR());
-                students.add(student);
-            }
-        }catch(Exception e){
-            Log.e(TAG,"",e);
-        }
-    }
-
-    private void assembleStudent(Student student, StudentVo studentVo) throws JSONException {
-        student.setName(studentVo.getStudentName());
-        student.setCode(studentVo.getStudentCode());
-        student.setBirthday(DateUtil.formatStrToDate(studentVo.getBirthday()));
-        student.setGender(studentVo.getGender());
-        student.setStudentIdR(studentVo.getStudentId());
-    }
-
     @Override
     protected void loadDataFromLocal() {
         institutes = DBService.getInstance(this).getInsituteDataByTeacher(loginInfo.getUserId());
@@ -423,6 +283,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
                     transaction.add(R.id.fl_content, todayFragment);
                 } else {
 //                    todayFragment.query();
+                    hideFragments(transaction);
                     transaction.show(todayFragment);
                 }
                 break;
@@ -473,6 +334,21 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
 
         // 提交事务
         transaction.commit();
+    }
+
+    private void hideFragments(FragmentTransaction transaction) {
+        if(todayFragment != null){
+            transaction.hide(todayFragment);
+        }
+        if(courseFragment != null){
+            transaction.hide(courseFragment);
+        }
+        if(classFragment != null){
+            transaction.hide(classFragment);
+        }
+        if(profileFragment != null){
+            transaction.hide(profileFragment);
+        }
     }
 
     //隐藏Fragment
@@ -561,7 +437,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         // 在每次点击后将所有的底部按钮(ImageView,TextView)颜色改为灰色，然后根据点击着色
-        restartBotton();
+        restartButton();
         // ImageView和TetxView置为绿色，页面随之跳转
         switch (v.getId()) {
             case R.id.id_today:
@@ -592,7 +468,9 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
                     intent.putExtra("useOnce", false);
                 }
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("courseDefine", new CourseDefineItemInfo());
+                CourseDefineItemInfo courseDefineItemInfo = new CourseDefineItemInfo();
+                courseDefineItemInfo.setDate(DateUtil.dateToStr(new Date()));
+                bundle.putSerializable("courseDefine", courseDefineItemInfo);
                 intent.putExtras(bundle);
                 startActivity(intent);
                 break;
@@ -607,7 +485,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         }
     }
 
-    private void restartBotton() {
+    private void restartButton() {
         // ImageView置为灰色
         iv_today.setImageResource(R.mipmap.bottom_toolbar_icon_today_gray);
         iv_course.setImageResource(R.mipmap.bottom_toolbar_icon_kc_gray);
@@ -646,10 +524,29 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
     Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            isExit = false;
+            switch (msg.what) {
+                case 0:
+                    isExit = false;
+                    break;
+                case 1:
+                    setNotificationFlag(msg);
+                    break;
+            }
         }
-
     };
+
+    private void setNotificationFlag(Message msg) {
+        int num =(Integer)msg.obj;
+        if(num > 0) {
+            bv.setText(String.valueOf(num));
+            bv.setBadgePosition(BadgeView.POSITION_TOP_RIGHT);
+            bv.show();
+        }else{
+            bv.hide();
+        }
+        if(profileFragment!= null){
+            profileFragment.toggleUploadNotificationFlag(num>0);
+        }
+    }
     /**************** 以上实现两次退出逻辑 *********************/
 }

@@ -1,5 +1,7 @@
 package com.straw.lession.physical.utils;
 
+import android.util.Log;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -8,6 +10,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 public final class DateUtil {
+    private static final String TAG = "DateUtil";
     public static String dToStr(Date dateDate) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM");
         String dateString = formatter.format(dateDate);
@@ -1326,6 +1329,32 @@ public final class DateUtil {
         return weekDay - 1;
     }
 
+    /**
+     * 判断当前日期是星期几<br>
+     * <br>
+     * @param pTime 修要判断的时间<br>
+     * @return dayForWeek 判断结果<br>
+     * @Exception 发生异常<br>
+     */
+    public static int dayForWeek(String pTime){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar c = Calendar.getInstance();
+        c.setFirstDayOfWeek(Calendar.SUNDAY);
+        try {
+            c.setTime(format.parse(pTime));
+        } catch (ParseException e) {
+            e.printStackTrace();
+            Log.e(TAG,"判断当前日期是星期几出错",e);
+        }
+        int dayForWeek = 0;
+        if(c.get(Calendar.DAY_OF_WEEK) == 1){
+            dayForWeek = 7;
+        }else{
+            dayForWeek = c.get(Calendar.DAY_OF_WEEK) - 1;
+        }
+        return dayForWeek;
+    }
+
     public static boolean isToday(Date date){
         if(date == null) return false;
         String dateStr = dateToStr(date);
@@ -1339,12 +1368,6 @@ public final class DateUtil {
             e.printStackTrace();
         }
         return false;
-    }
-
-    public static boolean isDateSame(Date d1, Date d2) {
-        String date1 = dateToStr(d1);
-        String date2 = dateToStr(d2);
-        return date1.equals(date2);
     }
 
     public static void main(String[] args){

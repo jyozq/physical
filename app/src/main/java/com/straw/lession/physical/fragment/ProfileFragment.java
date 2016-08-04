@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import android.widget.Toast;
@@ -16,9 +17,11 @@ import com.straw.lession.physical.activity.LoginActivity;
 import com.straw.lession.physical.activity.ResetPassWordActivity;
 import com.straw.lession.physical.activity.UploadDataActivity;
 import com.straw.lession.physical.app.MainApplication;
+import com.straw.lession.physical.db.DBService;
 import com.straw.lession.physical.fragment.base.BaseFragment;
 import com.straw.lession.physical.utils.AppPreference;
 import com.straw.lession.physical.vo.LoginInfoVo;
+import com.straw.lession.physical.vo.db.Institute;
 
 import java.io.IOException;
 import java.util.List;
@@ -33,7 +36,15 @@ public class ProfileFragment extends BaseFragment{
     private TextView profile_upload;
     private TextView profile_resetPwdText;
     private Button profile_exit;
+    private TextView profile_institute;
     private MyClickListener listener = new MyClickListener();
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Institute institute = DBService.getInstance(getContext()).findInstituteById(loginInfo.getCurrentInstituteIdR());
+        profile_institute.setText(institute.getName());
+    }
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         layoutView = inflater.inflate(R.layout.fragment_profile, container, false);
@@ -55,18 +66,10 @@ public class ProfileFragment extends BaseFragment{
         }
 
         TextView profile_name = (TextView)layoutView.findViewById(R.id.profile_name);
-        TextView profile_institute = (TextView)layoutView.findViewById(R.id.profile_institute);
+        profile_institute = (TextView)layoutView.findViewById(R.id.profile_institute);
         profile_name.setText(loginInfo.getPersonName());
-        List<LoginInfoVo.Institute> institutes = loginInfo.getInstitutes();
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < institutes.size(); i ++){
-            if( i == institutes.size() - 1) {
-                sb.append(institutes.get(i).getInsName());
-            }else{
-                sb.append(institutes.get(i).getInsName()).append(",");
-            }
-        }
-        profile_institute.setText(sb.toString());
+        Institute institute = DBService.getInstance(getContext()).findInstituteById(loginInfo.getCurrentInstituteIdR());
+        profile_institute.setText(institute.getName());
 
         profile_upload = (TextView) layoutView.findViewById(R.id.profile_upload);
         profile_resetPwdText = (TextView) layoutView.findViewById(R.id.profile_resetPwdText);
@@ -115,5 +118,10 @@ public class ProfileFragment extends BaseFragment{
                     break;
             }
         }
+    }
+
+    public void toggleUploadNotificationFlag(boolean isShow){
+        ImageView notifyFlag = (ImageView)getActivity().findViewById(R.id.has_unupload_flag);
+        notifyFlag.setVisibility(isShow?View.VISIBLE:View.GONE);
     }
 }

@@ -82,9 +82,9 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
         useOnce = getIntent().getBooleanExtra("useOnce", true);
         courseDefineItemInfo = (CourseDefineItemInfo)getIntent().getSerializableExtra("courseDefine");
         if(courseDefineItemInfo.getCourseDefineId() > 0){
-            initToolBar(getResources().getString(R.string.toolbar_edit_class));
+            initToolBar("编辑"+(useOnce?"临时":"常规")+"课程");
         }else {
-            initToolBar(getResources().getString(R.string.toolbar_new_class));
+            initToolBar("新增"+(useOnce?"临时":"常规")+"课程");
         }
         MainApplication.getInstance().addActivity(this);
         initViews();
@@ -156,6 +156,9 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
         if(courseDefineItemInfo != null){
             if(useOnce){
                 dateTxt.setText(courseDefineItemInfo.getDate());
+                if(Detect.notEmpty(courseDefineItemInfo.getDate())){
+                    dateTxt.setOnClickListener(null);
+                }
             }else{
                 if(courseDefineItemInfo.getWeekDay() > 0){
                     int pos = getWeekdayPos(courseDefineItemInfo.getWeekDay());
@@ -326,6 +329,7 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
             } else {
                 dateStr = dateTxt.getText().toString();
                 courseDefine.setDate(DateUtil.formatStrToDate(dateStr));
+                courseDefine.setWeekDay(DateUtil.dayForWeek(dateStr));
             }
         }else {
             if (weekdayTxt.getText() == null) {
@@ -390,7 +394,7 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
         params.add(new BasicNameValuePair("courseName", courseDefine.getName()));
         params.add(new BasicNameValuePair("instituteId", String.valueOf(courseDefine.getInstituteIdR())));
         params.add(new BasicNameValuePair("classId", String.valueOf(courseDefine.getClassIdR())));
-        params.add(new BasicNameValuePair("weekday", String.valueOf(courseDefine.getWeekDay())));
+        params.add(new BasicNameValuePair("weekday", courseDefine.getWeekDay()==null?null:String.valueOf(courseDefine.getWeekDay())));
         params.add(new BasicNameValuePair("courseDate", dateStr));
         params.add(new BasicNameValuePair("courseSeq", String.valueOf(courseDefine.getSeq())));
         params.add(new BasicNameValuePair("courseLocation", courseDefine.getLocation()));

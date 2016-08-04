@@ -14,8 +14,8 @@
         <TableRow android:layout_width="match_parent"
                   android:layout_height="wrap_content" android:gravity="center_vertical">
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                      android:text="三年四班" android:textStyle="bold" android:textSize="20sp"
-                      android:id="@+id/class_name"
+                      android:text="三年四班" android:textSize="20sp"
+                      android:id="@+id/class_name" android:textColor="@color/gray_33"
             />
             <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
                           android:orientation="horizontal" android:gravity="center_vertical">
@@ -39,10 +39,13 @@
                 <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:src="@mipmap/icon_time"/>
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                          android:text="2016年8月1日" android:id="@+id/date"/>
+                          android:text="2016年8月1日" android:id="@+id/date"
+                          android:textColor="@color/light_gray"
+                />
             </LinearLayout>
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                      android:text="星期二 17:30-18:30" android:id="@+id/weekdayAndSeq"/>
+                      android:text="星期二 17:30-18:30" android:id="@+id/weekdayAndSeq"
+                      android:textColor="@color/light_gray"/>
         </TableRow>
         <TableRow android:layout_width="match_parent"
                   android:layout_height="wrap_content">
@@ -51,10 +54,12 @@
                 <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"
                            android:src="@mipmap/icon_pin"/>
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                          android:text="篮球馆" android:id="@+id/location"/>
+                          android:text="篮球馆" android:id="@+id/location"
+                          android:textColor="@color/light_gray"/>
             </LinearLayout>
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                      android:text="篮球 0|40" android:id="@+id/type"/>
+                      android:text="篮球 0|40" android:id="@+id/type"
+                      android:textColor="@color/light_gray"/>
         </TableRow>
     </TableLayout>
 

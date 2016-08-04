@@ -47,6 +47,11 @@
             android:background="@color/transparent" android:src="@mipmap/icon_history_course"
             android:layout_marginRight="@dimen/dimen_15dp"
             android:layout_centerVertical="true" android:layout_alignParentRight="true"/>
+        <ImageButton
+                android:layout_width="@dimen/dimen_60dp" android:layout_height="@dimen/dimen_60dp"
+                android:id="@+id/btn_add_tempcourse" android:layout_centerVertical="true"
+                android:visibility="gone" android:layout_alignParentRight="true"
+                android:background="@color/transparent"  android:src="@android:drawable/ic_input_add"/>
     </RelativeLayout>
 
 </android.support.v7.widget.Toolbar>

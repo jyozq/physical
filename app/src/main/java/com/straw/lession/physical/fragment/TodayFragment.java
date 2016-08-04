@@ -295,10 +295,10 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
             courseItemInfo.setCourseDefineId(courseDefine.getCourseDefineIdR());
             courseItemInfo.setName(courseDefine.getName());
             courseItemInfo.setLocation(courseDefine.getLocation());
-            courseItemInfo.setDate(DateUtil.dateToStr(new Date()));
+            courseItemInfo.setDate(DateUtil.dateToStr(courseDefine.getDate()==null?new Date():courseDefine.getDate()));
             courseItemInfo.setSeq(courseDefine.getSeq());
             courseItemInfo.setType(courseDefine.getType());
-            courseItemInfo.setWeekDay(courseDefine.getWeekDay());
+            courseItemInfo.setWeekDay(courseDefine.getWeekDay()==null?-1:courseDefine.getWeekDay());
             ClassInfo classInfo = courseDefine.getClassInfo();
             courseItemInfo.setClassName(classInfo.getName());
             courseItemInfo.setClassId(classInfo.getClassIdR());

@@ -26,7 +26,7 @@
                                 android:gravity="center_vertical" android:layout_height="fill_parent"
                                 android:text="测试账户" android:textSize="@dimen/font_size_16"
                                 android:layout_marginLeft="@dimen/dimen_15dp" android:layout_marginRight="@dimen/dimen_15dp"
-                                android:textColor="@color/gray_4a4f49" android:id="@+id/profile_name"/>
+                                android:textColor="@color/white" android:id="@+id/profile_name"/>
                 </LinearLayout>
 
                 <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal"
@@ -37,7 +37,7 @@
                             android:gravity="center_vertical" android:layout_height="fill_parent"
                             android:text="XXX大学 XXX大学 XXX大学" android:id="@+id/profile_institute"
                             android:textSize="@dimen/font_size_16" android:layout_marginLeft="@dimen/dimen_15dp"
-                            android:layout_marginRight="@dimen/dimen_15dp" android:textColor="@color/gray_4a4f49"
+                            android:layout_marginRight="@dimen/dimen_15dp" android:textColor="@color/white"
                         />
                 </LinearLayout>
             </LinearLayout>
@@ -46,7 +46,8 @@
         <LinearLayout android:layout_marginTop="@dimen/dimen_25dp"
                       android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="vertical"
                       android:background="@color/white">
-            <LinearLayout android:layout_width="fill_parent" android:layout_height="@dimen/dimen_50dp" android:orientation="horizontal">
+            <LinearLayout android:layout_width="fill_parent" android:layout_height="@dimen/dimen_50dp" android:orientation="horizontal"
+                            android:gravity="center_vertical">
                 <ImageView
                         android:layout_width="wrap_content" android:layout_gravity="center_vertical" android:layout_marginTop="@dimen/dimen_1dp"
                         android:layout_height="wrap_content" android:src="@mipmap/icon_upload" android:layout_marginLeft="@dimen/dimen_40dp"/>
@@ -55,6 +56,10 @@
                           android:layout_height="fill_parent" android:text="@string/profile_upload"
                           android:textSize="@dimen/font_size_16" android:layout_marginLeft="@dimen/dimen_15dp"
                           android:layout_marginRight="@dimen/dimen_15dp" android:textColor="@color/gray_4a4f49" />
+                <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                           android:src="@android:drawable/ic_notification_overlay"
+                           android:layout_marginRight="@dimen/dimen_20dp" android:id="@+id/has_unupload_flag"
+                        />
                 <ImageView android:layout_marginRight="@dimen/dimen_20dp"
                            android:layout_width="wrap_content" android:layout_gravity="center" android:gravity="center" android:layout_height="wrap_content" android:src="@mipmap/right_arrow" />
             </LinearLayout>

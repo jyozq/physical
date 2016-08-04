@@ -21,6 +21,7 @@ import com.straw.lession.physical.async.ITask;
 import com.straw.lession.physical.async.TaskHandler;
 import com.straw.lession.physical.async.TaskResult;
 import com.straw.lession.physical.async.TaskWorker;
+import com.straw.lession.physical.constant.CommonConstants;
 import com.straw.lession.physical.constant.ParamConstant;
 import com.straw.lession.physical.constant.ReqConstant;
 import com.straw.lession.physical.custom.AlertDialogUtil;
@@ -30,10 +31,7 @@ import com.straw.lession.physical.http.AsyncHttpClient;
 import com.straw.lession.physical.http.AsyncHttpResponseHandler;
 import com.straw.lession.physical.http.HttpResponseBean;
 import com.straw.lession.physical.task.UpdateUploadResultTask;
-import com.straw.lession.physical.utils.AppPreference;
-import com.straw.lession.physical.utils.DateUtil;
-import com.straw.lession.physical.utils.ResponseParseUtils;
-import com.straw.lession.physical.utils.Utils;
+import com.straw.lession.physical.utils.*;
 import com.straw.lession.physical.vo.LoginInfoVo;
 import com.straw.lession.physical.vo.TokenInfo;
 import com.straw.lession.physical.vo.UploadCourseDataHolder;
@@ -54,7 +52,7 @@ import java.util.List;
 /**
  * Created by straw on 2016/7/28.
  */
-public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,UploadListViewAdapter.Callback,View.OnClickListener{
+public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,UploadListViewAdapter.Callback{
     private static final String TAG = "UploadDataFragment";
     private LoginInfoVo loginInfo;
     private TokenInfo tokenInfo;
@@ -124,7 +122,22 @@ public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayo
                         JSONArray courseArr = dataObject.getJSONArray("courses");
                         List<UploadCourseDataResultVo> uploadResults =
                                 JSON.parseArray(courseArr.toString(), UploadCourseDataResultVo.class);
+                        StringBuilder sb = new StringBuilder();
+                        for(UploadCourseDataResultVo resultVo : uploadResults){
+                            if(resultVo.getSyncResult().equals(CommonConstants.UPLOAD_DATA_FAILURE)){
+                                for(UploadDataItemInfo itemInfo : infoList){
+                                    if(itemInfo.getCourseId() == resultVo.getLocalCourseSeq()){
+                                        sb.append(itemInfo.getDate()+itemInfo.getClassName()+"的课程记录").append(",");
+                                        break;
+                                    }
+                                }
+                            }
+                        }
                         updateUploadResult(uploadResults);
+                        if(sb.length() > 0){
+                            sb.append("上传失败了！");
+                            AlertDialogUtil.showAlertWindow(mContext, -1, sb.toString() , null );
+                        }
                     }else {
                         String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);
                         AlertDialogUtil.showAlertWindow(mContext, -1, errorMessage , null );
@@ -171,6 +184,8 @@ public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayo
             btn_upload_all.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    readyToUploadDatas.clear();
+                    readyToUploadDatas.addAll(infoList);
                     startUpload();
                 }
             });
@@ -234,23 +249,20 @@ public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayo
     @Override
     public void click(View v) {
         readyToUploadDatas.clear();
-        switch (v.getId()){
-            case R.id.btn_upload:
-                readyToUploadDatas.clear();
-                UploadDataItemInfo clickUploadDataItemInfo = infoList.get((Integer) v.getTag());
-                readyToUploadDatas.add(clickUploadDataItemInfo);
-                break;
-            case R.id.btn_upload_all:
-                readyToUploadDatas.clear();
-                readyToUploadDatas.addAll(infoList);
-                break;
-        }
+        UploadDataItemInfo clickUploadDataItemInfo = infoList.get((Integer) v.getTag());
+        readyToUploadDatas.add(clickUploadDataItemInfo);
         startUpload();
 
     }
 
     private void startUpload() {
-        dialog = AlertDialogUtil.showAlertWindow2Button(getContext(), "是否上传数据？", new View.OnClickListener() {
+        if(!Detect.notEmpty(readyToUploadDatas)){
+            Toast.makeText(getContext(),"无可上传数据。",Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        dialog = AlertDialogUtil.showAlertWindow2Button(getContext(),
+                "是否上传"+(readyToUploadDatas.size()>1?"全部":"该条")+"数据？", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
@@ -258,6 +270,7 @@ public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayo
         }, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dialog.dismiss();
                 checkTokenInfo();
             }
         });

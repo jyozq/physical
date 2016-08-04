@@ -115,9 +115,10 @@ public class StudentCommentActivity extends ThreadToolBarBaseActivity implements
                     hideProgressDialog();
                     JSONObject contentObject = new JSONObject(httpResponseBean.content);
                     String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
-                    if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){//登录成功
+                    if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){
+                        studentComment.setText("");
                         query();
-                    }else {//登录失败
+                    }else {
                         String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);
                         AlertDialogUtil.showAlertWindow(mContext, -1, errorMessage , null );
                     }

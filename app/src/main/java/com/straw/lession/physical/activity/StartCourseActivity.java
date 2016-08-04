@@ -149,7 +149,7 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
     }
 
     private void endCourse() {
-        dialog = AlertDialogUtil.showAlertWindow2Button(this, "是否开始上课？", new View.OnClickListener() {
+        dialog = AlertDialogUtil.showAlertWindow2Button(this, "是否结束课程？", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
@@ -164,6 +164,7 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
                         btn_end_course.setOnClickListener(null);
                         btn_end_course.setVisibility(View.INVISIBLE);
                         btn_do_start_course.setText(CourseStatus.OVER.getText());
+                        dialog.dismiss();
                     }
                 });
     }
@@ -183,7 +184,7 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
                 Course course = new Course();
                 CourseDefine courseDefine = DBService.getInstance(StartCourseActivity.this).findCourseDefineById(courseItemVo.getCourseDefineId());
                 course.setDate(new Date());
-                course.setWeekday(courseDefine.getWeekDay());
+                course.setWeekday(courseDefine.getWeekDay()==null?-1:courseDefine.getWeekDay());
                 course.setCourseDefineIdR(courseDefine.getCourseDefineIdR());
                 course.setInstituteIdR(courseDefine.getInstituteIdR());
                 course.setTeacherIdR(courseDefine.getTeacherIdR());
@@ -208,6 +209,7 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
                 btn_do_start_course.setText(CourseStatus.STARTED.getText());
                 btn_end_course.setEnabled(true);
                 btn_end_course.setOnClickListener(listener);
+                dialog.dismiss();
             }
         });
     }

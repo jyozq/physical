@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import android.widget.Toast;
@@ -36,6 +37,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -55,8 +57,25 @@ public class TemporaryCourseListActivity extends ThreadToolBarBaseActivity imple
         super.onCreate(arg0);
         setContentView(R.layout.activity_temporary_coursedefine);
         initToolBar(getResources().getString(R.string.temporary_coursedefine_label));
+        myInitToolBar();
         MainApplication.getInstance().addActivity(this);
         initViews();
+    }
+
+    private void myInitToolBar() {
+        ImageButton btn_add_tempcourse = (ImageButton)findViewById(R.id.btn_add_tempcourse);
+        btn_add_tempcourse.setVisibility(View.VISIBLE);
+        btn_add_tempcourse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TemporaryCourseListActivity.this,AddCourseActivity.class);
+                intent.putExtra("useOnce", true);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("courseDefine", new CourseDefineItemInfo());
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -87,7 +106,7 @@ public class TemporaryCourseListActivity extends ThreadToolBarBaseActivity imple
     private CourseDefineItemInfo toItem(CourseDefine courseDefine) {
         CourseDefineItemInfo courseItemInfo = new CourseDefineItemInfo();
         courseItemInfo.setCourseDefineId(courseDefine.getCourseDefineIdR());
-        courseItemInfo.setWeekDay(courseDefine.getWeekDay());
+        courseItemInfo.setWeekDay(courseDefine.getWeekDay()==null?-1:courseDefine.getWeekDay());
         courseItemInfo.setSeq(courseDefine.getSeq());
         courseItemInfo.setName(courseDefine.getName());
         courseItemInfo.setLocation(courseDefine.getLocation());

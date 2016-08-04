@@ -29,6 +29,7 @@ public  abstract class ToolBarActivity extends AppCompatActivity implements View
     private Spinner spinner_class;
     private ImageButton btn_sync;
     private ImageButton btn_history;
+    private ImageButton btn_add_tempcourse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,7 @@ public  abstract class ToolBarActivity extends AppCompatActivity implements View
         onCreateCustomToolBar(toolbar) ;
         btn_back = (ImageButton) toolbar.findViewById(R.id.btn_back);
         btn_add_course = (ImageButton) toolbar.findViewById(R.id.btn_add_course);
+        btn_add_tempcourse = (ImageButton) toolbar.findViewById(R.id.btn_add_tempcourse);
         textView = (TextView) toolbar.findViewById(R.id.textView);
         spinner_school = (Spinner) toolbar.findViewById(R.id.spinner_school);
         spinner_class = (Spinner) toolbar.findViewById(R.id.spinner_class);
@@ -63,6 +65,7 @@ public  abstract class ToolBarActivity extends AppCompatActivity implements View
         spinner_class.setVisibility(View.GONE);
         btn_sync.setVisibility(View.GONE);
         btn_history.setVisibility(View.GONE);
+        btn_add_tempcourse.setVisibility(View.GONE);
     }
 
     public void displayBackBtn(){

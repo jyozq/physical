@@ -130,7 +130,7 @@ public class DayCourseFragment extends BaseFragment implements SwipeRefreshLayou
     private CourseDefineItemInfo toItem(CourseDefine courseDefine) {
         CourseDefineItemInfo courseItemInfo = new CourseDefineItemInfo();
         courseItemInfo.setCourseDefineId(courseDefine.getCourseDefineIdR());
-        courseItemInfo.setWeekDay(courseDefine.getWeekDay());
+        courseItemInfo.setWeekDay(courseDefine.getWeekDay() == null?-1:courseDefine.getWeekDay());
         courseItemInfo.setSeq(courseDefine.getSeq());
         if(courseDefine.getCourseDefineIdR() == -1){
             return courseItemInfo;

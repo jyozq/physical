@@ -378,7 +378,8 @@ public class DBService {
 
     public List<Course> getUnUploadedData(long userId) {
         return courseDao.queryBuilder().where(CourseDao.Properties.TeacherIdR.eq(userId),
-                                                                CourseDao.Properties.IsUploaded.eq(false)).list();
+                                                CourseDao.Properties.Status.eq(CourseStatus.OVER.getValue()),
+                                                CourseDao.Properties.IsUploaded.eq(false)).list();
     }
 
     public List<Course> getUploadedData(long userId) {
@@ -529,5 +530,9 @@ public class DBService {
 
     public List<ClassInfo> findAllClass() {
         return classInfoDao.loadAll();
+    }
+
+    public Institute findInstituteById(Long currentInstituteIdR) {
+        return instituteDao.load(currentInstituteIdR);
     }
 }

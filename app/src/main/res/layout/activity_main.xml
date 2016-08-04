@@ -14,7 +14,7 @@
             android:layout_weight="1" >
     </FrameLayout>
     <fragment
-            android:id="@+id/navigation_drawer"
+            android:id="@+id/bottom_toolbar"
             android:tag="navigation_drawer"
             android:name="com.straw.lession.physical.fragment.main_toolbar_fragment"
             android:layout_width="match_parent"
