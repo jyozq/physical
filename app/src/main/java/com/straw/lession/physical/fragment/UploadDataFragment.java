@@ -230,6 +230,7 @@ public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayo
 
     @Override
     public void click(View v) {
+        readyToUploadDatas.clear();
         switch (v.getId()){
             case R.id.btn_upload:
                 UploadDataItemInfo clickUploadDataItemInfo = infoList.get((Integer) v.getTag());

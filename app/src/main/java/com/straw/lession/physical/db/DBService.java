@@ -460,10 +460,11 @@ public class DBService {
         }
     }
 
-    public StudentDevice getStudentDeviceByStudent(Long studentIdR, long userId) {
+    public StudentDevice getStudentDeviceByStudent(Long studentIdR, long userId, long courseDefineId) {
         List<StudentDevice> studentDevices = studentDeviceDao.queryBuilder()
                 .where(StudentDeviceDao.Properties.StudentIdR.eq(studentIdR),
-                      StudentDeviceDao.Properties.TeacherIdR.eq(userId)).list();
+                      StudentDeviceDao.Properties.TeacherIdR.eq(userId),
+                        StudentDeviceDao.Properties.CourseDefineIdR.eq(courseDefineId)).list();
         if(Detect.notEmpty(studentDevices)){
             return studentDevices.get(0);
         }
@@ -474,7 +475,9 @@ public class DBService {
         return courseDefineDao.queryBuilder().where(CourseDefineDao.Properties.TeacherIdR.eq(teacherId),
                 CourseDefineDao.Properties.InstituteIdR.eq(instituteId),
                 CourseDefineDao.Properties.WeekDay.eq(weekday),
-                CourseDefineDao.Properties.IsDel.eq(0)).orderAsc(CourseDefineDao.Properties.WeekDay).list();
+                CourseDefineDao.Properties.IsDel.eq(0),
+                CourseDefineDao.Properties.UseOnce.eq(CommonConstants.UseOnce.USE_ONCE_NOT.getValue())
+        ).orderAsc(CourseDefineDao.Properties.WeekDay).list();
     }
 
     public List<CourseDefine> getTemporaryCourseDefine(long teacherId, Long instituteId) {

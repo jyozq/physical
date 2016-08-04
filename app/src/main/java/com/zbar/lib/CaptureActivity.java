@@ -368,6 +368,7 @@ public class CaptureActivity extends ThreadBaseActivity implements Callback,View
 		switch (v.getId()) {
 			case R.id.btn_next_student:
 				// 连续扫描，不发送此消息扫描一次结束后就不能再次扫描
+				switchToNext();
 				handler.sendEmptyMessage(R.id.restart_preview);
 				break;
 			case R.id.btn_light:

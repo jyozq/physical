@@ -1,6 +1,7 @@
 package com.straw.lession.physical.activity;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -59,6 +60,7 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
     private long courseId;
     private MyListener listener = new MyListener();
     private StudentItemInfo studentItemInfo;
+    private Dialog dialog;
 
     @Override
     protected void onCreate(Bundle arg0) {
@@ -147,47 +149,67 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
     }
 
     private void endCourse() {
-        Course course = DBService.getInstance(this).findCourseById(courseItemVo.getCourseId());
-        course.setStatus(CourseStatus.OVER.getValue());
-        course.setEndTime(new Date());
-        DBService.getInstance(this).updateCourse(course);
-        btn_end_course.setOnClickListener(null);
-        btn_end_course.setVisibility(View.INVISIBLE);
-        btn_do_start_course.setText(CourseStatus.OVER.getText());
+        dialog = AlertDialogUtil.showAlertWindow2Button(this, "是否开始上课？", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Course course = DBService.getInstance(StartCourseActivity.this).findCourseById(courseItemVo.getCourseId());
+                        course.setStatus(CourseStatus.OVER.getValue());
+                        course.setEndTime(new Date());
+                        DBService.getInstance(StartCourseActivity.this).updateCourse(course);
+                        btn_end_course.setOnClickListener(null);
+                        btn_end_course.setVisibility(View.INVISIBLE);
+                        btn_do_start_course.setText(CourseStatus.OVER.getText());
+                    }
+                });
     }
 
     private void startCourse() {
-        if(hasStartedCourse()){
-            return;
-        }
-        Course course = new Course();
-        CourseDefine courseDefine = DBService.getInstance(this).findCourseDefineById(courseItemVo.getCourseDefineId());
-        course.setDate(new Date());
-        course.setWeekday(courseDefine.getWeekDay());
-        course.setCourseDefineIdR(courseDefine.getCourseDefineIdR());
-        course.setInstituteIdR(courseDefine.getInstituteIdR());
-        course.setTeacherIdR(courseDefine.getTeacherIdR());
-        course.setUseOnce(courseDefine.getUseOnce());
-        course.setStatus(CourseStatus.STARTED.getValue());
-        course.setStartTime(new Date());
-        course.setIsUploaded(false);
-        DBService.getInstance(this).addCourse(course);
-        courseItemVo.setCourseId(course.getId());
-
-        //更新学生绑定信息
-        List<StudentDevice> studentDevices = DBService.getInstance(this)
-                .getStudentDeviceByCourseDefine(courseItemVo.getCourseDefineId(), loginInfo.getUserId());
-        for(StudentDevice studentDevice : studentDevices){
-            if(DateUtil.isToday(studentDevice.getBindTime())){
-                studentDevice.setCourseId(course.getId());
+        dialog = AlertDialogUtil.showAlertWindow2Button(this, "是否开始上课？", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
             }
-        }
-        DBService.getInstance(this).updateStudentDevices(studentDevices);
-        courseId = course.getId();
-        btn_do_start_course.setOnClickListener(null);
-        btn_do_start_course.setText(CourseStatus.STARTED.getText());
-        btn_end_course.setEnabled(true);
-        btn_end_course.setOnClickListener(listener);
+        }, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(hasStartedCourse()){
+                    return;
+                }
+                Course course = new Course();
+                CourseDefine courseDefine = DBService.getInstance(StartCourseActivity.this).findCourseDefineById(courseItemVo.getCourseDefineId());
+                course.setDate(new Date());
+                course.setWeekday(courseDefine.getWeekDay());
+                course.setCourseDefineIdR(courseDefine.getCourseDefineIdR());
+                course.setInstituteIdR(courseDefine.getInstituteIdR());
+                course.setTeacherIdR(courseDefine.getTeacherIdR());
+                course.setUseOnce(courseDefine.getUseOnce());
+                course.setStatus(CourseStatus.STARTED.getValue());
+                course.setStartTime(new Date());
+                course.setIsUploaded(false);
+                DBService.getInstance(StartCourseActivity.this).addCourse(course);
+                courseItemVo.setCourseId(course.getId());
+
+                //更新学生绑定信息
+                List<StudentDevice> studentDevices = DBService.getInstance(StartCourseActivity.this)
+                        .getStudentDeviceByCourseDefine(courseItemVo.getCourseDefineId(), loginInfo.getUserId());
+                for(StudentDevice studentDevice : studentDevices){
+                    if(DateUtil.isToday(studentDevice.getBindTime())){
+                        studentDevice.setCourseId(course.getId());
+                    }
+                }
+                DBService.getInstance(StartCourseActivity.this).updateStudentDevices(studentDevices);
+                courseId = course.getId();
+                btn_do_start_course.setOnClickListener(null);
+                btn_do_start_course.setText(CourseStatus.STARTED.getText());
+                btn_end_course.setEnabled(true);
+                btn_end_course.setOnClickListener(listener);
+            }
+        });
     }
 
     private boolean hasStartedCourse() {
@@ -218,7 +240,7 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
         studentItemInfo.setGender(student.getGender());
         studentItemInfo.setStudentIdR(student.getStudentIdR());
         studentItemInfo.setCourseDefindIdR(courseItemVo.getCourseDefineId());
-        StudentDevice sd = DBService.getInstance(this).getStudentDeviceByStudent(student.getStudentIdR(),loginInfo.getUserId());
+        StudentDevice sd = DBService.getInstance(this).getStudentDeviceByStudent(student.getStudentIdR(),loginInfo.getUserId(),courseItemVo.getCourseDefineId());
         studentItemInfo.setHasBinded(sd!=null);
         if(sd!=null){
             studentItemInfo.setDeviceNo(sd.getDeviceNo());
