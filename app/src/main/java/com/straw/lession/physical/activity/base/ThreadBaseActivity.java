@@ -184,7 +184,7 @@ public abstract class ThreadBaseActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int which) {
                     loadDataFromLocal();
                     dialog.cancel();
-                    finish();
+//                    finish();
                 }
             }).show();
         }

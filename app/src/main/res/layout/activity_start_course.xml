@@ -12,7 +12,8 @@
                         android:layout_gravity="bottom" android:gravity="center_vertical">
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                       android:text="三年级（2）班" android:textSize="18sp"
-                        android:id="@+id/startcourse_className"/>
+                        android:id="@+id/startcourse_className"
+                android:textColor="@color/white" />
             <Button android:id="@+id/btn_do_start_course"
                     android:layout_width="wrap_content" android:textColor="@color/white" android:textSize="@dimen/font_size_20"
                     android:layout_height="wrap_content" android:background="@drawable/button_blue_selector" android:text="@string/btn_start_course"

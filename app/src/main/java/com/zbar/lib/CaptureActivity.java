@@ -135,7 +135,8 @@ public class CaptureActivity extends ThreadBaseActivity implements Callback,View
 		lightBtn.setOnClickListener(this);
 		student_name.setText(currentStudent.getName());
 		student_no.setText(currentStudent.getCode());
-		device_no.setText(getResources().getString(R.string.unmatch));
+		String deviceNo = currentStudent.getDeviceNo();
+		device_no.setText(Detect.notEmpty(deviceNo)?deviceNo:getResources().getString(R.string.unmatch));
 		gender.setText(Gender.getName(currentStudent.getGender()));
 
 		ImageView mQrLineView = (ImageView) findViewById(R.id.capture_scan_line);

@@ -59,7 +59,12 @@ public class ClassFragment extends BaseFragment implements SwipeRefreshLayout.On
 
     @Override
     protected void loadDataFromLocal() {
-        Toast.makeText(getContext(),"访问本地缓存操作",Toast.LENGTH_SHORT).show();
+        List<ClassInfo> classInfos = DBService.getInstance(getContext()).findAllClass();
+        infoList.clear();
+        for(ClassInfo classInfo : classInfos){
+            infoList.add(toItem(classInfo));
+        }
+        adapter.notifyDataSetChanged();
     }
 
     @Override

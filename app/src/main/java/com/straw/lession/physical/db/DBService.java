@@ -526,4 +526,8 @@ public class DBService {
             courseDefineDao.delete(courseDefines.get(0));
         }
     }
+
+    public List<ClassInfo> findAllClass() {
+        return classInfoDao.loadAll();
+    }
 }

@@ -70,8 +70,13 @@ public class UploadListViewAdapter extends BaseAdapter implements View.OnClickLi
         class_name.setText(info.getClassName());
         date.setText(info.getDate());
         duration.setText(info.getDuration());
-        holder.button.setOnClickListener(this);
-        holder.button.setTag(position);
+        if(info.isUploaded()){
+            holder.button.setVisibility(View.GONE);
+        }else {
+            holder.button.setVisibility(View.VISIBLE);
+            holder.button.setOnClickListener(this);
+            holder.button.setTag(position);
+        }
         return convertView;
     }
 

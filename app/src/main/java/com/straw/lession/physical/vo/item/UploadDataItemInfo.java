@@ -36,8 +36,17 @@ public class UploadDataItemInfo {
         this.duration = duration;
     }
 
+    public boolean isUploaded() {
+        return isUploaded;
+    }
+
+    public void setUploaded(boolean uploaded) {
+        isUploaded = uploaded;
+    }
+
     private long courseId;
     private String className;
     private String date;
     private String duration;
+    private boolean isUploaded;
 }
