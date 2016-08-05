@@ -24,12 +24,6 @@
                         android:layout_height="@dimen/dimen_30dp" android:background="@color/blue17"
                         android:text="@string/btn_start_course"
                 />
-                <ImageButton
-                        android:layout_width="wrap_content" android:background="@color/white"
-                        android:layout_height="wrap_content" android:src="@mipmap/icon_delete"
-                        android:layout_margin="@dimen/dimen_5dp" android:id="@+id/btn_del_coursedefine"
-                        android:visibility="gone"
-                />
             </LinearLayout>
         </TableRow>
         <TableRow android:layout_width="match_parent"

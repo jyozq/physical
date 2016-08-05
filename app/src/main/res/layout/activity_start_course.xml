@@ -29,19 +29,19 @@
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal" android:gravity="center_vertical">
         <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                   android:src="@mipmap/icon_time"/>
+                   android:src="@mipmap/icon_time" android:layout_marginLeft="@dimen/dimen_10dp"/>
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                   android:textSize="16sp" android:text="2016年8月1日 星期一 10:00-11:00"
-                    android:id="@+id/startcourse_time"
+                    android:id="@+id/startcourse_time" android:layout_marginLeft="@dimen/dimen_10dp"
             />
     </LinearLayout>
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                   android:orientation="horizontal" android:gravity="center_vertical">
         <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                   android:src="@mipmap/icon_pin"/>
+                   android:src="@mipmap/icon_pin" android:layout_marginLeft="@dimen/dimen_10dp"/>
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                   android:textSize="16sp" android:text="篮球馆 跑步 4/45 未开始"
-                    android:id="@+id/startcourse_location"
+                    android:id="@+id/startcourse_location" android:layout_marginLeft="@dimen/dimen_10dp"
             />
     </LinearLayout>
 

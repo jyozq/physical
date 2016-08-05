@@ -38,7 +38,6 @@ public class CourseListViewAdapter extends BaseAdapter implements View.OnClickLi
 
     public class ViewHolder {
         public Button button;
-        public ImageButton imageButton;
     }
 
     public CourseListViewAdapter(Context context, List<CourseItemInfo> list, Callback callback) {
@@ -77,7 +76,6 @@ public class CourseListViewAdapter extends BaseAdapter implements View.OnClickLi
             convertView = inflater.inflate(R.layout.course_item_listview, null);
             holder = new ViewHolder();
             holder.button = (Button) convertView.findViewById(R.id.btn_start_course);
-            holder.imageButton = (ImageButton) convertView.findViewById(R.id.btn_del_coursedefine);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -95,10 +93,15 @@ public class CourseListViewAdapter extends BaseAdapter implements View.OnClickLi
         TextView type = (TextView) convertView.findViewById(R.id.type);
         type.setText(info.getType() + " " + info.getBindedStudentNum() + "|" + info.getTotalStudentNum());
         holder.button.setOnClickListener(this);
-        holder.imageButton.setOnClickListener(this);
         holder.button.setTag(position);
+        if(info.getStatus() == CourseStatus.UNSTARTED.getValue()){
+            holder.button.setBackground(mContext.getResources().getDrawable(R.drawable.button_blue_selector));
+        }else if(info.getStatus() == CourseStatus.STARTED.getValue()){
+            holder.button.setBackgroundColor(mContext.getResources().getColor(R.color.yellow_fbae5c));
+        }else if(info.getStatus() == CourseStatus.OVER.getValue()){
+            holder.button.setBackgroundColor(mContext.getResources().getColor(R.color.green_46d136));
+        }
         holder.button.setText(CourseStatus.getName(info.getStatus()));
-        holder.imageButton.setTag(position);
         return convertView;
     }
 }

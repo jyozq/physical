@@ -3,6 +3,7 @@ package com.zbar.lib;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import android.app.Dialog;
@@ -26,6 +27,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.base.ThreadBaseActivity;
@@ -66,6 +68,8 @@ public class CaptureActivity extends ThreadBaseActivity implements Callback,View
 	private ArrayList<StudentItemInfo> studentItemInfos;
 	private LoginInfoVo loginInfoVo;
 	private Dialog dialog;
+	private int studentIdx = 0;
+	private boolean isContinueSwitch;
 
 	public boolean isNeedCapture() {
 		return isNeedCapture;
@@ -116,6 +120,7 @@ public class CaptureActivity extends ThreadBaseActivity implements Callback,View
 
 		currentStudent = (StudentItemInfo)getIntent().getSerializableExtra("student");
 		studentItemInfos = (ArrayList<StudentItemInfo>)getIntent().getSerializableExtra("students");
+		studentItemInfos.add(0,currentStudent);
 
 		// 初始化 CameraManager
 		CameraManager.init(getApplication());
@@ -133,11 +138,12 @@ public class CaptureActivity extends ThreadBaseActivity implements Callback,View
 
 		nextBtn.setOnClickListener(this);
 		lightBtn.setOnClickListener(this);
-		student_name.setText(currentStudent.getName());
-		student_no.setText(currentStudent.getCode());
-		String deviceNo = currentStudent.getDeviceNo();
-		device_no.setText(Detect.notEmpty(deviceNo)?deviceNo:getResources().getString(R.string.unmatch));
-		gender.setText(Gender.getName(currentStudent.getGender()));
+		switchToNext();
+//		student_name.setText(currentStudent.getName());
+//		student_no.setText(currentStudent.getCode());
+//		String deviceNo = currentStudent.getDeviceNo();
+//		device_no.setText(Detect.notEmpty(deviceNo)?deviceNo:getResources().getString(R.string.unmatch));
+//		gender.setText(Gender.getName(currentStudent.getGender()));
 
 		ImageView mQrLineView = (ImageView) findViewById(R.id.capture_scan_line);
 		TranslateAnimation mAnimation = new TranslateAnimation(TranslateAnimation.ABSOLUTE, 0f, TranslateAnimation.ABSOLUTE, 0f,
@@ -240,6 +246,8 @@ public class CaptureActivity extends ThreadBaseActivity implements Callback,View
 					isAdd = false;
 					studentDevice.setDeviceNo(result);
 					studentDevice.setBindTime(new Date());
+					DBService.getInstance(this).updateStudentDevice(studentDevice);
+					break;
 				}
 			}
 		}
@@ -253,11 +261,11 @@ public class CaptureActivity extends ThreadBaseActivity implements Callback,View
 			studentDevice.setTeacherIdR(loginInfoVo.getUserId());
 			DBService.getInstance(this).addStudentDevice(studentDevice);
 		}
+		currentStudent.setDeviceNo(result);
 		dialog = AlertDialogUtil.showAlertWindow(this, -1,
 				"学生" + currentStudent.getName() + "(学号:" + currentStudent.getCode() + ")与设备" + result + "已绑定", new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						studentItemInfos.remove(0);
 						switchToNext();
 						dialog.dismiss();
 						handler.sendEmptyMessage(R.id.restart_preview);
@@ -267,14 +275,37 @@ public class CaptureActivity extends ThreadBaseActivity implements Callback,View
 
 	private void switchToNext() {
 		if(Detect.notEmpty(studentItemInfos)) {
-			currentStudent = studentItemInfos.get(0);
-			student_name.setText(currentStudent.getName());
-			student_no.setText(currentStudent.getCode());
-			device_no.setText(getResources().getString(R.string.unmatch));
-			gender.setText(Gender.getName(currentStudent.getGender()));
+			if(studentIdx == studentItemInfos.size()){
+				dialog = AlertDialogUtil.showAlertWindow2Button(this, "已到达最后一名学生，是否从头开始？", new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						dialog.dismiss();
+					}
+				}, new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						dialog.dismiss();
+						studentIdx = 0;
+						doSwitch();
+
+					}
+				});
+			}else{
+				doSwitch();
+			}
 		}else{
-			AlertDialogUtil.showAlertWindow(this,-1,"无其他未匹配学生。",null);
+			Toast.makeText(this,"无其他未匹配学生。", Toast.LENGTH_SHORT).show();
 		}
+	}
+
+	private void doSwitch() {
+		currentStudent = studentItemInfos.get(studentIdx++);
+		student_name.setText(currentStudent.getName());
+		student_no.setText(currentStudent.getCode());
+		device_no.setText(Detect.notEmpty(
+				currentStudent.getDeviceNo())?currentStudent.getDeviceNo()
+				:getResources().getString(R.string.unmatch));
+		gender.setText(Gender.getName(currentStudent.getGender()));
 	}
 
 	private void initCamera(SurfaceHolder surfaceHolder) {

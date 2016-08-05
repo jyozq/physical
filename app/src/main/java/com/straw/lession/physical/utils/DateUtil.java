@@ -1358,16 +1358,8 @@ public final class DateUtil {
     public static boolean isToday(Date date){
         if(date == null) return false;
         String dateStr = dateToStr(date);
-        String today = curDate();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-mm-dd");
-        try {
-            Date d1 = df.parse(dateStr);
-            Date d2 = df.parse(today);
-            return (d1.compareTo(d2)==0);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return false;
+        String today = dateToStr(new Date());
+        return dateStr.equals(today);
     }
 
     public static void main(String[] args){

@@ -142,6 +142,16 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
         seqTxt.setInputType(InputType.TYPE_NULL);
         classTxt.setInputType(InputType.TYPE_NULL);
         typeTxt.setInputType(InputType.TYPE_NULL);
+        dateTxt.setFocusable(false);
+        dateTxt.setFocusableInTouchMode(false);
+        weekdayTxt.setFocusable(false);
+        weekdayTxt.setFocusableInTouchMode(false);
+        seqTxt.setFocusable(false);
+        seqTxt.setFocusableInTouchMode(false);
+        classTxt.setFocusable(false);
+        classTxt.setFocusableInTouchMode(false);
+        typeTxt.setFocusable(false);
+        typeTxt.setFocusableInTouchMode(false);
 
         weekdayArr = getResources().getStringArray(R.array.weekday);
         weekday_val_arr = getResources().getIntArray(R.array.weekday_value);

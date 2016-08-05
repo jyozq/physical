@@ -21,7 +21,7 @@
                 android:id="@+id/id_today_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/toolbar_today"
+                android:text="@string/toolbar_today" android:textSize="@dimen/font_size_12"
                 android:textColor="@color/toolbar_btn_pressed"
         />
     </LinearLayout>
@@ -44,7 +44,7 @@
                 android:id="@+id/id_lesson_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/toolbar_course"
+                android:text="@string/toolbar_course" android:textSize="@dimen/font_size_12"
                 android:textColor="@color/toolbar_btn_gray"
         />
     </LinearLayout>
@@ -67,7 +67,7 @@
                 android:id="@+id/id_class_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/toolbar_class"
+                android:text="@string/toolbar_class" android:textSize="@dimen/font_size_12"
                 android:textColor="@color/toolbar_btn_gray"
         />
     </LinearLayout>
@@ -79,6 +79,7 @@
             android:layout_weight="1"
             android:gravity="center">
         <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:orientation="vertical" android:id="@+id/profile_linear_layout">
             <ImageButton
                     android:id="@+id/id_profile_img"
@@ -92,7 +93,7 @@
                     android:id="@+id/id_profile_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/toolbar_profile"
+                    android:text="@string/toolbar_profile" android:textSize="@dimen/font_size_12"
                     android:textColor="@color/toolbar_btn_gray"
             />
         </LinearLayout>

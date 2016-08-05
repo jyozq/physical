@@ -79,8 +79,10 @@ public class StudentListViewAdapter extends BaseAdapter implements View.OnClickL
         }
 
         TextView studentno = (TextView) convertView.findViewById(R.id.studentno);
+        TextView studentname = (TextView) convertView.findViewById(R.id.studentname);
         TextView student_status = (TextView) convertView.findViewById(R.id.student_status);
         studentno.setText(info.getCode());
+        studentname.setText(info.getName());
         holder.button.setOnClickListener(this);
         if(info.isHasBinded()){
             holder.button.setText("重新绑定");

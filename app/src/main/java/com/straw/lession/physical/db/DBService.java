@@ -536,4 +536,8 @@ public class DBService {
     public Institute findInstituteById(Long currentInstituteIdR) {
         return instituteDao.load(currentInstituteIdR);
     }
+
+    public void updateStudentDevice(StudentDevice studentDevice) {
+        studentDeviceDao.update(studentDevice);
+    }
 }

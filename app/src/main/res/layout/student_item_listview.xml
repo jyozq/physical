@@ -18,6 +18,13 @@
                         android:text="学号" android:id="@+id/studentno"/>
         </TableRow>
         <TableRow android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:gravity="center_vertical|left">
+            <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:src="@mipmap/icon_link"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="姓名" android:id="@+id/studentname"/>
+        </TableRow>
+        <TableRow android:layout_width="wrap_content"
                   android:layout_height="wrap_content" android:gravity="center_vertical|left">
             <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"
                        android:src="@mipmap/icon_link"/>

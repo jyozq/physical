@@ -119,17 +119,24 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
             }
         }
         if(status == null){
+            btn_do_start_course.setEnabled(true);
             btn_do_start_course.setOnClickListener(listener);
             btn_end_course.setEnabled(false);
+            btn_end_course.setBackgroundColor(getResources().getColor(R.color.gray_dddedf2));
         }else if(status == CourseStatus.STARTED.getValue()){
             btn_end_course.setEnabled(true);
+            btn_end_course.setBackground(getResources().getDrawable(R.drawable.button_reg_selector));
             btn_end_course.setOnClickListener(listener);
+            btn_do_start_course.setEnabled(false);
             btn_do_start_course.setOnClickListener(null);
+            btn_do_start_course.setBackgroundColor(getResources().getColor(R.color.yellow_fbae5c));
             btn_do_start_course.setText(CourseStatus.getName(status));
         }else if(status == CourseStatus.OVER.getValue()){
             btn_end_course.setVisibility(View.INVISIBLE);
             btn_end_course.setOnClickListener(null);
+            btn_do_start_course.setEnabled(false);
             btn_do_start_course.setOnClickListener(null);
+            btn_do_start_course.setBackgroundColor(getResources().getColor(R.color.green_46d136));
             btn_do_start_course.setText(CourseStatus.getName(status));
         }
     }
@@ -150,6 +157,7 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
                         btn_end_course.setOnClickListener(null);
                         btn_end_course.setVisibility(View.INVISIBLE);
                         btn_do_start_course.setText(CourseStatus.OVER.getText());
+                        btn_do_start_course.setBackgroundColor(getResources().getColor(R.color.green_46d136));
                         dialog.dismiss();
                     }
                 });
@@ -191,8 +199,10 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
                 }
                 DBService.getInstance(StartCourseActivity.this).updateStudentDevices(studentDevices);
                 btn_do_start_course.setOnClickListener(null);
+                btn_do_start_course.setBackgroundColor(getResources().getColor(R.color.yellow_fbae5c));
                 btn_do_start_course.setText(CourseStatus.STARTED.getText());
                 btn_end_course.setEnabled(true);
+                btn_end_course.setBackground(getResources().getDrawable(R.drawable.button_reg_selector));
                 btn_end_course.setOnClickListener(listener);
                 dialog.dismiss();
             }
