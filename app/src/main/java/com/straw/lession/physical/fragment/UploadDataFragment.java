@@ -54,8 +54,6 @@ import java.util.List;
  */
 public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,UploadListViewAdapter.Callback{
     private static final String TAG = "UploadDataFragment";
-    private LoginInfoVo loginInfo;
-    private TokenInfo tokenInfo;
     private View layoutView;
     private boolean isUploaded;
     private SwipeRefreshLayout swipeLayout;
@@ -66,12 +64,6 @@ public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayo
     private Button btn_upload_all;
     private List<UploadDataItemInfo> readyToUploadDatas = new ArrayList<UploadDataItemInfo>();
     private Dialog dialog;
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        query();
-    }
 
     @Override
     protected void loadDataFromLocal() {
@@ -85,15 +77,7 @@ public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayo
 
     @Override
     public void doAfterGetToken() {
-        try{
-            tokenInfo = AppPreference.getUserToken();
-        }catch (Exception ex){
-            ex.printStackTrace();
-            Log.e(TAG,"",ex);
-            Toast.makeText(getContext(),"获取token出错",Toast.LENGTH_SHORT).show();
-            return;
-        }
-
+        super.doAfterGetToken();
         List<UploadCourseDataVo> uploadCourseDataVos = new ArrayList<>();
         for(UploadDataItemInfo uploadDataItemInfo : readyToUploadDatas){
             long courseId = uploadDataItemInfo.getCourseId();
@@ -170,6 +154,7 @@ public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayo
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initViews();
+        query();
     }
 
     private void initViews() {
@@ -178,7 +163,7 @@ public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayo
         listView = (ListView) layoutView.findViewById(R.id.listview);
         btn_upload_all = (Button) layoutView.findViewById(R.id.btn_upload_all);
         if(isUploaded){
-            btn_upload_all.setVisibility(View.INVISIBLE);
+            btn_upload_all.setVisibility(View.GONE);
         }else{
             btn_upload_all.setVisibility(View.VISIBLE);
             btn_upload_all.setOnClickListener(new View.OnClickListener() {
@@ -196,13 +181,7 @@ public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayo
     }
 
     public void query() {
-        try {
-            loginInfo = AppPreference.getLoginInfo();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e(TAG,"",e);
-            return;
-        }
+        getLoginAndToken();
         List<Course> courses = null;
         if(isUploaded){
             courses = DBService.getInstance(getContext()).getUploadedData(loginInfo.getUserId());
@@ -271,6 +250,7 @@ public class UploadDataFragment extends BaseFragment implements SwipeRefreshLayo
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
+                getLoginAndToken();
                 checkTokenInfo();
             }
         });

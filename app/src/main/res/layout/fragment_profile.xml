@@ -57,7 +57,7 @@
                           android:textSize="@dimen/font_size_16" android:layout_marginLeft="@dimen/dimen_15dp"
                           android:layout_marginRight="@dimen/dimen_15dp" android:textColor="@color/gray_4a4f49" />
                 <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                           android:src="@android:drawable/ic_notification_overlay"
+                           android:src="@android:drawable/ic_notification_overlay" android:visibility="gone"
                            android:layout_marginRight="@dimen/dimen_20dp" android:id="@+id/has_unupload_flag"
                         />
                 <ImageView android:layout_marginRight="@dimen/dimen_20dp"

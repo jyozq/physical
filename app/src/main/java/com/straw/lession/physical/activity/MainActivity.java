@@ -86,8 +86,6 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
     private ClassFragment classFragment;
 
     private Spinner spinner;
-    private LoginInfoVo loginInfo;
-    private TokenInfo tokenInfo;
     private List<Institute> institutes = new ArrayList<>();
     private LinearLayout profile_linear_layout;
     private BadgeView bv;
@@ -95,18 +93,12 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        try {
-            loginInfo = AppPreference.getLoginInfo();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG,"",e);
-            Toast.makeText(MainActivity.this, "获取登录信息出错", Toast.LENGTH_SHORT).show();
-            return;
-        }
         setContentView(R.layout.activity_main);
+        getLoginAndToken();
         toolbar = (Toolbar)this.findViewById(R.id.id_tool_bar);
         setSupportActionBar(toolbar);
         MainApplication.getInstance().addActivity(this);
+        getLoginAndToken();
         getDataByNetSate();
         // 初始化控件
         initView();
@@ -163,14 +155,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
 
     @Override
     protected void doAfterGetToken() {
-        try {
-            tokenInfo = AppPreference.getUserToken();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e(TAG,"",e);
-            Toast.makeText(this,"获取TOKEN出错",Toast.LENGTH_SHORT).show();
-            return;
-        }
+        super.doAfterGetToken();
         //获取数据并更新本地库
         getInstituteCoursedefineClassStudentInfo();
 
@@ -543,9 +528,6 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
             bv.show();
         }else{
             bv.hide();
-        }
-        if(profileFragment!= null){
-            profileFragment.toggleUploadNotificationFlag(num>0);
         }
     }
     /**************** 以上实现两次退出逻辑 *********************/

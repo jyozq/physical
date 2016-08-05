@@ -56,7 +56,6 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
     private static final String TAG = "AddCourseActivity";
     private final int RESULT_CODE=101;
     private final int REQUEST_CODE=1;
-    private LoginInfoVo loginInfo;
     private ActionSheetTwoColumnGridDialog actionSheetGridDialog;
     private EditText dateTxt, weekdayTxt, seqTxt, classTxt, kcTxt, typeTxt, locationTxt;
     private MyListener listener = new MyListener();
@@ -79,6 +78,7 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
         setContentView(R.layout.activity_add_course);
+        getLoginAndToken();
         useOnce = getIntent().getBooleanExtra("useOnce", true);
         courseDefineItemInfo = (CourseDefineItemInfo)getIntent().getSerializableExtra("courseDefine");
         if(courseDefineItemInfo.getCourseDefineId() > 0){
@@ -102,6 +102,7 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
 
     @Override
     public void doAfterGetToken() {
+        super.doAfterGetToken();
         try {
             saveCourse();
         }catch (Exception ex){
@@ -303,6 +304,7 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
                     actionSheetGridDialog.show();
                     break;
                 case R.id.addcourse_save_btn:
+                    getLoginAndToken();
                     checkTokenInfo();
                     break;
             }

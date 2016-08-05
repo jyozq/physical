@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.LoginActivity;
 import com.straw.lession.physical.app.MainApplication;
@@ -25,9 +26,11 @@ import com.straw.lession.physical.utils.AppPreference;
 import com.straw.lession.physical.utils.DateUtil;
 import com.straw.lession.physical.utils.ResponseParseUtils;
 import com.straw.lession.physical.utils.Utils;
+import com.straw.lession.physical.vo.LoginInfoVo;
 import com.straw.lession.physical.vo.TokenInfo;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.concurrent.ThreadPoolExecutor;
 
 
@@ -41,6 +44,8 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     protected MainApplication mApp;
     protected ThreadPoolExecutor mThreadPool;
     private View viewTip ;
+    protected LoginInfoVo loginInfo;
+    protected TokenInfo tokenInfo;
 
     @Override
     public void onAttach(Activity activity) {
@@ -145,7 +150,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
             long nowTime = System.currentTimeMillis();
             if(nowTime >= tokenExpireTime){
                 AppPreference.logout();
-                MainApplication.getInstance().exit();
+//                MainApplication.getInstance().exit();
                 startActivity(new Intent(getContext(), LoginActivity.class));
             }else{
                 long duration = tokenExpireTime - nowTime;
@@ -197,5 +202,24 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
         }
     }
 
-    public abstract void doAfterGetToken();
+    public void doAfterGetToken(){
+        try {
+            tokenInfo = AppPreference.getUserToken();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e(TAG,"",e);
+            Toast.makeText(getContext(),"获取TOKEN出错",Toast.LENGTH_SHORT).show();
+            return;
+        }
+    }
+
+    public void getLoginAndToken(){
+        try{
+            loginInfo = AppPreference.getLoginInfo();
+            tokenInfo = AppPreference.getUserToken();
+        }catch (Exception e){
+            Log.e(TAG, "登录信息或token信息有误！", e);
+            startActivity(new Intent(getContext(), LoginActivity.class));
+        }
+    }
 }

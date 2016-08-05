@@ -25,13 +25,10 @@ import com.straw.lession.physical.db.DBService;
 import com.straw.lession.physical.http.AsyncHttpClient;
 import com.straw.lession.physical.http.AsyncHttpResponseHandler;
 import com.straw.lession.physical.http.HttpResponseBean;
-import com.straw.lession.physical.utils.AppPreference;
 import com.straw.lession.physical.utils.ResponseParseUtils;
 import com.straw.lession.physical.utils.Utils;
 import com.straw.lession.physical.vo.ClassInfoVo;
-import com.straw.lession.physical.vo.LoginInfoVo;
 import com.straw.lession.physical.vo.StudentVo;
-import com.straw.lession.physical.vo.TokenInfo;
 import com.straw.lession.physical.vo.db.ClassInfo;
 import com.straw.lession.physical.vo.db.Student;
 import com.straw.lession.physical.vo.item.ClassItemInfo;
@@ -40,7 +37,6 @@ import com.straw.lession.physical.vo.item.StudentItemInfo;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,25 +51,17 @@ public class StudentCommentListActivity extends ThreadToolBarBaseActivity implem
     private List<StudentItemInfo> infoList = new ArrayList<StudentItemInfo>();
     private Spinner spinner_class;
     private ClassItemInfo classItemInfo;
-    private LoginInfoVo loginInfoVo;
-    private TokenInfo tokenInfo;
     private List<ClassInfo> classInfos;
 
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
         setContentView(R.layout.activity_coment_student_list);
+        getLoginAndToken();
         Intent intent = getIntent();
         classItemInfo = (ClassItemInfo)intent.getSerializableExtra("classInfo");
         initToolBar();
         MainApplication.getInstance().addActivity(this);
-        try {
-            loginInfoVo = AppPreference.getLoginInfo();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this,"获取登录信息出错",Toast.LENGTH_SHORT).show();
-            return;
-        }
         initViews();
     }
 
@@ -106,7 +94,7 @@ public class StudentCommentListActivity extends ThreadToolBarBaseActivity implem
 
     private void initClassSpinner() {
         classInfos = DBService.getInstance(this)
-                .getClassByInstitute(loginInfoVo.getCurrentInstituteIdR());
+                .getClassByInstitute(loginInfo.getCurrentInstituteIdR());
         ClassSpinnerAdapter schoolSpinnerAdapter = new ClassSpinnerAdapter(this, spinner_class, classInfos);
         schoolSpinnerAdapter.setDropDownViewResource(R.layout.school_item_spinner_dropdown);
         spinner_class.setAdapter(schoolSpinnerAdapter);
@@ -145,6 +133,7 @@ public class StudentCommentListActivity extends ThreadToolBarBaseActivity implem
     }
 
     public void query() {
+        getLoginAndToken();
         checkTokenInfo();
     }
 
@@ -161,17 +150,10 @@ public class StudentCommentListActivity extends ThreadToolBarBaseActivity implem
 
     @Override
     public void doAfterGetToken() {
-        try{
-            tokenInfo = AppPreference.getUserToken();
-        }catch (Exception ex){
-            ex.printStackTrace();
-            Log.e(TAG,"",ex);
-            Toast.makeText(this,"获取token出错",Toast.LENGTH_SHORT).show();
-            return;
-        }
+        super.doAfterGetToken();
         String URL = ReqConstant.URL_BASE + "/class/student/list";
         ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
-        params.add(new BasicNameValuePair("instituteId", String.valueOf(loginInfoVo.getCurrentInstituteIdR())));
+        params.add(new BasicNameValuePair("instituteId", String.valueOf(loginInfo.getCurrentInstituteIdR())));
         params.add(new BasicNameValuePair("classId", String.valueOf(classItemInfo.getClassIdR())));
         showProgressDialog(getResources().getString(R.string.loading));
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.GET,

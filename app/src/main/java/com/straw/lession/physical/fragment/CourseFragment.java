@@ -67,23 +67,23 @@ public class CourseFragment extends BaseFragment {
         // Bind the tabs to the ViewPager
         tabs = (PagerSlidingTabStrip) layoutView.findViewById(R.id.tabs);
         tabs.setViewPager(pager);
-        tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                DayCourseFragment dayCourseFragment = fragmentList.get(position);
-                dayCourseFragment.query();
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
+//        tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+//            @Override
+//            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//
+//            }
+//
+//            @Override
+//            public void onPageSelected(int position) {
+//                DayCourseFragment dayCourseFragment = fragmentList.get(position);
+//                dayCourseFragment.query();
+//            }
+//
+//            @Override
+//            public void onPageScrollStateChanged(int state) {
+//
+//            }
+//        });
         return layoutView;
     }
 
@@ -100,6 +100,16 @@ public class CourseFragment extends BaseFragment {
     private void initViews() {
         tabs.setIndicatorColor(currentColor);
 //        query();
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if(hidden){
+
+        }else{
+            refresh();
+        }
     }
 
     @Override

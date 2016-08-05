@@ -11,7 +11,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -25,10 +24,8 @@ import com.straw.lession.physical.constant.CourseStatus;
 import com.straw.lession.physical.constant.Weekday;
 import com.straw.lession.physical.custom.AlertDialogUtil;
 import com.straw.lession.physical.db.DBService;
-import com.straw.lession.physical.utils.AppPreference;
 import com.straw.lession.physical.utils.DateUtil;
 import com.straw.lession.physical.utils.Detect;
-import com.straw.lession.physical.vo.LoginInfoVo;
 import com.straw.lession.physical.vo.db.Course;
 import com.straw.lession.physical.vo.db.CourseDefine;
 import com.straw.lession.physical.vo.db.Student;
@@ -37,7 +34,6 @@ import com.straw.lession.physical.vo.item.CourseItemInfo;
 import com.straw.lession.physical.vo.item.StudentItemInfo;
 import com.zbar.lib.CaptureActivity;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -55,9 +51,7 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
     private List<StudentItemInfo> infoList = new ArrayList<StudentItemInfo>();
     private StudentListViewAdapter studentListViewAdapter;
     private CourseItemInfo courseItemVo;
-    private LoginInfoVo loginInfo;
     private Button btn_do_start_course,btn_end_course;
-    private long courseId;
     private MyListener listener = new MyListener();
     private StudentItemInfo studentItemInfo;
     private Dialog dialog;
@@ -70,14 +64,6 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
         courseItemVo = (CourseItemInfo)intent.getSerializableExtra("course");
         initToolBar(courseItemVo.getName());
         MainApplication.getInstance().addActivity(this);
-        try {
-            loginInfo = AppPreference.getLoginInfo();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e(TAG,"",e);
-            showErrorMsgInfo(e.toString());
-            return;
-        }
         initViews();
     }
 
@@ -204,7 +190,6 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
                     }
                 }
                 DBService.getInstance(StartCourseActivity.this).updateStudentDevices(studentDevices);
-                courseId = course.getId();
                 btn_do_start_course.setOnClickListener(null);
                 btn_do_start_course.setText(CourseStatus.STARTED.getText());
                 btn_end_course.setEnabled(true);
@@ -215,7 +200,7 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
     }
 
     private boolean hasStartedCourse() {
-        List<Course> startedCourses = DBService.getInstance(this).getStartedCourseByTeacher(loginInfo.getUserId());
+        List<Course> startedCourses = DBService.getInstance(this).getStartedCourseByTeacher(loginInfo.getUserId(),loginInfo.getCurrentInstituteIdR());
         if(Detect.notEmpty(startedCourses)){
             Course course = startedCourses.get(0);
             CourseDefine courseDefine = course.getCourseDefine();
@@ -226,6 +211,7 @@ public class StartCourseActivity extends ThreadToolBarBaseActivity implements Sw
     }
 
     private void query() {
+        getLoginAndToken();
         refreshStatus();
         List<Student> students = DBService.getInstance(this).getStudentByClass(courseItemVo.getClassId());
         infoList.clear();

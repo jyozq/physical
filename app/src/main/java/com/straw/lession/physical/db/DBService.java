@@ -405,17 +405,18 @@ public class DBService {
     public List<StudentDevice> getStudentDeviceByCourseDefine(long courseDefineId, long userId) {
         return studentDeviceDao.queryBuilder().where(StudentDeviceDao.Properties.CourseDefineIdR.eq(courseDefineId),
                                                     StudentDeviceDao.Properties.TeacherIdR.eq(userId),
-                                                    StudentDeviceDao.Properties.IsUploaded.eq(false)).list();
+                                                    StudentDeviceDao.Properties.IsUploaded.eq(false)).orderAsc().list();
     }
 
     public void updateStudentDevices(List<StudentDevice> studentDevices) {
         studentDeviceDao.updateInTx(studentDevices);
     }
 
-    public List<Course> getStartedCourseByTeacher(long userId) {
+    public List<Course> getStartedCourseByTeacher(long userId, Long currentInstituteIdR) {
         return courseDao.queryBuilder().where(CourseDao.Properties.TeacherIdR.eq(userId),
                                                 CourseDao.Properties.Status.eq(CourseStatus.STARTED.getValue()),
-                                                CourseDao.Properties.IsUploaded.eq(false)).list();
+                                                CourseDao.Properties.IsUploaded.eq(false),
+                CourseDao.Properties.InstituteIdR.eq(currentInstituteIdR)).list();
     }
 
     public int countBindedStudentNumByCourse(long userId, Long courseId) {

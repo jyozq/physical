@@ -1,5 +1,6 @@
 package com.straw.lession.physical.fragment;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,11 +17,12 @@ import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.LoginActivity;
 import com.straw.lession.physical.activity.ResetPassWordActivity;
 import com.straw.lession.physical.activity.UploadDataActivity;
-import com.straw.lession.physical.app.MainApplication;
+import com.straw.lession.physical.custom.AlertDialogUtil;
 import com.straw.lession.physical.db.DBService;
 import com.straw.lession.physical.fragment.base.BaseFragment;
 import com.straw.lession.physical.utils.AppPreference;
-import com.straw.lession.physical.vo.LoginInfoVo;
+import com.straw.lession.physical.utils.Detect;
+import com.straw.lession.physical.vo.db.Course;
 import com.straw.lession.physical.vo.db.Institute;
 
 import java.io.IOException;
@@ -32,18 +34,41 @@ import java.util.List;
 public class ProfileFragment extends BaseFragment{
     private static final String TAG = "ProfileFragment";
     private View layoutView;
-    private LoginInfoVo loginInfo;
     private TextView profile_upload;
     private TextView profile_resetPwdText;
     private Button profile_exit;
+    private TextView profile_name;
     private TextView profile_institute;
+    private ImageView has_unupload_flag;
     private MyClickListener listener = new MyClickListener();
+    private boolean hasUnuploadData;
+    private Dialog dialog;
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if(hidden){
+
+        }else{
+            myinit();
+        }
+    }
+
+    private void myinit() {
+        getLoginAndToken();
+        Institute institute = DBService.getInstance(getContext()).findInstituteById(loginInfo.getCurrentInstituteIdR());
+        profile_name.setText(loginInfo.getPersonName());
+        profile_institute.setText(institute.getName());
+
+        List<Course> unUploadDatas = DBService.getInstance(getContext()).getUnUploadedData(loginInfo.getUserId());
+        hasUnuploadData = Detect.notEmpty(unUploadDatas);
+        has_unupload_flag.setVisibility(hasUnuploadData ? View.VISIBLE : View.GONE);
+    }
 
     @Override
     public void onResume() {
         super.onResume();
-        Institute institute = DBService.getInstance(getContext()).findInstituteById(loginInfo.getCurrentInstituteIdR());
-        profile_institute.setText(institute.getName());
+        myinit();
     }
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -57,23 +82,15 @@ public class ProfileFragment extends BaseFragment{
     }
 
     private void initViews() {
-        try {
-            loginInfo = AppPreference.getLoginInfo();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e(TAG,"",e);
-            return;
-        }
-
-        TextView profile_name = (TextView)layoutView.findViewById(R.id.profile_name);
+        profile_name = (TextView)layoutView.findViewById(R.id.profile_name);
         profile_institute = (TextView)layoutView.findViewById(R.id.profile_institute);
-        profile_name.setText(loginInfo.getPersonName());
-        Institute institute = DBService.getInstance(getContext()).findInstituteById(loginInfo.getCurrentInstituteIdR());
-        profile_institute.setText(institute.getName());
+//        Institute institute = DBService.getInstance(getContext()).findInstituteById(loginInfo.getCurrentInstituteIdR());
+//        profile_institute.setText(institute.getName());
 
         profile_upload = (TextView) layoutView.findViewById(R.id.profile_upload);
         profile_resetPwdText = (TextView) layoutView.findViewById(R.id.profile_resetPwdText);
         profile_exit = (Button) layoutView.findViewById(R.id.profile_exit);
+        has_unupload_flag = (ImageView) layoutView.findViewById(R.id.has_unupload_flag);
         profile_upload.setOnClickListener(listener);
         profile_resetPwdText.setOnClickListener(listener);
         profile_exit.setOnClickListener(listener);
@@ -105,23 +122,44 @@ public class ProfileFragment extends BaseFragment{
                     startActivity(new Intent(ProfileFragment.this.getActivity(), ResetPassWordActivity.class));
                     break;
                 case R.id.profile_exit:
-                    try {
-                        AppPreference.logout();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "", e);
-                        Toast.makeText(getActivity(),"登出出错，请重试！",Toast.LENGTH_LONG).show();
-                        return;
+                    String content = null;
+                    final String btn1Txt;
+                    String btn2Txt = null;
+                    if(hasUnuploadData){
+                        content = "您有未上传的课程数据，请确认所有课程都上传完成。";
+                        btn1Txt = "立刻上传";
+                        btn2Txt = "登出账户";
+                    }else{
+                        content = "请确认是否退出？";
+                        btn1Txt = "取消";
+                        btn2Txt = "确定";
                     }
-                    startActivity(new Intent(getActivity(), LoginActivity.class));
-                    MainApplication.getInstance().exit();
+
+                    dialog = AlertDialogUtil.showAlertWindow2Button(getContext(), content, btn1Txt, btn2Txt, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                            if(btn1Txt.equals("立刻上传")){
+                                startActivity(new Intent(ProfileFragment.this.getActivity(),UploadDataActivity.class));
+                            }
+                        }
+                    }, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            try {
+                                AppPreference.logout();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                Log.e(TAG, "", e);
+                                Toast.makeText(getActivity(),"登出出错，请重试！",Toast.LENGTH_LONG).show();
+                                return;
+                            }
+                            dialog.dismiss();
+                            startActivity(new Intent(getActivity(), LoginActivity.class));
+                        }
+                    });
                     break;
             }
         }
-    }
-
-    public void toggleUploadNotificationFlag(boolean isShow){
-        ImageView notifyFlag = (ImageView)getActivity().findViewById(R.id.has_unupload_flag);
-        notifyFlag.setVisibility(isShow?View.VISIBLE:View.GONE);
     }
 }

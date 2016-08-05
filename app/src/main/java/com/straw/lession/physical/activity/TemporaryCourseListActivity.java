@@ -85,15 +85,7 @@ public class TemporaryCourseListActivity extends ThreadToolBarBaseActivity imple
     }
 
     private void query() {
-        LoginInfoVo loginInfo = null;
-        try {
-            loginInfo = AppPreference.getLoginInfo();
-        } catch (IOException e) {
-            e.printStackTrace();
-            showErrorMsgInfo(e.toString());
-            return;
-        }
-
+        getLoginAndToken();
         List<CourseDefine> courseDefines = DBService.getInstance(this)
                 .getTemporaryCourseDefine(loginInfo.getUserId(),loginInfo.getCurrentInstituteIdR());
         infoList.clear();
@@ -139,18 +131,7 @@ public class TemporaryCourseListActivity extends ThreadToolBarBaseActivity imple
 
     @Override
     public void doAfterGetToken() {
-        TokenInfo tokenInfo = null;
-        final LoginInfoVo loginInfoVo;
-        try{
-            tokenInfo = AppPreference.getUserToken();
-            loginInfoVo = AppPreference.getLoginInfo();
-        }catch (Exception e){
-            e.printStackTrace();
-            Log.e(TAG,"",e);
-            Toast.makeText(mContext,"获取登录信息或token出错",Toast.LENGTH_SHORT).show();
-            return;
-        }
-
+        super.doAfterGetToken();
         String URL = ReqConstant.URL_BASE + "/course/define/remove";
         ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
         params.add(new BasicNameValuePair("courseDefineId", String.valueOf(selCourseDefineItemInfo.getCourseDefineId())));
@@ -164,7 +145,7 @@ public class TemporaryCourseListActivity extends ThreadToolBarBaseActivity imple
                     JSONObject contentObject = new JSONObject(httpResponseBean.content);
                     String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
                     if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){
-                        DBService.getInstance(mContext).delteCourseDefine(selCourseDefineItemInfo.getCourseDefineId(),loginInfoVo.getUserId());
+                        DBService.getInstance(mContext).delteCourseDefine(selCourseDefineItemInfo.getCourseDefineId(),loginInfo.getUserId());
                         query();
                     }else {
                         String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);

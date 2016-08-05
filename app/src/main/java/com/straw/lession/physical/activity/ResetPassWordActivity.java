@@ -15,15 +15,12 @@ import com.straw.lession.physical.custom.AlertDialogUtil;
 import com.straw.lession.physical.http.AsyncHttpClient;
 import com.straw.lession.physical.http.AsyncHttpResponseHandler;
 import com.straw.lession.physical.http.HttpResponseBean;
-import com.straw.lession.physical.utils.AppPreference;
 import com.straw.lession.physical.utils.Detect;
 import com.straw.lession.physical.utils.ResponseParseUtils;
 import com.straw.lession.physical.utils.Utils;
-import com.straw.lession.physical.vo.TokenInfo;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -40,6 +37,7 @@ public class ResetPassWordActivity extends ThreadToolBarBaseActivity{
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
         setContentView(R.layout.reset_password);
+        getLoginAndToken();
         initToolBar(getResources().getString(R.string.profile_reset_passwd));
         MainApplication.getInstance().addActivity(this);
         initViews();
@@ -69,14 +67,7 @@ public class ResetPassWordActivity extends ThreadToolBarBaseActivity{
 
     @Override
     public void doAfterGetToken() {
-        TokenInfo tokenInfo = null;
-        try {
-            tokenInfo = AppPreference.getUserToken();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e(TAG,"",e);
-            return;
-        }
+        super.doAfterGetToken();
         String oldPwd = originPasswd.getText().toString();
         String newPwd = newPasswd.getText().toString();
         String repPwd = repnewPasswd.getText().toString();

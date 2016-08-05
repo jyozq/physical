@@ -18,20 +18,16 @@ import com.straw.lession.physical.custom.AlertDialogUtil;
 import com.straw.lession.physical.http.AsyncHttpClient;
 import com.straw.lession.physical.http.AsyncHttpResponseHandler;
 import com.straw.lession.physical.http.HttpResponseBean;
-import com.straw.lession.physical.utils.AppPreference;
 import com.straw.lession.physical.utils.Detect;
 import com.straw.lession.physical.utils.ResponseParseUtils;
 import com.straw.lession.physical.utils.Utils;
 import com.straw.lession.physical.vo.CommentVo;
-import com.straw.lession.physical.vo.LoginInfoVo;
-import com.straw.lession.physical.vo.TokenInfo;
 import com.straw.lession.physical.vo.item.CommentItemInfo;
 import com.straw.lession.physical.vo.item.StudentItemInfo;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,8 +37,6 @@ import java.util.List;
 public class StudentCommentActivity extends ThreadToolBarBaseActivity implements SwipeRefreshLayout.OnRefreshListener{
     private static final String TAG = "StudentCommentActivity";
     private StudentItemInfo studentItemInfo;
-    private LoginInfoVo loginInfoVo;
-    private TokenInfo tokenInfo;
     private TextView student_comment_classname,student_comment_studentname,student_comment_studentno;
     private EditText studentComment;
     private SwipeRefreshLayout swipeLayout;
@@ -55,17 +49,11 @@ public class StudentCommentActivity extends ThreadToolBarBaseActivity implements
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
         setContentView(R.layout.activity_comment_student);
+        getLoginAndToken();
         Intent intent = getIntent();
         studentItemInfo = (StudentItemInfo) intent.getSerializableExtra("studentInfo");
         initToolBar(studentItemInfo.getName());
         MainApplication.getInstance().addActivity(this);
-        try {
-            loginInfoVo = AppPreference.getLoginInfo();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this,"获取登录信息出错",Toast.LENGTH_SHORT).show();
-            return;
-        }
         initViews();
     }
 
@@ -141,6 +129,7 @@ public class StudentCommentActivity extends ThreadToolBarBaseActivity implements
     }
 
     public void query() {
+        getLoginAndToken();
         checkTokenInfo();
     }
 
@@ -156,14 +145,7 @@ public class StudentCommentActivity extends ThreadToolBarBaseActivity implements
 
     @Override
     public void doAfterGetToken() {
-        try{
-            tokenInfo = AppPreference.getUserToken();
-        }catch (Exception ex){
-            ex.printStackTrace();
-            Log.e(TAG,"",ex);
-            Toast.makeText(this,"获取token出错",Toast.LENGTH_SHORT).show();
-            return;
-        }
+        super.doAfterGetToken();
         String URL = ReqConstant.URL_BASE + "/comment/list";
         ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
         params.add(new BasicNameValuePair("classId", String.valueOf(studentItemInfo.getClassIdR())));

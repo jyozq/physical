@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,20 +25,14 @@ import com.straw.lession.physical.custom.swipemenulistview.SwipeMenuItem;
 import com.straw.lession.physical.custom.swipemenulistview.SwipeMenuListView;
 import com.straw.lession.physical.db.DBService;
 import com.straw.lession.physical.fragment.base.BaseFragment;
-import com.straw.lession.physical.utils.AppPreference;
 import com.straw.lession.physical.utils.DateUtil;
-import com.straw.lession.physical.vo.LoginInfoVo;
 import com.straw.lession.physical.vo.db.ClassInfo;
 import com.straw.lession.physical.vo.db.Course;
 import com.straw.lession.physical.vo.db.CourseDefine;
 import com.straw.lession.physical.vo.db.StudentDevice;
 import com.straw.lession.physical.vo.item.CourseItemInfo;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by straw on 2016/7/8.
@@ -54,14 +47,13 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
     private Dialog dialog;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if(hidden){
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        query();
+        }else{
+            query();
+        }
     }
 
     @Override
@@ -87,6 +79,12 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initViews();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        query();
     }
 
     private void initViews() {
@@ -242,15 +240,7 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
     }
 
     public void query() {
-        LoginInfoVo loginInfo = null;
-        try {
-            loginInfo = AppPreference.getLoginInfo();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e(TAG,"",e);
-            return;
-        }
-
+        getLoginAndToken();
         List<Course> courses = DBService.getInstance(getActivity()).getTodayCourses(loginInfo.getUserId(),
                                                                                     loginInfo.getCurrentInstituteIdR());
         List<CourseDefine> unstartCourses = DBService.getInstance(getActivity())
@@ -286,6 +276,12 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
             courseItemInfo.setBindedStudentNum(cnt);
             infoList.add(courseItemInfo);
         }
+        Collections.sort(infoList, new Comparator<CourseItemInfo>() {
+            @Override
+            public int compare(CourseItemInfo lhs, CourseItemInfo rhs) {
+                return lhs.getSeq() - rhs.getSeq();
+            }
+        });
         adapter.notifyDataSetChanged();
     }
 

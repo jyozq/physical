@@ -82,6 +82,26 @@ public class AlertDialogUtil {
     }
 
     //2个按钮
+    public static Dialog showAlertWindow2Button (Context mContext,  String content , String btn1Txt, String btn2Txt, OnClickListener cancelclickListener
+            , OnClickListener okclickListener){
+        final Dialog dialog = new Dialog(mContext, R.style.MyDialog);
+        dialog.setContentView(R.layout.mydialog_2_button);
+        dialog.setCancelable(false);
+
+        TextView contentText =(TextView) dialog.findViewById(R.id.alert_title);
+        contentText.setText(content);
+        Button alert_cancel_btn =(Button) dialog.findViewById(R.id.alert_cancel_btn);
+        alert_cancel_btn.setText(btn1Txt);
+        alert_cancel_btn.setOnClickListener(cancelclickListener);
+        Button alert_ok_btn =(Button) dialog.findViewById(R.id.alert_ok_btn);
+        alert_ok_btn.setText(btn2Txt);
+        alert_ok_btn.setOnClickListener(okclickListener);
+
+        dialog.show();
+        return dialog;
+    }
+
+    //2个按钮
     public static Dialog showAlertVersion2Button (Context mContext,  String content , OnClickListener cancelclickListener
             , OnClickListener okclickListener){
         final Dialog dialog = new Dialog(mContext, R.style.MyDialog);

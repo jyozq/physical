@@ -50,6 +50,7 @@ public class LoginActivity extends ThreadBaseActivity {
         super.onCreate(savedInstanceState);
 //        Utils.getInstance().systemBarTintUpdate(LoginActivity.this , R.drawable.shape_gradient );
         setContentView(R.layout.activity_login);
+        MainApplication.getInstance().exit();
         MainApplication.getInstance().addActivity(this);
         initViews();
 //        login.setOnClickListener(new View.OnClickListener() {

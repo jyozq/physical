@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import android.widget.Toast;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.AddCourseActivity;
 import com.straw.lession.physical.activity.MainActivity;
@@ -31,19 +30,15 @@ import com.straw.lession.physical.http.AsyncHttpClient;
 import com.straw.lession.physical.http.AsyncHttpResponseHandler;
 import com.straw.lession.physical.http.HttpResponseBean;
 import com.straw.lession.physical.task.InitDayCourseTask;
-import com.straw.lession.physical.utils.AppPreference;
 import com.straw.lession.physical.utils.DateUtil;
 import com.straw.lession.physical.utils.ResponseParseUtils;
 import com.straw.lession.physical.utils.Utils;
-import com.straw.lession.physical.vo.LoginInfoVo;
-import com.straw.lession.physical.vo.TokenInfo;
 import com.straw.lession.physical.vo.db.ClassInfo;
 import com.straw.lession.physical.vo.db.CourseDefine;
 import com.straw.lession.physical.vo.item.CourseDefineItemInfo;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -75,25 +70,17 @@ public class DayCourseFragment extends BaseFragment implements SwipeRefreshLayou
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initViews();
+        weekday = getArguments().getInt("weekday");
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        weekday = getArguments().getInt("weekday");
         query();
     }
 
     public void query() {
-        LoginInfoVo loginInfo = null;
-        try {
-            loginInfo = AppPreference.getLoginInfo();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e(TAG,"",e);
-            return;
-        }
-
+        getLoginAndToken();
         mContext.showProgressDialog(getResources().getString(R.string.loading));
         ITask updResultTask = new InitDayCourseTask(getContext(), new TaskHandler() {
             @Override
@@ -166,18 +153,7 @@ public class DayCourseFragment extends BaseFragment implements SwipeRefreshLayou
 
     @Override
     public void doAfterGetToken() {
-        TokenInfo tokenInfo = null;
-        final LoginInfoVo loginInfoVo;
-        try{
-            tokenInfo = AppPreference.getUserToken();
-            loginInfoVo = AppPreference.getLoginInfo();
-        }catch (Exception e){
-            e.printStackTrace();
-            Log.e(TAG,"",e);
-            Toast.makeText(mContext,"获取登录信息或token出错",Toast.LENGTH_SHORT).show();
-            return;
-        }
-
+        super.doAfterGetToken();
         String URL = ReqConstant.URL_BASE + "/course/define/remove";
         ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
         params.add(new BasicNameValuePair("courseDefineId", String.valueOf(selCourseDefineItemInfo.getCourseDefineId())));
@@ -191,7 +167,7 @@ public class DayCourseFragment extends BaseFragment implements SwipeRefreshLayou
                     JSONObject contentObject = new JSONObject(httpResponseBean.content);
                     String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
                     if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){
-                        DBService.getInstance(mContext).delteCourseDefine(selCourseDefineItemInfo.getCourseDefineId(),loginInfoVo.getUserId());
+                        DBService.getInstance(mContext).delteCourseDefine(selCourseDefineItemInfo.getCourseDefineId(),loginInfo.getUserId());
                         query();
                     }else {
                         String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);

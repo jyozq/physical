@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.Toast;
 import com.alibaba.fastjson.JSON;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.MainActivity;
@@ -24,18 +23,14 @@ import com.straw.lession.physical.fragment.base.BaseFragment;
 import com.straw.lession.physical.http.AsyncHttpClient;
 import com.straw.lession.physical.http.AsyncHttpResponseHandler;
 import com.straw.lession.physical.http.HttpResponseBean;
-import com.straw.lession.physical.utils.AppPreference;
 import com.straw.lession.physical.utils.ResponseParseUtils;
 import com.straw.lession.physical.utils.Utils;
 import com.straw.lession.physical.vo.ClassInfoVo;
-import com.straw.lession.physical.vo.LoginInfoVo;
-import com.straw.lession.physical.vo.TokenInfo;
 import com.straw.lession.physical.vo.db.ClassInfo;
 import com.straw.lession.physical.vo.item.ClassItemInfo;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,14 +47,18 @@ public class ClassFragment extends BaseFragment implements SwipeRefreshLayout.On
     private MainActivity mContext;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mContext = (MainActivity) getActivity();
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if(hidden){
+
+        }else{
+            query();
+        }
     }
 
     @Override
     protected void loadDataFromLocal() {
-        List<ClassInfo> classInfos = DBService.getInstance(getContext()).findAllClass();
+        List<ClassInfo> classInfos = DBService.getInstance(getContext()).getClassByInstitute(loginInfo.getCurrentInstituteIdR());
         infoList.clear();
         for(ClassInfo classInfo : classInfos){
             infoList.add(toItem(classInfo));
@@ -74,20 +73,10 @@ public class ClassFragment extends BaseFragment implements SwipeRefreshLayout.On
 
     @Override
     public void doAfterGetToken() {
-        final LoginInfoVo loginInfoVo;
-        final TokenInfo tokenInfo;
-        try {
-            loginInfoVo = AppPreference.getLoginInfo();
-            tokenInfo = AppPreference.getUserToken();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(getActivity(), "获取登录信息出错", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
+        super.doAfterGetToken();
         String URL = ReqConstant.URL_BASE + "/class/list";
         ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
-        params.add(new BasicNameValuePair("instituteId",String.valueOf(loginInfoVo.getCurrentInstituteIdR())));
+        params.add(new BasicNameValuePair("instituteId",String.valueOf(loginInfo.getCurrentInstituteIdR())));
         mContext.showProgressDialog(getResources().getString(R.string.loading));
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.GET,URL,params,
                 tokenInfo.getToken(),new AsyncHttpResponseHandler(){
@@ -100,9 +89,9 @@ public class ClassFragment extends BaseFragment implements SwipeRefreshLayout.On
                         JSONObject dataObject = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
                         List<ClassInfoVo> classInfoVos =
                                 JSON.parseArray(dataObject.getJSONArray("classes").toString(), ClassInfoVo.class);
-                        DBService.getInstance(mContext).refineClassInfoData(classInfoVos, loginInfoVo.getCurrentInstituteIdR());
+                        DBService.getInstance(mContext).refineClassInfoData(classInfoVos, loginInfo.getCurrentInstituteIdR());
                         List<ClassInfo> classInfos = DBService.getInstance(mContext)
-                                .getClassByInstitute(loginInfoVo.getCurrentInstituteIdR());
+                                .getClassByInstitute(loginInfo.getCurrentInstituteIdR());
                         infoList.clear();
                         for(ClassInfo classInfo:classInfos){
                             infoList.add(toItem(classInfo));
@@ -133,12 +122,14 @@ public class ClassFragment extends BaseFragment implements SwipeRefreshLayout.On
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         layoutView = inflater.inflate(R.layout.fragment_class, container, false);
+        mContext = (MainActivity) getActivity();
         return layoutView;
     }
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initViews();
+        query();
     }
 
     private void initViews() {
@@ -147,10 +138,10 @@ public class ClassFragment extends BaseFragment implements SwipeRefreshLayout.On
         listView = (ListView) layoutView.findViewById(R.id.class_listview);
         adapter = new ClassListViewAdapter(layoutView.getContext(), infoList, this);
         listView.setAdapter(adapter);
-        query();
     }
 
     public void query() {
+        getLoginAndToken();
         getDataByNetSate();
     }
 

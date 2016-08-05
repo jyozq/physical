@@ -10,6 +10,7 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.LoginActivity;
 import com.straw.lession.physical.app.MainApplication;
@@ -26,10 +27,12 @@ import com.straw.lession.physical.utils.AppPreference;
 import com.straw.lession.physical.utils.DateUtil;
 import com.straw.lession.physical.utils.ResponseParseUtils;
 import com.straw.lession.physical.utils.Utils;
+import com.straw.lession.physical.vo.LoginInfoVo;
 import com.straw.lession.physical.vo.TokenInfo;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -40,7 +43,8 @@ public abstract class ThreadToolBarBaseActivity extends ToolBarActivity {
     protected MainApplication mApp;
     protected ThreadPoolExecutor mThreadPool;
     protected ProgressDialogFragment mProgressDialog;
-
+    protected LoginInfoVo loginInfo;
+    protected TokenInfo tokenInfo;
     protected int pageNumber = 1;
     protected final static int pageCount = 20;
 
@@ -187,7 +191,7 @@ public abstract class ThreadToolBarBaseActivity extends ToolBarActivity {
             long nowTime = System.currentTimeMillis();
             if(nowTime >= tokenExpireTime){
                 AppPreference.logout();
-                MainApplication.getInstance().exit();
+//                MainApplication.getInstance().exit();
                 startActivity(new Intent(this, LoginActivity.class));
             }else{
                 long duration = tokenExpireTime - nowTime;
@@ -247,5 +251,24 @@ public abstract class ThreadToolBarBaseActivity extends ToolBarActivity {
         }
     }
 
-    public abstract void doAfterGetToken();
+    public void getLoginAndToken(){
+        try{
+            loginInfo = AppPreference.getLoginInfo();
+            tokenInfo = AppPreference.getUserToken();
+        }catch (Exception e){
+            Log.e(TAG, "登录信息或token信息有误！", e);
+            startActivity(new Intent(this, LoginActivity.class));
+        }
+    }
+
+    public void doAfterGetToken(){
+        try {
+            tokenInfo = AppPreference.getUserToken();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e(TAG,"",e);
+            Toast.makeText(this,"获取TOKEN出错",Toast.LENGTH_SHORT).show();
+            return;
+        }
+    }
 }
