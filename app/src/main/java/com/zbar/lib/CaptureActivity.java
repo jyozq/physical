@@ -235,7 +235,48 @@ public class CaptureActivity extends ThreadBaseActivity implements Callback,View
 	public void handleDecode(String result) {
 		inactivityTimer.onActivity();
 		playBeepSoundAndVibrate();
-		device_no.setText(result);
+		List<StudentDevice> studentDeviceInfos = DBService.getInstance(this)
+				.getStudentDeviceInfoByDeviceNo(loginInfoVo.getUserId(),
+						currentStudent.getCourseDefindIdR(),currentStudent.getStudentIdR(),result);
+		final String deviceNo = result;
+		if(Detect.notEmpty(studentDeviceInfos)) {
+			boolean isBindedDevice = false;
+			for (StudentDevice studentDeviceItem : studentDeviceInfos) {
+				final StudentDevice studentDevice = studentDeviceItem;
+				if (DateUtil.isToday(studentDevice.getBindTime())) {
+					isBindedDevice =true;
+					dialog = AlertDialogUtil.showAlertWindow2Button(this, "设备" + result + "已与" + studentDevice.getStudent().getName() + "绑定，是否解除绑定？", new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							dialog.dismiss();
+							handler.sendEmptyMessage(R.id.restart_preview);
+						}
+					}, new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							DBService.getInstance(CaptureActivity.this).delteStudentDevice(studentDevice);
+							for(StudentItemInfo studentItemInfo : studentItemInfos){
+								if(studentItemInfo.getStudentIdR() == studentDevice.getStudentIdR()){
+									studentItemInfo.setDeviceNo(getResources().getString(R.string.unmatch));
+								}
+							}
+							dialog.dismiss();
+							bindStudent(deviceNo);
+						}
+					});
+					break;
+				}
+			}
+			if(!isBindedDevice){
+				bindStudent(deviceNo);
+			}
+		}else{
+			bindStudent(deviceNo);
+		}
+	}
+
+	private void bindStudent(String deviceNo) {
+		device_no.setText(deviceNo);
 		List<StudentDevice> studentDeviceInfos = DBService.getInstance(this)
 				.getStudentDeviceInfoNotUploaded(currentStudent.getStudentIdR(),loginInfoVo.getUserId(),
 						currentStudent.getCourseDefindIdR());
@@ -244,7 +285,7 @@ public class CaptureActivity extends ThreadBaseActivity implements Callback,View
 			for (StudentDevice studentDevice : studentDeviceInfos) {
 				if (DateUtil.isToday(studentDevice.getBindTime())) {
 					isAdd = false;
-					studentDevice.setDeviceNo(result);
+					studentDevice.setDeviceNo(deviceNo);
 					studentDevice.setBindTime(new Date());
 					DBService.getInstance(this).updateStudentDevice(studentDevice);
 					break;
@@ -255,19 +296,19 @@ public class CaptureActivity extends ThreadBaseActivity implements Callback,View
 			StudentDevice studentDevice = new StudentDevice();
 			studentDevice.setCourseDefineIdR(currentStudent.getCourseDefindIdR());
 			studentDevice.setBindTime(new Date());
-			studentDevice.setDeviceNo(result);
+			studentDevice.setDeviceNo(deviceNo);
 			studentDevice.setIsUploaded(false);
 			studentDevice.setStudentIdR(currentStudent.getStudentIdR());
 			studentDevice.setTeacherIdR(loginInfoVo.getUserId());
 			DBService.getInstance(this).addStudentDevice(studentDevice);
 		}
-		currentStudent.setDeviceNo(result);
+		currentStudent.setDeviceNo(deviceNo);
 		dialog = AlertDialogUtil.showAlertWindow(this, -1,
-				"学生" + currentStudent.getName() + "(学号:" + currentStudent.getCode() + ")与设备" + result + "已绑定", new View.OnClickListener() {
+				"学生" + currentStudent.getName() + "(学号:" + currentStudent.getCode() + ")与设备" + deviceNo + "绑定成功！", new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						switchToNext();
 						dialog.dismiss();
+						switchToNext();
 						handler.sendEmptyMessage(R.id.restart_preview);
 					}
 				});

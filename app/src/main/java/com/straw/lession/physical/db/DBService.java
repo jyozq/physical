@@ -540,4 +540,16 @@ public class DBService {
     public void updateStudentDevice(StudentDevice studentDevice) {
         studentDeviceDao.update(studentDevice);
     }
+
+    public List<StudentDevice> getStudentDeviceInfoByDeviceNo(long userId, long courseDefindIdR, long studentIdR, String result) {
+        return studentDeviceDao.queryBuilder().where(StudentDeviceDao.Properties.TeacherIdR.eq(userId),
+                StudentDeviceDao.Properties.CourseDefineIdR.eq(courseDefindIdR),
+                StudentDeviceDao.Properties.DeviceNo.eq(result),
+                StudentDeviceDao.Properties.StudentIdR.notEq(studentIdR),
+                StudentDeviceDao.Properties.IsUploaded.eq(false)).list();
+    }
+
+    public void delteStudentDevice(StudentDevice studentDevice) {
+        studentDeviceDao.delete(studentDevice);
+    }
 }
