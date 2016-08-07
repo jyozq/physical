@@ -67,12 +67,17 @@ public class StudentCommentListActivity extends ThreadToolBarBaseActivity implem
 
     @Override
     protected void loadDataFromLocal() {
-
+        List<Student> students = DBService.getInstance(this).getStudentByClass(classItemInfo.getClassIdR());
+        infoList.clear();
+        for(Student student:students){
+            infoList.add(toItemInfo(student));
+        }
+        adapter.notifyDataSetChanged();
     }
 
     @Override
     protected void loadDataFromService() {
-
+        checkTokenInfo();
     }
 
     private void initToolBar() {
@@ -134,7 +139,7 @@ public class StudentCommentListActivity extends ThreadToolBarBaseActivity implem
 
     public void query() {
         getLoginAndToken();
-        checkTokenInfo();
+        getDataByNetSate();
     }
 
     private StudentItemInfo toItemInfo(Student student) {

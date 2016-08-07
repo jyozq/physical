@@ -171,7 +171,7 @@ public class AddCourseActivity extends ThreadToolBarBaseActivity{
                     dateTxt.setOnClickListener(null);
                 }
             }else{
-                if(courseDefineItemInfo.getWeekDay() > 0){
+                if(courseDefineItemInfo.getWeekDay() >= 0){
                     int pos = getWeekdayPos(courseDefineItemInfo.getWeekDay());
                     weekdayTxt.setText(weekdayArr[pos]);
                     weekdayTxt.setTag(courseDefineItemInfo.getWeekDay());

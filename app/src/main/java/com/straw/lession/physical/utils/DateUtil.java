@@ -1348,7 +1348,7 @@ public final class DateUtil {
         }
         int dayForWeek = 0;
         if(c.get(Calendar.DAY_OF_WEEK) == 1){
-            dayForWeek = 7;
+            dayForWeek = 0;
         }else{
             dayForWeek = c.get(Calendar.DAY_OF_WEEK) - 1;
         }

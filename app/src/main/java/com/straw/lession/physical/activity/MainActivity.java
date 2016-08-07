@@ -105,6 +105,24 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         startTimerTask();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(todayFragment!=null && todayFragment.isVisible()){
+            iv_today.setImageResource(R.mipmap.bottom_toolbar_icon_today);
+            tv_today.setTextColor(getResources().getColor(R.color.toolbar_btn_pressed));
+        }else if(courseFragment!=null && courseFragment.isVisible()){
+            iv_course.setImageResource(R.mipmap.bottom_toolbar_icon_kc);
+            tv_course.setTextColor(getResources().getColor(R.color.toolbar_btn_pressed));
+        }else if(classFragment!=null && classFragment.isVisible()){
+            iv_class.setImageResource(R.mipmap.bottom_toolbar_icon_class);
+            tv_class.setTextColor(getResources().getColor(R.color.toolbar_btn_pressed));
+        }else if(profileFragment!=null && profileFragment.isVisible()){
+            iv_profile.setImageResource(R.mipmap.bottom_toolbar_icon_wo);
+            tv_profile.setTextColor(getResources().getColor(R.color.toolbar_btn_pressed));
+        }
+    }
+
     private void startTimerTask() {
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
