@@ -39,7 +39,7 @@ public  abstract class ToolBarActivity extends AppCompatActivity implements View
     @Override
     public void setContentView(int layoutResID) {
         //systemBarTintUpdate();
-        Utils.getInstance().systemBarTintUpdate(mContext);
+//        Utils.getInstance().systemBarTintUpdate(mContext);
         mToolBarHelper = new ToolBarHelper(this,layoutResID) ;
         toolbar = mToolBarHelper.getToolBar() ;
         setContentView(mToolBarHelper.getContentView());

@@ -331,7 +331,8 @@ public class DBService {
         List<Course> tempCourses = qb.where(wc).list();
 
         for(Course course : tempCourses){
-            if(DateUtil.dateToStr(course.getDate()).equals(DateUtil.dateToStr(new Date()))){
+            if(DateUtil.dateToStr(course.getDate()).equals(DateUtil.dateToStr(new Date()))
+                    || course.getStatus() == CourseStatus.STARTED.getValue()){
                 courses.add(course);
             }
         }

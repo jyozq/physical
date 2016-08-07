@@ -57,6 +57,7 @@
     <dimen name="dimen_140dp">140dp</dimen>
     <dimen name="dimen_150dp">150dp</dimen>
     <dimen name="dimen_170dp">170dp</dimen>
+    <dimen name="dimen_200dp">200dp</dimen>
 
     <dimen name="image_size">120dp</dimen>
     <dimen name="folder_cover_size">72dp</dimen>
