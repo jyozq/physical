@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.straw.lession.physical.R;
@@ -60,6 +61,7 @@ public class DayCourseFragment extends BaseFragment implements SwipeRefreshLayou
     private int weekday;
     private Dialog dialog;
     private CourseDefineItemInfo selCourseDefineItemInfo;
+    private LinearLayout bottom_bar;
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         layoutView = inflater.inflate(R.layout.day_fragment_course, container, false);
@@ -138,6 +140,7 @@ public class DayCourseFragment extends BaseFragment implements SwipeRefreshLayou
         listView = (ListView) layoutView.findViewById(R.id.class_listview);
         adapter = new CourseDefineListViewAdapter(layoutView.getContext(), infoList, this);
         listView.setAdapter(adapter);
+        bottom_bar = (LinearLayout) layoutView.findViewById(R.id.bottom_bar);
 //        query();
     }
 
@@ -239,6 +242,14 @@ public class DayCourseFragment extends BaseFragment implements SwipeRefreshLayou
                 }
             });
         }
+    }
+
+    @Override
+    public void longClick(View v) {
+        CourseDefineItemInfo longClickItem = infoList.get((Integer)v.getTag());
+        adapter.setMultiSelect(true);
+        bottom_bar.setVisibility(View.VISIBLE);
+        adapter.notifyDataSetChanged();
     }
 
     private void deleteCourseDefine() {
