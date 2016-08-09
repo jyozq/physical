@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:visibility="gone" >
-
         <Button
             android:id="@+id/bt_cancel"
             android:layout_width="wrap_content"

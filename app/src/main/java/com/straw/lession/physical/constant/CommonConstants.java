@@ -4,8 +4,10 @@ package com.straw.lession.physical.constant;
  * Created by straw on 2016/7/31.
  */
 public class CommonConstants {
+
     public static final int OPR_EDIT = 0;
     public static final int OPR_DEL = 1;
+    public static final int OPR_ADD = 2;
 
     public static final long EXPIRE_DURATION = 60*1000;
 

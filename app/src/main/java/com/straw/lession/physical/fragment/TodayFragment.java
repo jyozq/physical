@@ -118,25 +118,7 @@ public class TodayFragment extends BaseFragment implements SwipeRefreshLayout.On
                 intent.putExtras(bundle);
                 getContext().startActivity(intent);
                 break;
-            case R.id.btn_del_coursedefine:
-                dialog = AlertDialogUtil.showAlertWindow2Button(getContext(), "确定要删除吗？", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {   //cancel
-                        dialog.dismiss();
-                    }
-                }, new View.OnClickListener() {     //ok
-                    @Override
-                    public void onClick(View v) {
-                        deleteTodayCourse(selCourseItemInfo);
-                        dialog.dismiss();
-                    }
-                });
-                break;
         }
-    }
-
-    private void deleteTodayCourse(CourseItemInfo selCourseItemInfo) {
-
     }
 
     public void query() {

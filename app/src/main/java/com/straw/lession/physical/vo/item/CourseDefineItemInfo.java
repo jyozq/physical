@@ -78,6 +78,14 @@ public class CourseDefineItemInfo implements Serializable{
         this.classId = classId;
     }
 
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
+    }
+
     private long courseDefineId = -1l;
     private String name;
     private String date;
@@ -87,6 +95,5 @@ public class CourseDefineItemInfo implements Serializable{
     private String location;
     private String className;
     private long classId = -1l;
-
-
+    private boolean isChecked;
 }

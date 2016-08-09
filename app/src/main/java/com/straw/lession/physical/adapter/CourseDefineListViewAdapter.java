@@ -30,18 +30,16 @@ public class CourseDefineListViewAdapter extends BaseAdapter implements View.OnC
     private Callback mCallback;
     private LayoutInflater inflater;
     private int opr;
-    private HashMap<Integer, Integer> isCheckBoxVisible;// 用来记录是否显示checkBox
-    private HashMap<Integer, Boolean> isChecked;// 用来记录是否被选中
     private List<CourseDefineItemInfo> list_delete = new ArrayList<CourseDefineItemInfo>();// 需要删除的数据
     private boolean isMultiSelect = false;// 是否处于多选状态
+    private TextView tv_sum;
 
-    public CourseDefineListViewAdapter(Context context, List<CourseDefineItemInfo> list, Callback callback){
+    public CourseDefineListViewAdapter(Context context, List<CourseDefineItemInfo> list, Callback callback, TextView tv_sum){
         inflater = LayoutInflater.from(context);
         mContext = context;
         mContentList = list;
         mCallback = callback;
-        isCheckBoxVisible = new HashMap<Integer, Integer>();
-        isChecked = new HashMap<Integer, Boolean>();
+        this.tv_sum = tv_sum;
     }
 
     @Override
@@ -62,14 +60,12 @@ public class CourseDefineListViewAdapter extends BaseAdapter implements View.OnC
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Log.i(TAG, "getView");
-        ViewHolder holder = null;
-        CourseDefineItemInfo info = getItem(position);
+        final ViewHolder holder;
+        final CourseDefineItemInfo info = getItem(position);
 
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.coursedefine_item_listview, null);
             holder = new ViewHolder();
-//            holder.editButton = (ImageButton) convertView.findViewById(R.id.btn_edit_coursedefine);
-//            holder.deleteButton = (ImageButton) convertView.findViewById(R.id.btn_del_coursedefine);
             holder.coursedefine_info_view = (LinearLayout) convertView.findViewById(R.id.coursedefine_info_view);
             holder.coursedefine_add_view = (LinearLayout) convertView.findViewById(R.id.coursedefine_add_view);
             holder.cb = (CheckBox) convertView.findViewById(R.id.cb_select);
@@ -85,6 +81,10 @@ public class CourseDefineListViewAdapter extends BaseAdapter implements View.OnC
             // 根据position设置CheckBox是否可见，是否选中
             if(isMultiSelect){
                 holder.cb.setVisibility(View.VISIBLE);
+                holder.cb.setChecked(info.isChecked());
+            }else{
+                holder.cb.setVisibility(View.INVISIBLE);
+                holder.cb.setChecked(false);
             }
             class_no_label.setBackground(mContext.getResources().getDrawable(R.drawable.round_label_select));
             coursedefine_info_view.setVisibility(View.VISIBLE);
@@ -100,51 +100,75 @@ public class CourseDefineListViewAdapter extends BaseAdapter implements View.OnC
         class_info.setText(info.getName() + "   " + "第" + info.getSeq() + "节");
         TextView location = (TextView) convertView.findViewById(R.id.class_location);
         location.setText(info.getLocation());
-//        holder.editButton.setOnClickListener(this);
-//        holder.deleteButton.setOnClickListener(this);
         holder.coursedefine_add_view.setOnClickListener(this);
-//        holder.editButton.setTag(position);
-//        holder.deleteButton.setTag(position);
         holder.coursedefine_add_view.setTag(position);
-        holder.coursedefine_info_view.setOnLongClickListener(this);
         holder.coursedefine_info_view.setTag(position);
+        holder.coursedefine_info_view.setOnLongClickListener(this);
+        holder.coursedefine_info_view.setOnClickListener(this);
         return convertView;
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.btn_edit_coursedefine:
-                opr = CommonConstants.OPR_EDIT;
-                mCallback.click(v, opr);
-                break;
-            case R.id.btn_del_coursedefine:
-                opr = CommonConstants.OPR_DEL;
-                mCallback.click(v, opr);
-                break;
             case R.id.coursedefine_add_view:
-                mCallback.addCourseDefine(v);
+                opr = CommonConstants.OPR_ADD;
+                mCallback.click(v,opr);
+                break;
+            case R.id.coursedefine_info_view:
+                // 处于多选模式
+                if (isMultiSelect) {
+                    CheckBox cb = (CheckBox) v.findViewById(R.id.cb_select);
+                    CourseDefineItemInfo info = mContentList.get((Integer)v.getTag());
+                    if (cb.isChecked()) {
+                        cb.setChecked(false);
+                        info.setChecked(false);
+                        list_delete.remove(info);
+                    } else {
+                        cb.setChecked(true);
+                        info.setChecked(true);
+                        list_delete.add(info);
+                    }
+                    calcSelectedNum();
+                }else {
+                    opr = CommonConstants.OPR_EDIT;
+                    mCallback.click(v, opr);
+                }
                 break;
         }
-
-
     }
 
     @Override
     public boolean onLongClick(View v) {
+        list_delete.add(mContentList.get((Integer)v.getTag()));
+        calcSelectedNum();
         mCallback.longClick(v);
-        return false;
+        return true;
+    }
+
+    private void calcSelectedNum() {
+        tv_sum.setText("共选择了" + list_delete.size() + "项");
+    }
+
+    public void enterMultiSelectMode() {
+        isMultiSelect = true;
+        calcSelectedNum();
+    }
+
+    public void removeMultiSelectModel() {
+        isMultiSelect = false;
+        list_delete.clear();
+        for(CourseDefineItemInfo courseDefineItemInfo : mContentList){
+            courseDefineItemInfo.setChecked(false);
+        }
     }
 
     public interface Callback{
-        public void addCourseDefine(View v);
         public void click(View v, int opr);
         public void longClick(View v);
     }
 
     public class ViewHolder {
-//        public ImageButton editButton;
-//        public ImageButton deleteButton;
         public LinearLayout coursedefine_info_view;
         public LinearLayout coursedefine_add_view;
         public CheckBox cb;
@@ -156,5 +180,13 @@ public class CourseDefineListViewAdapter extends BaseAdapter implements View.OnC
 
     public void setMultiSelect(boolean multiSelect) {
         isMultiSelect = multiSelect;
+    }
+
+    public List<CourseDefineItemInfo> getList_delete() {
+        return list_delete;
+    }
+
+    public void setList_delete(List<CourseDefineItemInfo> list_delete) {
+        this.list_delete = list_delete;
     }
 }

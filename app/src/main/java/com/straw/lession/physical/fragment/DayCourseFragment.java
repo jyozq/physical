@@ -10,8 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.widget.*;
 
 import com.straw.lession.physical.R;
 import com.straw.lession.physical.activity.AddCourseActivity;
@@ -32,6 +31,7 @@ import com.straw.lession.physical.http.AsyncHttpResponseHandler;
 import com.straw.lession.physical.http.HttpResponseBean;
 import com.straw.lession.physical.task.InitDayCourseTask;
 import com.straw.lession.physical.utils.DateUtil;
+import com.straw.lession.physical.utils.Detect;
 import com.straw.lession.physical.utils.ResponseParseUtils;
 import com.straw.lession.physical.utils.Utils;
 import com.straw.lession.physical.vo.db.ClassInfo;
@@ -60,8 +60,11 @@ public class DayCourseFragment extends BaseFragment implements SwipeRefreshLayou
     private MainActivity mContext;
     private int weekday;
     private Dialog dialog;
-    private CourseDefineItemInfo selCourseDefineItemInfo;
     private LinearLayout bottom_bar;
+    private TextView tv_sum;
+    private Button bt_cancel;
+    private Button bt_delete;
+
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         layoutView = inflater.inflate(R.layout.day_fragment_course, container, false);
@@ -138,10 +141,40 @@ public class DayCourseFragment extends BaseFragment implements SwipeRefreshLayou
         swipeLayout = (SwipeRefreshLayout) layoutView.findViewById(R.id.swipe_refresh);
         swipeLayout.setOnRefreshListener(this);
         listView = (ListView) layoutView.findViewById(R.id.class_listview);
-        adapter = new CourseDefineListViewAdapter(layoutView.getContext(), infoList, this);
-        listView.setAdapter(adapter);
         bottom_bar = (LinearLayout) layoutView.findViewById(R.id.bottom_bar);
+        tv_sum = (TextView) layoutView.findViewById(R.id.tv_sum);
+        bt_cancel = (Button) layoutView.findViewById(R.id.bt_cancel);
+        bt_delete = (Button) layoutView.findViewById(R.id.bt_delete);
+        adapter = new CourseDefineListViewAdapter(layoutView.getContext(), infoList, this,tv_sum);
+        listView.setAdapter(adapter);
+        bt_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeMultiSelectMode();
+            }
+        });
+        bt_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteSelectedItems();
+            }
+        });
 //        query();
+    }
+
+    private void deleteSelectedItems() {
+        dialog = AlertDialogUtil.showAlertWindow2Button(getContext(), "确定要删除吗？", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {   //cancel
+                dialog.dismiss();
+            }
+        }, new View.OnClickListener() {     //ok
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                deleteCourseDefine();
+            }
+        });
     }
 
     @Override
@@ -159,39 +192,44 @@ public class DayCourseFragment extends BaseFragment implements SwipeRefreshLayou
         super.doAfterGetToken();
         String URL = ReqConstant.URL_BASE + "/course/define/remove";
         ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
-        params.add(new BasicNameValuePair("courseDefineId", String.valueOf(selCourseDefineItemInfo.getCourseDefineId())));
-        mContext.showProgressDialog(getResources().getString(R.string.loading));
-        AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.POST, URL, params, tokenInfo.getToken(),new AsyncHttpResponseHandler(){
-            @Override
-            public void onSuccess(HttpResponseBean httpResponseBean) {
-                super.onSuccess(httpResponseBean);
-                try{
-                    mContext.hideProgressDialog();
-                    JSONObject contentObject = new JSONObject(httpResponseBean.content);
-                    String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
-                    if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){
-                        DBService.getInstance(mContext).delteCourseDefine(selCourseDefineItemInfo.getCourseDefineId(),loginInfo.getUserId());
-                        query();
-                    }else {
-                        String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);
-                        AlertDialogUtil.showAlertWindow(mContext, -1, errorMessage , null );
+        List<CourseDefineItemInfo> deleteItems = adapter.getList_delete();
+        for(final CourseDefineItemInfo courseDefineItemInfo : deleteItems) {
+            params.clear();
+            params.add(new BasicNameValuePair("courseDefineId", String.valueOf(courseDefineItemInfo.getCourseDefineId())));
+            mContext.showProgressDialog(getResources().getString(R.string.loading));
+            AsyncHttpClient asyncHttpClient = new AsyncHttpClient(AsyncHttpClient.RequestType.POST, URL, params, tokenInfo.getToken(), new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(HttpResponseBean httpResponseBean) {
+                    super.onSuccess(httpResponseBean);
+                    try {
+                        mContext.hideProgressDialog();
+                        JSONObject contentObject = new JSONObject(httpResponseBean.content);
+                        String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
+                        if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS)) {
+                            DBService.getInstance(mContext).delteCourseDefine(courseDefineItemInfo.getCourseDefineId(), loginInfo.getUserId());
+                            query();
+                        } else {
+                            String errorMessage = contentObject.getString(ParamConstant.RESULT_MSG);
+                            AlertDialogUtil.showAlertWindow(mContext, -1, errorMessage, null);
+                        }
+                    } catch (Exception e) {
+                        mContext.hideProgressDialog();
+                        mContext.showErrorMsgInfo(e.toString());
+                        e.printStackTrace();
                     }
-                }catch(Exception e){
-                    mContext.hideProgressDialog();
-                    mContext.showErrorMsgInfo(e.toString());
-                    e.printStackTrace();
                 }
-            }
-            @Override
-            public void onFailure(Throwable error, String content) {
-                super.onFailure(error, content);
-                mContext.hideProgressDialog();
-                String errorContent = Utils.parseErrorMessage(mContext, content);
-                mContext.showErrorMsgInfo(errorContent);
-                Log.e(TAG, content);
-            }
-        });
-        mThreadPool.execute(asyncHttpClient);
+
+                @Override
+                public void onFailure(Throwable error, String content) {
+                    super.onFailure(error, content);
+                    mContext.hideProgressDialog();
+                    String errorContent = Utils.parseErrorMessage(mContext, content);
+                    mContext.showErrorMsgInfo(errorContent);
+                    Log.e(TAG, content);
+                }
+            });
+            mThreadPool.execute(asyncHttpClient);
+        }
     }
 
     @Override
@@ -205,54 +243,55 @@ public class DayCourseFragment extends BaseFragment implements SwipeRefreshLayou
     }
 
     @Override
-    public void addCourseDefine(View v) {
-        int seq = ((Integer)v.getTag()) + 1;
-        CourseDefineItemInfo courseDefineItemInfo = new CourseDefineItemInfo();
-        courseDefineItemInfo.setWeekDay(weekday);
-        courseDefineItemInfo.setSeq(seq);
-        Intent intent = new Intent(getContext(), AddCourseActivity.class);
-        intent.putExtra("useOnce", false);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("courseDefine", courseDefineItemInfo);
-        intent.putExtras(bundle);
-        startActivity(intent);
-    }
-
-    @Override
     public void click(View v, int opr) {
-        selCourseDefineItemInfo = infoList.get((Integer) v.getTag());
         if (opr == CommonConstants.OPR_EDIT) {   //编辑
+            CourseDefineItemInfo selCourseDefineItemInfo = infoList.get((Integer)v.getTag());
             Intent intent = new Intent(getContext(), AddCourseActivity.class);
             intent.putExtra("useOnce", false);
             Bundle bundle = new Bundle();
             bundle.putSerializable("courseDefine", selCourseDefineItemInfo);
             intent.putExtras(bundle);
             startActivity(intent);
-        } else if (opr == CommonConstants.OPR_DEL) { //删除
-            dialog = AlertDialogUtil.showAlertWindow2Button(getContext(), "确定要删除吗？", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {   //cancel
-                    dialog.dismiss();
-                }
-            }, new View.OnClickListener() {     //ok
-                @Override
-                public void onClick(View v) {
-                    deleteCourseDefine();
-                    dialog.dismiss();
-                }
-            });
+        } else if (opr == CommonConstants.OPR_ADD) {
+            int seq = ((Integer)v.getTag()) + 1;
+            CourseDefineItemInfo courseDefineItemInfo = new CourseDefineItemInfo();
+            courseDefineItemInfo.setWeekDay(weekday);
+            courseDefineItemInfo.setSeq(seq);
+            Intent intent = new Intent(getContext(), AddCourseActivity.class);
+            intent.putExtra("useOnce", false);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("courseDefine", courseDefineItemInfo);
+            intent.putExtras(bundle);
+            startActivity(intent);
         }
     }
 
     @Override
     public void longClick(View v) {
+        enterMultiSelectMode(v);
+    }
+
+    private void enterMultiSelectMode(View v) {
         CourseDefineItemInfo longClickItem = infoList.get((Integer)v.getTag());
-        adapter.setMultiSelect(true);
+        longClickItem.setChecked(true);
         bottom_bar.setVisibility(View.VISIBLE);
+        adapter.enterMultiSelectMode();
         adapter.notifyDataSetChanged();
     }
 
+    public void removeMultiSelectMode(){
+        if(adapter.isMultiSelect()) {
+            bottom_bar.setVisibility(View.GONE);
+            adapter.removeMultiSelectModel();
+            adapter.notifyDataSetChanged();
+        }
+    }
+
     private void deleteCourseDefine() {
+        if(!Detect.notEmpty(adapter.getList_delete())){
+            Toast.makeText(getContext(),"请选择要删除的记录。",Toast.LENGTH_SHORT).show();
+            return;
+        }
         getDataByNetSate();
     }
 }

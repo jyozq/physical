@@ -40,17 +40,21 @@
             </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="wrap_content" android:gravity="center"
-            android:layout_height="match_parent" android:orientation="vertical">
-            <ImageButton
-                android:layout_width="wrap_content" android:background="@color/white"
-                android:layout_height="wrap_content" android:src="@android:drawable/ic_menu_edit"
-                android:layout_margin="@dimen/dimen_5dp" android:id="@+id/btn_edit_coursedefine"/>
-            <ImageButton
-                android:layout_width="wrap_content" android:background="@color/white"
-                android:layout_height="wrap_content" android:src="@android:drawable/ic_delete"
-                android:layout_margin="@dimen/dimen_5dp" android:id="@+id/btn_del_coursedefine"/>
-        </LinearLayout>
+        <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content" android:gravity="center"-->
+            <!--android:layout_height="match_parent" android:orientation="vertical">-->
+            <!--<ImageButton-->
+                <!--android:layout_width="wrap_content" android:background="@color/white"-->
+                <!--android:layout_height="wrap_content" android:src="@android:drawable/ic_menu_edit"-->
+                <!--android:layout_margin="@dimen/dimen_5dp" android:id="@+id/btn_edit_coursedefine"/>-->
+            <!--<ImageButton-->
+                <!--android:layout_width="wrap_content" android:background="@color/white"-->
+                <!--android:layout_height="wrap_content" android:src="@android:drawable/ic_delete"-->
+                <!--android:layout_margin="@dimen/dimen_5dp" android:id="@+id/btn_del_coursedefine"/>-->
+        <!--</LinearLayout>-->
+        <CheckBox
+                android:id="@+id/cb_select" android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:clickable="false"
+                android:visibility="invisible" android:layout_gravity="center_vertical"/>
     </LinearLayout>
 </LinearLayout>

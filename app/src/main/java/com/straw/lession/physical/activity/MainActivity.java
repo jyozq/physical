@@ -114,6 +114,7 @@ public class MainActivity extends ThreadBaseActivity implements View.OnClickList
         }else if(courseFragment!=null && courseFragment.isVisible()){
             iv_course.setImageResource(R.mipmap.bottom_toolbar_icon_kc);
             tv_course.setTextColor(getResources().getColor(R.color.toolbar_btn_pressed));
+            courseFragment.removeAllMultiSelectModel();
         }else if(classFragment!=null && classFragment.isVisible()){
             iv_class.setImageResource(R.mipmap.bottom_toolbar_icon_class);
             tv_class.setTextColor(getResources().getColor(R.color.toolbar_btn_pressed));
