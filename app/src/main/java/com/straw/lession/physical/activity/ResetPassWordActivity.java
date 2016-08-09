@@ -16,6 +16,7 @@ import com.straw.lession.physical.http.AsyncHttpClient;
 import com.straw.lession.physical.http.AsyncHttpResponseHandler;
 import com.straw.lession.physical.http.HttpResponseBean;
 import com.straw.lession.physical.utils.Detect;
+import com.straw.lession.physical.utils.EncryptUtil;
 import com.straw.lession.physical.utils.ResponseParseUtils;
 import com.straw.lession.physical.utils.Utils;
 import org.apache.http.message.BasicNameValuePair;
@@ -90,6 +91,8 @@ public class ResetPassWordActivity extends ThreadToolBarBaseActivity{
 
         String URL = ReqConstant.URL_BASE + "/user/password/change";
         ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+        String encyptedOldPwd = EncryptUtil.MD5(loginInfo.getMobile() + "_" + oldPwd);
+        String encyptedNewPwd = EncryptUtil.MD5(loginInfo.getMobile() + "_" + newPwd);
         params.add(new BasicNameValuePair("oldPassword",oldPwd));
         params.add(new BasicNameValuePair("newPassword",newPwd));
         showProgressDialog(getResources().getString(R.string.loading));

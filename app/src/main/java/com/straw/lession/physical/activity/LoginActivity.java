@@ -21,10 +21,7 @@ import com.straw.lession.physical.custom.ClearEditText;
 import com.straw.lession.physical.http.AsyncHttpClient;
 import com.straw.lession.physical.http.AsyncHttpResponseHandler;
 import com.straw.lession.physical.http.HttpResponseBean;
-import com.straw.lession.physical.utils.AppPreference;
-import com.straw.lession.physical.utils.ResponseParseUtils;
-import com.straw.lession.physical.utils.TimeUtils;
-import com.straw.lession.physical.utils.Utils;
+import com.straw.lession.physical.utils.*;
 import com.straw.lession.physical.vo.LoginInfoVo;
 import com.straw.lession.physical.vo.TokenInfo;
 
@@ -147,8 +144,9 @@ public class LoginActivity extends ThreadBaseActivity {
         showProgressDialog(getResources().getString(R.string.loading));
 
         final ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
-        params.add(new BasicNameValuePair("mobile", userName  ));
-        params.add(new BasicNameValuePair("password", password  ));
+        params.add(new BasicNameValuePair("mobile", userName));
+        String encrypted=(EncryptUtil.MD5(userName.toLowerCase()+"_"+password)).toLowerCase();
+        params.add(new BasicNameValuePair("password", password));
 
         final String URL = ReqConstant.URL_BASE + "/auth/teacher/login";
 
@@ -161,7 +159,6 @@ public class LoginActivity extends ThreadBaseActivity {
                     JSONObject contentObject = new JSONObject(httpResponseBean.content);
                     String resultCode = contentObject.getString(ParamConstant.RESULT_CODE);
                     if (resultCode.equals(ResponseParseUtils.RESULT_CODE_SUCCESS) ){//登录成功
-
                         JSONObject dataObject = contentObject.getJSONObject(ParamConstant.RESULT_DATA);
                         String userToken = dataObject.getString(ParamConstant.USER_TOKEN);
                         String tokenExpireTime = dataObject.getString(ParamConstant.TOKEN_EXPIRE_TIME);
